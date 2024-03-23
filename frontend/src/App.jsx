@@ -1,4 +1,5 @@
-import { useAddress } from "@thirdweb-dev/react";
+// import { useAddress } from "@thirdweb-dev/react";
+import axios from "axios";
 import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
@@ -10,12 +11,11 @@ import Login from "./pages/Login";
 import ProblemDesc from "./pages/ProblemDesc";
 import Problems from "./pages/Problems.";
 import Signup from "./pages/Signup";
+import { useAddress } from "@thirdweb-dev/react";
 
 function App() {
-  const address = useAddress();
+  const address = null;
   const data = JSON.parse(localStorage.getItem("user"));
-
-  console.log('datra : ', data);
 
   const userWalletHanlder = async () => {
     // try {
@@ -40,9 +40,9 @@ function App() {
     // }
   };
 
-  useEffect(() => {
-    userWalletHanlder();
-  }, [address]);
+  // useEffect(() => {
+  //   userWalletHanlder();
+  // }, [address]);
 
   return (
     <main className="dark bg-gradient-to-br from-[#0F1522] to-background to text-foreground bg-black">
@@ -56,7 +56,6 @@ function App() {
           <Route path="/addquestion" element={<AddQuestion />} />
           <Route path="/problems" element={<Problems />} />
           <Route path="/problems/problem/*" element={<ProblemDesc />} />
-          {/* <Route path="*" element={<NoPage />} /> */}
         </Routes>
       </BrowserRouter>
     </main>
