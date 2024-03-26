@@ -1,64 +1,63 @@
 import BannerGrids from "@/components/BannerGrids";
 import { Faq } from "@/components/Faq";
 import Footer from "@/components/Footer";
+import Hero from "@/components/Hero";
 import Logos from "@/components/Logos";
+import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
+import clsx from "clsx";
 import React from "react";
 import { Link } from "react-router-dom";
 
 const Landing = () => {
   return (
     <div>
-      <Navbar />
-      <div className="flex flex-col space-y-4">
-        {" "}
-        {/* Container */}
-        {/* hero section */}
-        <section
-          className="w-full px-5 py-32 flex
-     items-center justify-center"
+      <Navbar /> {/* Container */}
+      {/* hero section */}
+      <MaxWidthWrapper className={clsx(`flex flex-col space-y-4
+      max-w-[] `)}>
+        <Hero />
+        {/* <section
+          className="flex w-full items-center justify-center
+     px-5 py-32"
         >
-          <div className="max-w-full flex max-lg:flex-col items-center gap-10 justify-between flex-row-reverse">
-            {/* image */}
+          <div className="flex max-w-full flex-row-reverse items-center justify-between gap-10 max-lg:flex-col">
             <div
-              className="xl:w-[900px] flex-1 md:w-[600px] max-w-[760px]
-        shadow-xl shadow-[#2A2A2A] "
+              className="max-w-[760px] flex-1 shadow-xl shadow-[#2A2A2A]
+        md:w-[600px] xl:w-[900px] "
             >
               <img
                 src="/assets/home-ss.png"
                 alt="homepage-screenshot"
-                className="w-full h-full"
-                // className='xl:w-[900px] shadow-xl shadow-[#2A2A2A]
-                // rounded-md'
+                className="h-full w-full"
               />
             </div>
-            {/* right section */}
             <section
-              className="flex flex-1 flex-col space-y-4 items-start 
+              className="flex flex-1 flex-col items-start space-y-4 
         max-lg:items-center "
             >
-              <h1 className="text-white  w-[370px] xl:w-[700px] flex flex-col font-extrabold lg:text-[2.6rem] max-lg:w-full max-lg:text-center text-[2rem]">
+              <h1 className="flex  w-[370px] flex-col text-[2rem] font-extrabold text-white max-lg:w-full max-lg:text-center lg:text-[2.6rem] xl:w-[700px]">
                 A New Way to
                 <span className="">Solve Challenges and win rewards</span>{" "}
               </h1>
-              <p className="text-foreground text-gray-300 max-lg:text-center max-lg:w-full w-[70%]">
+              <p className="w-[70%] text-foreground text-gray-300 max-lg:w-full max-lg:text-center">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos,
                 magnam inventore rerum nam id beatae!
               </p>
-              <Button className="px-8 py-4 mt-10">
+              <Button className="mt-10 px-8 py-4">
                 <Link to="/problems">Enter App !</Link>
               </Button>
             </section>
           </div>
-        </section>
+        </section> */}
         <Logos />
         {/* components */}
         <BannerGrids />
         {/* faq */}
         <Faq />
         <Footer />
-      </div>
+      </MaxWidthWrapper>
     </div>
   );
 };
