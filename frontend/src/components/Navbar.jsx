@@ -33,13 +33,13 @@ const Navbar = () => {
       <main className="flex items-center justify-between text-white">
         {/* Logo */}
         <div className="h-full w-full">
-          {/* <img
+          <img
             onClick={() => navigate("/")}
             src="/assets/logo.png"
             alt="CodeHive"
-            className="w-[180px] h-[100%] cursor-pointer"
-          /> */}
-          <h1 className="text-2xl font-semibold">CodeHive</h1>
+            className="w-[240px] h-[160px] object-fill cursor-pointer"
+          />
+          {/* <h1 className="text-2xl font-semibold">CodeHive</h1> */}
         </div>
         {/* right side */}
         {(user && user?.user) || address ? (

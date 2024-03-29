@@ -45,7 +45,7 @@ function App() {
   // }, [address]);
 
   return (
-    <main className="dm-sans bg-black to-background text-foreground">
+    <main className="dark dm-sans bg-black to-background text-foreground">
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />
