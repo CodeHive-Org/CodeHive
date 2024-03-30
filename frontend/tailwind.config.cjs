@@ -12,6 +12,8 @@ module.exports = {
     },
     extend: {
       colors: {
+        bg_p: "#070815",
+        tron: "#F72045",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -20,7 +22,7 @@ module.exports = {
         second: "#FDFCCC",
         third: "#262626",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "#F72045",
           foreground: "hsl(var(--primary-foreground))"
         },
         secondary: {

@@ -7,7 +7,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  const disconnect = () => 'disconnect';
+  const disconnect = () => "disconnect";
   const address = null;
 
   const loginHandler = () => {
@@ -29,16 +29,17 @@ const Navbar = () => {
   // }, []);
 
   return (
-    <div className="px-5 w-full py-4">
+    <div className="w-full px-5 py-4 xl:px-10">
       <main className="flex items-center justify-between text-white">
         {/* Logo */}
-        <div className="w-full h-full">
+        <div className="h-full w-full">
           <img
             onClick={() => navigate("/")}
             src="/assets/logo.png"
             alt="CodeHive"
-            className="w-[180px] h-[100%] cursor-pointer"
+            className="w-[240px] h-[160px] object-fill cursor-pointer"
           />
+          {/* <h1 className="text-2xl font-semibold">CodeHive</h1> */}
         </div>
         {/* right side */}
         {(user && user?.user) || address ? (
@@ -53,7 +54,11 @@ const Navbar = () => {
           </div>
         ) : (
           <div className="">
-            <Button onClick={loginHandler} className="px-10 py-2">
+            <Button
+              onClick={loginHandler}
+              variant={"outline"}
+              className="px-10 py-2"
+            >
               Login
             </Button>
           </div>
