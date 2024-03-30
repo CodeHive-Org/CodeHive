@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Nav = () => {
     const navigate = useNavigate();
-    const address = useAddress();
+    // const address = useAddress();
 
     const loginHandler = () => {
         navigate("/login");
@@ -36,7 +36,7 @@ const Nav = () => {
                 </div>
                 {/* right side */}
                 <div className='flex items-center space-x-4'>
-                    <p className='text-gray-400'>{address}</p>
+                    {/* <p className='text-gray-400'>{address}</p> */}
                     <User className='text-white' size={28} />
                     {/* <Button variant='link' className='bg-red-500  text-foreground hover:bg-black'>
                         Logout
