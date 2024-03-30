@@ -2,7 +2,7 @@ import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useAddress, useDisconnect } from "@thirdweb-dev/react";
 import { User } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
@@ -18,17 +18,17 @@ import {
 
 const Nav = () => {
   const navigate = useNavigate();
-  const address = useAddress();
+  const address = '0x9492823';
   const loginHandler = () => {
     return navigate("/login");
   };
 
-  const disconnect = useDisconnect();
+  // const disconnect = useDisconnect();
 
-  const [position, setPosition] = React.useState("bottom");
+  const [position, setPosition] = useState("bottom");
 
   const logoutHandler = () => {
-    disconnect();
+    // disconnect();
     return <Navigate to="/" />;
   };
 
@@ -85,7 +85,7 @@ const Nav = () => {
           {/* right side */}
           {address ? (
             <div className="flex items-center space-x-4">
-              <p className="text-gray-400">{address}</p>
+              {/* <p className="text-gray-400">{address}</p> */}
               {/* dropdown menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

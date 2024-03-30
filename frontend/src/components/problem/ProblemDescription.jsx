@@ -1,37 +1,73 @@
 "use client";
 
-import { Check } from 'lucide-react';
-import { useParams } from 'next/navigation';
-import React, { useState } from 'react'
-import { useLocation } from 'react-router-dom';
+import { Check } from "lucide-react";
+import { useParams } from "next/navigation";
+import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 const ProblemDescription = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const pid = queryParams.get('pid');
+  const pid = queryParams.get("pid");
 
-  console.log('params : ', pid);
+  console.log("params : ", pid);
+
+  // {problem.examples.map((example, index) => (
+  //   <div key={example.id}>
+  //     <p className="font-medium text-white ">
+  //       Example {index + 1}:{" "}
+  //     </p>
+  //     {example.img && (
+  //       <img src={example.img} alt="" className="mt-3" />
+  //     )}
+  //     <div className="example-card">
+  //       <pre>
+  //         <strong className="text-white">Input: </strong>{" "}
+  //         {example.inputText}
+  //         <br />
+  //         <strong>Output:</strong>
+  //         {example.outputText} <br />
+  //         {example.explanation && (
+  //           <>
+  //             <strong>Explanation:</strong> {example.explanation}
+  //           </>
+  //         )}
 
   const problem = {
     title: "Two Sum",
     fees: 0,
-    description: "Given an array of integers `nums` and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice. You can return the answer in any order."
+    description:
+      "Given an array of integers `nums` and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice. You can return the answer in any order.",
+    examples: [
+      {
+        id: 1,
+        img: "",
+        inputText: "nums = [34,3,54,1,5,14], target = 9",
+        outputText: "[9.4]",
+        explanation:
+          "a random explanation about the code which i dont understand !",
+      },
+    ],
   };
 
   const solved = true;
 
   return (
     <main>
-      <div className='bg-third'>
+      <div className="bg-third">
         {/* TAB */}
-        <div className='flex h-11 w-full items-center pt-2 bg-secondary text-white overflow-x-hidden border-b border-gray-500'>
-          <div className={"bg-gray-700 rounded-t-[5px] px-5 py-[10px] text-xs cursor-pointer"}>
+        <div className="flex h-11 w-full items-center overflow-x-hidden border-b border-gray-500 bg-secondary pt-2 text-white">
+          <div
+            className={
+              "cursor-pointer rounded-t-[5px] bg-gray-700 px-5 py-[10px] text-xs"
+            }
+          >
             Description
           </div>
         </div>
 
-        <div className='flex px-0 py-4 h-[calc(100vh-94px)] overflow-y-auto'>
-          <div className='px-5'>
+        <div className="flex h-[calc(100vh-94px)] overflow-y-auto px-0 py-4">
+          <div className="px-5">
             {/*  PROBLEM solved info */}
             {/* {!loading && (
               <div className='flex items-center mt-3'>
@@ -43,19 +79,23 @@ const ProblemDescription = () => {
               </div>
             )} */}
             {/* Problem heading */}
-            <div className='w-full flex flex-col gap-4'>
-              <div className='flex space-x-4'>
-                <div className='flex-1 mr-2 text-xl text-white font-medium'>
-                  <span className='text-[1.7rem]'>{pid}. </span> {problem?.title}</div>
+            <div className="flex w-full flex-col gap-4">
+              <div className="flex space-x-4">
+                <div className="mr-2 flex-1 text-xl font-medium text-white">
+                  <span className="text-[1.7rem]">{pid}. </span>{" "}
+                  {problem?.title}
+                </div>
               </div>
 
               {/* Problem Statement(paragraphs) */}
-              <div className='text-gray-300 text-[0.9rem]'>
-                <div dangerouslySetInnerHTML={{ __html: problem.description }} />
+              <div className="text-[0.9rem] text-gray-300">
+                <div
+                  dangerouslySetInnerHTML={{ __html: problem.description }}
+                />
               </div>
 
               {/* Examples */}
-              <div className=''>
+              <div className="">
                 {/* {problem.examples.map((example, index) => (
                   <div key={example.id}>
                     <p className='font-medium text-white '>Example {index + 1}: </p>
@@ -77,27 +117,72 @@ const ProblemDescription = () => {
                 ))} */}
               </div>
 
+              {/* Examples */}
+              <div className="mt-4 p-4 rounded-md bg-gray-400/40">
+                {problem.examples.map((example, index) => (
+                  <div key={example.id}>
+                    <p className="font-medium text-white ">
+                      Example {index + 1}:{" "}
+                    </p>
+                    {example.img && (
+                      <img src={example.img} alt="" className="mt-3" />
+                    )}
+                    <div className="example-card">
+                      <pre>
+                        <strong className="text-white">Input: </strong>{" "}
+                        {example.inputText}
+                        <br />
+                        <strong>Output:</strong>
+                        {example.outputText} <br />
+                        {example.explanation && (
+                          <>
+                            <strong>Explanation:</strong> {example.explanation}
+                          </>
+                        )}
+                      </pre>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
               {/* Constraints */}
-              <div className='my-4 pb-4'>
-                <div className='text-white text-sm font-medium'>Constraints:</div>
-                <ul className='text-white ml-5 list-disc '>
-                  <li dangerouslySetInnerHTML={{ __html: "n == nums.length" }} />
+              <div className="my-4 pb-4">
+                <div className="text-sm font-medium text-white">
+                  Constraints:
+                </div>
+                <ul className="ml-5 list-disc text-white ">
+                  <li
+                    dangerouslySetInnerHTML={{ __html: "n == nums.length" }}
+                  />
                   <li dangerouslySetInnerHTML={{ __html: "1 <= n <= 105" }} />
-                  <li dangerouslySetInnerHTML={{ __html: "n is a multiple of 3." }} />
+                  <li
+                    dangerouslySetInnerHTML={{
+                      __html: "n is a multiple of 3.",
+                    }}
+                  />
                   <li dangerouslySetInnerHTML={{ __html: "1 <= k <= 105" }} />
                 </ul>
               </div>
 
               {/* more info regarding problem  */}
-              <div className='flex flex-col space-y-4 max-w-max'>
-                <div className='flex p-2 rounded-md px-4 bg-orange-400 text-white font-semibold'>
-                  <h1 className='text-black font-medium mr-2'>People attempted to solve this problem : </h1> 6
+              <div className="flex max-w-max flex-col space-y-4">
+                <div className="flex rounded-md bg-orange-400 p-2 px-4 font-semibold text-white">
+                  <h1 className="mr-2 font-medium text-black">
+                    People attempted to solve this problem :{" "}
+                  </h1>{" "}
+                  6
                 </div>
-                <div className='flex p-2 rounded-md px-4 bg-orange-400 text-red-700 font-semibold'>
-                  <h1 className='text-black font-medium mr-2'>Reward if you solve this : </h1> 6 Eth
+                <div className="flex rounded-md bg-orange-400 p-2 px-4 font-semibold text-red-700">
+                  <h1 className="mr-2 font-medium text-black">
+                    Reward if you solve this :{" "}
+                  </h1>{" "}
+                  6 Eth
                 </div>
-                <div className='flex p-2 rounded-md px-4 bg-orange-400 text-blue-700 font-semibold'>
-                  <h1 className='text-black font-medium mr-2'>Probability of solving this problem : </h1> 10 %
+                <div className="flex rounded-md bg-orange-400 p-2 px-4 font-semibold text-blue-700">
+                  <h1 className="mr-2 font-medium text-black">
+                    Probability of solving this problem :{" "}
+                  </h1>{" "}
+                  10 %
                 </div>
               </div>
             </div>
@@ -105,7 +190,7 @@ const ProblemDescription = () => {
         </div>
       </div>
     </main>
-  )
-}
+  );
+};
 
-export default ProblemDescription
+export default ProblemDescription;

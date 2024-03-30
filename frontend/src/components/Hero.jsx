@@ -1,15 +1,18 @@
 import clsx from "clsx";
 import React, { useRef } from "react";
 import StarGrid from "./ui/StarGrid";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import usePrefersReducedMotion from "@/hooks/usePrefersReducedMotion";
+import { Button } from "./ui/button";
 
 const Hero = () => {
   const container = useRef(null);
   const prefersReducedMotion = usePrefersReducedMotion();
   gsap.registerPlugin(useGSAP);
+
+  const navigate = useNavigate();
 
   useGSAP(
     () => {
@@ -58,6 +61,10 @@ const Hero = () => {
     { scope: container },
   );
 
+  const clickHandler = () => {
+    navigate('/');
+  }
+
   return (
     <div
       ref={container}
@@ -76,10 +83,10 @@ const Hero = () => {
         dolorum.
       </p>
 
-      <Link className="mt-5 bg-rose-700/90
-      text-white rounded-full px-10 text-medium py-2" to="/">
+      <Button className="mt-5 bg-rose-700/90 cursor-pointer hover:bg-primary
+      text-white rounded-full px-10 text-medium py-2" >
         Lets goo
-      </Link>
+      </Button>
       <div className="hero__image glass-container mt-16 w-fit opacity-0 max-sm:w-[90%]">
         <div className="hero__glow absolute inset-0 -z-10 bg-rose-600/30 opacity-0 blur-2xl filter" />
         <img
