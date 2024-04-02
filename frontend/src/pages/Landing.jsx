@@ -15,8 +15,10 @@ const Landing = () => {
     <div>
       <Navbar /> {/* Container */}
       {/* hero section */}
-      <MaxWidthWrapper className={clsx(`flex flex-col space-y-4
-      max-w-[] `)}>
+      <MaxWidthWrapper
+        className={clsx(`flex max-w-[] flex-col
+      space-y-4 `)}
+      >
         <Hero />
         {/* <section
           className="flex w-full items-center justify-center

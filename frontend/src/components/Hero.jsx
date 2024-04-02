@@ -62,7 +62,7 @@ const Hero = () => {
   );
 
   const clickHandler = () => {
-    navigate('/');
+    navigate('/problems');
   }
 
   return (
@@ -83,8 +83,8 @@ const Hero = () => {
         dolorum.
       </p>
 
-      <Button className="mt-5 bg-rose-700/90 cursor-pointer hover:bg-primary
-      text-white rounded-full px-10 text-medium py-2" >
+      <Button onClick={clickHandler} className="mt-5 bg-rose-700/90 cursor-pointer hover:bg-primary
+      text-white rounded-full px-10 text-medium py-2 z-10" >
         Lets goo
       </Button>
       <div className="hero__image glass-container mt-16 w-fit opacity-0 max-sm:w-[90%]">
