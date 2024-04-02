@@ -23,13 +23,13 @@ const Nav = () => {
   const userId = "sfdsd";
   return (
     <nav className="pz-2 sticky inset-x-0 bg-background px-6 py-3">
-      <main className="flex items-center justify-between ">
+      <main className="flex items-center justify-between py-1">
         {/* Logo */}
         <img
           onClick={() => navigate("/")}
           src="/assets/logo1.png"
           alt="Code Duel"
-          className="object-contain h-[80px] cursor-pointer"
+          className="object-contain w-[140px] cursor-pointer"
         />
         <div className="flex h-full w-full items-center space-x-4">
           {/* prev and next problem buttons */}

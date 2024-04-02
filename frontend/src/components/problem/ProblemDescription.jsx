@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 
-const ProblemDescription = () => {
+const ProblemDescription = ({ problem }) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const pid = queryParams.get("pid");
@@ -33,22 +33,22 @@ const ProblemDescription = () => {
   //           </>
   //         )}
 
-  const problem = {
-    title: "Two Sum",
-    fees: 0,
-    description:
-      "Given an array of integers `nums` and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice. You can return the answer in any order.",
-    examples: [
-      {
-        id: 1,
-        img: "",
-        inputText: "nums = [34,3,54,1,5,14], target = 9",
-        outputText: "[9.4]",
-        explanation:
-          "a random explanation about the code which i dont understand !",
-      },
-    ],
-  };
+  // const problem = {
+  //   title: "Two Sum",
+  //   fees: 0,
+  //   description:
+  //     "Given an array of integers `nums` and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice. You can return the answer in any order.",
+  //   examples: [
+  //     {
+  //       id: 1,
+  //       img: "",
+  //       inputText: "nums = [34,3,54,1,5,14], target = 9",
+  //       outputText: "[9.4]",
+  //       explanation:
+  //         "a random explanation about the code which i dont understand !",
+  //     },
+  //   ],
+  // };
 
   const solved = true;
 
@@ -118,7 +118,7 @@ const ProblemDescription = () => {
               </div>
 
               {/* Examples */}
-              <div className="mt-4 p-4 rounded-md bg-gray-400/40">
+              <div className="mt-4 rounded-md bg-gray-400/40 p-4">
                 {problem.examples.map((example, index) => (
                   <div key={example.id}>
                     <p className="font-medium text-white ">

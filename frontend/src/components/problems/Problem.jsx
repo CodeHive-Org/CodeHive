@@ -10,7 +10,7 @@ const Problem = ({ id, title, fees, description, isOpen, handleOpen }) => {
 
   const clickHandler = (e, id) => {
     e.preventDefault();
-    navigate(`/problems/${id}`);
+    navigate(`/problems/${title}`);
   };
 
   const isEven = id % 2 === 0;
