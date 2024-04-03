@@ -35,9 +35,9 @@ const Navbar = () => {
         <div className="h-full w-full">
           <img
             onClick={() => navigate("/")}
-            src="/assets/logo.png"
+            src="/assets/logo1.png"
             alt="CodeHive"
-            className="w-[240px] h-[160px] object-fill cursor-pointer"
+            className="w-[160px] object-fill cursor-pointer"
           />
           {/* <h1 className="text-2xl font-semibold">CodeHive</h1> */}
         </div>

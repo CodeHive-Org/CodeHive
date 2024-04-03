@@ -3,7 +3,7 @@ import React from "react";
 
 const SubmitBox = ({ handleSubmit }) => {
   return (
-    <div className="bg-dark-layer-1 absolute bottom-0 z-10 flex w-full">
+    <div className="bg-dark-layer-1 absolute bottom-6 z-10 flex w-full">
       <div className="mx-5 my-[10px] flex w-full justify-between">
         <div className="mr-2 flex flex-1 flex-nowrap items-center space-x-4">
           <button className="bg-dark-fill-3 hover:bg-dark-fill-2 text-dark-label-2 inline-flex items-center rounded-lg px-3 py-1.5 pl-3 pr-2 text-sm font-medium transition-all">

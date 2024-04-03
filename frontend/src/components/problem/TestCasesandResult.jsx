@@ -39,7 +39,7 @@ const TestCasesandResult = ({ problem }) => {
   // }
 
   return (
-    <div className="w-full overflow-auto px-5">
+    <div className="h-full w-full overflow-auto bg-third px-5">
       {/* testcase heading */}
       <div className="flex h-10 items-center space-x-6">
         <div className="relative flex h-full cursor-pointer flex-col justify-center">
@@ -50,7 +50,7 @@ const TestCasesandResult = ({ problem }) => {
         </div>
       </div>
 
-      <div className="flex">
+      <div className="mt-4 flex rounded-md bg-black">
         {problem.examples.map((example, index) => (
           <div
             className="mr-2 mt-2 items-start "
@@ -72,11 +72,11 @@ const TestCasesandResult = ({ problem }) => {
 
       <div className="my-4 font-semibold">
         <p className="mt-4 text-sm font-medium text-white">Input:</p>
-        <div className="bg-dark-fill-3 mt-2 w-full cursor-text rounded-lg border border-transparent px-3 py-[10px] text-white">
+        <div className="mt-2 w-full cursor-text rounded-lg border border-transparent bg-gray-400/20 px-3 py-[10px] text-white">
           {problem.examples[activeTestCaseId].inputText}
         </div>
         <p className="mt-4 text-sm font-medium text-white">Output:</p>
-        <div className="bg-dark-fill-3 mt-2 w-full cursor-text rounded-lg border border-transparent px-3 py-[10px] text-white">
+        <div className="mt-2 w-full cursor-text rounded-lg border border-transparent bg-gray-400/20 px-3 py-[10px] text-white">
           {problem.examples[activeTestCaseId].outputText}
         </div>
       </div>

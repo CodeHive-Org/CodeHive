@@ -62,8 +62,8 @@ const Hero = () => {
   );
 
   const clickHandler = () => {
-    navigate('/problems');
-  }
+    navigate("/problems");
+  };
 
   return (
     <div
@@ -79,19 +79,21 @@ const Hero = () => {
         className="hero__body mx-auto mt-6 max-w-md text-balance
         text-center text-slate-300 opacity-0"
       >
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Perferendis,
-        dolorum.
+        {`"Solve challenges, reap rewards – it's more than just leveling up your skills"`}
       </p>
 
-      <Button onClick={clickHandler} className="mt-5 bg-rose-700/90 cursor-pointer hover:bg-primary
-      text-white rounded-full px-10 text-medium py-2 z-10" >
+      <Button
+        onClick={clickHandler}
+        className="text-medium z-10 mt-5 cursor-pointer
+      rounded-full bg-rose-700/90 px-10 py-2 text-white hover:bg-primary"
+      >
         Lets goo
       </Button>
       <div className="hero__image glass-container mt-16 w-fit opacity-0 max-sm:w-[90%]">
         <div className="hero__glow absolute inset-0 -z-10 bg-rose-600/30 opacity-0 blur-2xl filter" />
         <img
           className="mx-auto rounded-lg"
-          src="/assets/home-ss.png"
+          src="/assets/main-ss.png"
           alt="home screenshot"
           sizes="100%"
         />

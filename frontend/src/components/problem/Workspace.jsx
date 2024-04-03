@@ -76,7 +76,7 @@ const WorkSpace = ({ problem }) => {
       direction="horizontal"
       className="h-[100vh] max-w-full rounded-lg border-none"
     >
-      <Toaster />
+      <Toaster richColors />
       <ResizablePanel defaultSize={50}>
         {/* Problem Description */}
         <ProblemDescription problem={problem} />

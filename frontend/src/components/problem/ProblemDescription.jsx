@@ -66,7 +66,7 @@ const ProblemDescription = ({ problem }) => {
           </div>
         </div>
 
-        <div className="flex h-[calc(100vh-94px)] overflow-y-auto px-0 py-4">
+        <div className="flex h-[calc(100vh-94px)] overflow-y-hidden px-0 py-4">
           <div className="px-5">
             {/*  PROBLEM solved info */}
             {/* {!loading && (
@@ -166,7 +166,7 @@ const ProblemDescription = ({ problem }) => {
 
               {/* more info regarding problem  */}
               <div className="flex max-w-max flex-col space-y-4">
-                <div className="flex rounded-md bg-orange-400 p-2 px-4 font-semibold text-white">
+                <div className="flex rounded-md bg-rose-600 p-2 px-4 font-semibold text-white">
                   <h1 className="mr-2 font-medium text-black">
                     People attempted to solve this problem :{" "}
                   </h1>{" "}
@@ -178,7 +178,7 @@ const ProblemDescription = ({ problem }) => {
                   </h1>{" "}
                   6 Eth
                 </div>
-                <div className="flex rounded-md bg-orange-400 p-2 px-4 font-semibold text-blue-700">
+                <div className="flex rounded-md bg-gray-600/30 p-2 px-4 font-semibold text-blue-700">
                   <h1 className="mr-2 font-medium text-black">
                     Probability of solving this problem :{" "}
                   </h1>{" "}

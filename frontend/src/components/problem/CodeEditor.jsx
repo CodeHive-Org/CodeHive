@@ -41,7 +41,7 @@ const CodeEditor = ({ starterCode, setUserCode }) => {
               "flex cursor-pointer items-center rounded-t-[5px] px-5 py-[10px] text-sm"
             }
           >
-            <Code className="mr-3 text-green-500" /> Code
+            <Code className="mr-3 text-primary" /> Code
           </div>
         </div>
       </nav>
