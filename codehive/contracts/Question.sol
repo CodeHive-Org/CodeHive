@@ -7,6 +7,7 @@ contract Question {
     string public QuestionData;//ipfs data goes here....
     string public topicName;//name of the bounty....
     address moderator;//owner of the bounty....
+    address webHandler;
     
     //non static data...
     uint256 public bountyValue;
@@ -22,8 +23,11 @@ contract Question {
         require(msg.sender == moderator, "Not authoresised.");
         _;
     }
-    
-    constructor(string memory _name, string memory _quesData, address _mod, uint16 _diff, string memory _chatHash)payable{
+    modifier onlyWebHandler(){
+        require(msg.sender == webHandler, "Not authoresised.");
+        _;
+    }
+    constructor(string memory _name, string memory _quesData, address _mod, uint16 _diff, string memory _chatHash, address _webHandler)payable{
         QuestionData = _quesData;
         topicName = _name;
         moderator = _mod;
@@ -32,8 +36,9 @@ contract Question {
         claimed = false;
         difficulty = _diff;
         chatHash=_chatHash;
+        webHandler = _webHandler;
     }
-    function submitCode(string memory _codeHash, address _sender)public onlyModerator returns(bool){
+    function submitCode(string memory _codeHash, address _sender)public onlyWebHandler returns(bool){
         require(bytes(codes[_sender]).length==0,"code allready submitted.");
         codes[_sender] = _codeHash;
         submissions.push(_sender);

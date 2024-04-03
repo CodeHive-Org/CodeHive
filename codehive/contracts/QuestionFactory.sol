@@ -11,6 +11,7 @@ contract QuestionFactory {
     uint16 private count = 0;
     uint256 rant;
     uint256 thresholdFees;
+    address webHandler;
     uint16 noOfValidators=0;
     address[] validators;
     
@@ -29,14 +30,15 @@ contract QuestionFactory {
         _;
     }
     
-    constructor(uint256 _rant, uint256 _thresholdFees){
+    constructor(uint256 _rant, uint256 _thresholdFees, address _webHandler){
+        webHandler = _webHandler;
         rant = _rant;
         thresholdFees = _thresholdFees;
     }
     
     function generateBounty(string memory _name, string memory _quesData, uint16 _difficulty, string memory _chatHash, uint256 bountyValue, string memory _shortDesc)public isValidated payable{
         require((bountyValue+rant) <= msg.value, "not enough value sent");
-        Question temp = (new Question){value:msg.value}(_name,_quesData,msg.sender,_difficulty,_chatHash);
+        Question temp = (new Question){value:msg.value}(_name,_quesData,msg.sender,_difficulty,_chatHash, webHandler);
         Bounty memory theBounty = Bounty(temp, _name, _shortDesc);
         //saving the bounty....
         bounties[_name] = theBounty;
