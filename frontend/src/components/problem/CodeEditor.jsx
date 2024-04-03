@@ -1,39 +1,60 @@
 "use client";
 
-import React from 'react'
-import CodeMirror from '@uiw/react-codemirror'
-import { vscodeDark } from '@uiw/codemirror-theme-vscode'
-import { javascript } from '@codemirror/lang-javascript'
-import { Code } from 'lucide-react';
-import EditorFooter from './EditorFooter';
-import { useRecoilState } from 'recoil';
-import { resultAtom } from '@/atoms/userAtom';
+import React, { useEffect, useState } from "react";
+import CodeMirror from "@uiw/react-codemirror";
+import { vscodeDark } from "@uiw/codemirror-theme-vscode";
+import { javascript } from "@codemirror/lang-javascript";
+import { Code } from "lucide-react";
+import EditorFooter from "./EditorFooter";
+import { useRecoilState } from "recoil";
+import { resultAtom } from "@/atoms/userAtom";
+import { useParams } from "react-router-dom";
 
-const CodeEditor = () => {
+const CodeEditor = ({ starterCode, setUserCode }) => {
   const [result, setResult] = useRecoilState(resultAtom);
+  const { pid } = useParams();
 
   const handleSubmit = () => {
     setResult(true);
-}
+  };
+
+  useEffect(() => {
+    const code = localStorage.getItem(`code-${pid}`);
+    if (code) {
+      setUserCode(code ? JSON.parse(code) : starterCode);
+    } else {
+      setUserCode(starterCode);
+    }
+  }, [pid, starterCode]);
+
+  const onChange = (value) => {
+    setUserCode(value);
+    localStorage.setItem(`code-${pid}`, JSON.stringify(value));
+  };
 
   return (
-    <main className='w-full overflow-auto h-full relative bg-third'>
+    <main className="relative h-full w-full overflow-auto bg-third">
       <nav>
-        <div className='flex w-full items-center bg-secondary text-white overflow-x-hidden border-b border-gray-500'>
-          <div className={"rounded-t-[5px] px-5 py-[10px] flex items-center text-sm cursor-pointer"}>
-            <Code className='text-green-500 mr-3' />  Code
+        <div className="flex w-full items-center overflow-x-hidden border-b border-gray-500 bg-secondary text-white">
+          <div
+            className={
+              "flex cursor-pointer items-center rounded-t-[5px] px-5 py-[10px] text-sm"
+            }
+          >
+            <Code className="mr-3 text-primary" /> Code
           </div>
         </div>
       </nav>
       <CodeMirror
-        value="const hello = world;"
+        value={starterCode}
+        onChange={onChange}
         theme={vscodeDark}
         extensions={[javascript()]}
         style={{ fontSize: 16 }}
       />
-      <EditorFooter handleSubmit={handleSubmit} />
+      {/* <EditorFooter handleSubmit={handleSubmit} /> */}
     </main>
-  )
-}
+  );
+};
 
-export default CodeEditor
+export default CodeEditor;

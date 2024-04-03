@@ -1,13 +1,15 @@
-import assert from "assert";
-import { Problem } from "../types/problem";
-
 const starterCodeTwoSum = `function twoSum(nums,target){
   // Write your code here
 };`;
 
-// checks if the user has the correct code
+// Custom deep equality check to replace assert.deepStrictEqual
+function assertDeepStrictEqual(a, b) {
+  if (JSON.stringify(a) !== JSON.stringify(b)) {
+    throw new Error(`AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal: ${JSON.stringify(a)} !== ${JSON.stringify(b)}`);
+  }
+}
+
 const handlerTwoSum = (fn) => {
-  // fn is the callback that user's code is passed into
   try {
     const nums = [
       [2, 7, 11, 15],
@@ -22,11 +24,9 @@ const handlerTwoSum = (fn) => {
       [0, 1],
     ];
 
-    // loop all tests to check if the user's code is correct
     for (let i = 0; i < nums.length; i++) {
-      // result is the output of the user's function and answer is the expected output
       const result = fn(nums[i], targets[i]);
-      assert.deepStrictEqual(result, answers[i]);
+      assertDeepStrictEqual(result, answers[i]);
     }
     return true;
   } catch (error) {
@@ -38,7 +38,7 @@ const handlerTwoSum = (fn) => {
 export const twoSum = {
   id: "two-sum",
   title: "1. Two Sum",
-  problemStatement: `<p class='mt-3'>
+  description: `<p class='mt-3'>
   Given an array of integers <code>nums</code> and an integer <code>target</code>, return
   <em>indices of the two numbers such that they add up to</em> <code>target</code>.
 </p>
