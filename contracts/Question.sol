@@ -16,7 +16,7 @@ contract Question {
     string public winnerCode;
     mapping(address => string) codes;
     address[] submissions;
-    string public chatHash;
+    address public chatHash;
     uint16 public difficulty;
 
     modifier onlyModerator(){
@@ -27,7 +27,7 @@ contract Question {
         require(msg.sender == webHandler, "Not authoresised.");
         _;
     }
-    constructor(string memory _name, string memory _quesData, address _mod, uint16 _diff, string memory _chatHash, address _webHandler)payable{
+    constructor(string memory _name, string memory _quesData, address _mod, uint16 _diff, address _chatHash, address _webHandler)payable{
         QuestionData = _quesData;
         topicName = _name;
         moderator = _mod;
@@ -55,4 +55,33 @@ contract Question {
     function haveSubmitted()public view returns(bool){
         return (bytes(codes[msg.sender]).length != 0);
     }
+    
+    //chat logic here...
+    
+    struct Message{
+        string content;
+        address sender;
+        uint256 postTime;
+        uint256 editTime;
+        bool edited;
+        uint16 index;
+    }
+    Message[] Chat;
+    uint16 noOfChat=0;
+    
+    function postDiscussion(string memory _content, address _sender)public onlyWebHandler {
+        Chat.push(Message(_content,_sender,block.timestamp,0,false,noOfChat));
+        noOfChat++;
+    }
+    function editChat(address _sender, string memory _newContent, uint16 _index)public onlyWebHandler{
+        require(_index<noOfChat ,"invalid index");
+        require(Chat[_index].sender == _sender, "require the address to match.");
+        Chat[_index].edited = true;
+        Chat[_index].editTime = block.timestamp;
+        Chat[_index].content = _newContent;
+    }
+    function fetchChat()public view returns(Message[] memory){
+        return Chat;
+    }
+    
 }

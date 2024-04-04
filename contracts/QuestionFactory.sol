@@ -36,7 +36,7 @@ contract QuestionFactory {
         thresholdFees = _thresholdFees;
     }
     
-    function generateBounty(string memory _name, string memory _quesData, uint16 _difficulty, string memory _chatHash, uint256 bountyValue, string memory _shortDesc)public isValidated payable{
+    function generateBounty(string memory _name, string memory _quesData, uint16 _difficulty, address _chatHash, uint256 bountyValue, string memory _shortDesc)public isValidated payable{
         require((bountyValue+rant) <= msg.value, "not enough value sent");
         Question temp = (new Question){value:msg.value}(_name,_quesData,msg.sender,_difficulty,_chatHash, webHandler);
         Bounty memory theBounty = Bounty(temp, _name, _shortDesc);
