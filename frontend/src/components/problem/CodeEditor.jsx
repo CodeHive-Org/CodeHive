@@ -10,7 +10,7 @@ import { useRecoilState } from "recoil";
 import { resultAtom } from "@/atoms/userAtom";
 import { useParams } from "react-router-dom";
 
-const CodeEditor = ({ starterCode, setUserCode }) => {
+const CodeEditor = ({ starterCode, setUserCode,userCode }) => {
   const [result, setResult] = useRecoilState(resultAtom);
   const { pid } = useParams();
 
@@ -46,7 +46,7 @@ const CodeEditor = ({ starterCode, setUserCode }) => {
         </div>
       </nav>
       <CodeMirror
-        value={starterCode}
+        value={userCode}
         onChange={onChange}
         theme={vscodeDark}
         extensions={[javascript()]}

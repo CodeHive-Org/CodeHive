@@ -1,21 +1,28 @@
+import { outputAtom } from "@/atoms/problemAtom";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import ProblemDescription from "./ProblemDescription";
-import CodeEditor from "./CodeEditor";
-import TestCasesandResult from "./TestCasesandResult";
-import { Toaster, toast } from "sonner";
+import useWindowSize from "@/hooks/useWindowSize";
 import { useState } from "react";
+import ReactConfetti from "react-confetti";
+import { useRecoilState } from "recoil";
+import { Toaster, toast } from "sonner";
+import CodeEditor from "./CodeEditor";
+import ProblemDescription from "./ProblemDescription";
 import SubmitBox from "./SubmitBox";
+import TestCasesandResult from "./TestCasesandResult";
 // import TestCasesandResult from "./TestCasesandResult";
 
 const WorkSpace = ({ problem }) => {
   let [userCode, setUserCode] = useState(problem.starterCode);
+  const { width, height } = useWindowSize();
+  const [success, setSuccess] = useState(false);
+
+  const [, setOutputState] = useRecoilState(outputAtom);
   const user = "sdfsf";
 
-  console.log("userCode : ", userCode);
 
   const handleSubmit = async () => {
     if (!user) {
@@ -29,11 +36,9 @@ const WorkSpace = ({ problem }) => {
     try {
       userCode = userCode.slice(userCode.indexOf(problem.starterFunctionName));
       const cb = new Function(`return ${userCode}`)();
-      console.log("hii : ", cb);
       const handler = problem.handlerFunction;
 
       if (typeof handler === "function") {
-        console.log("reaching till here ?");
         const success = handler(cb);
         if (success) {
           toast.success("Congrats! All tests passed!", {
@@ -41,9 +46,9 @@ const WorkSpace = ({ problem }) => {
             autoClose: 3000,
             theme: "dark",
           });
-          // setSuccess(true);
+          setSuccess(true);
           setTimeout(() => {
-            // setSuccess(false);
+            setSuccess(false);
           }, 4000);
 
           // setSolved(true);
@@ -71,6 +76,26 @@ const WorkSpace = ({ problem }) => {
     }
   };
 
+  const handleRun = async () => {
+    try {
+      userCode = userCode.slice(userCode.indexOf(problem.starterFunctionName));
+      const cb = new Function(`return ${userCode}`)();
+      const handler = problem.runnerFunction;
+
+      if (typeof handler === "function") {
+        const output = handler(cb);
+        setOutputState(JSON.stringify(output));
+      }
+    } catch (error) {
+      console.log(error.message);
+      toast.error(error.message, {
+        position: "top-center",
+        autoClose: 3000,
+        theme: "dark",
+      });
+    }
+  };
+
   return (
     <ResizablePanelGroup
       direction="horizontal"
@@ -88,6 +113,7 @@ const WorkSpace = ({ problem }) => {
             {/* Code Editor */}
             <CodeEditor
               setUserCode={setUserCode}
+              userCode={userCode}
               starterCode={problem.starterCode}
             />
           </ResizablePanel>
@@ -98,7 +124,15 @@ const WorkSpace = ({ problem }) => {
           </ResizablePanel>
         </ResizablePanelGroup>
       </ResizablePanel>
-      <SubmitBox handleSubmit={handleSubmit} />
+      <SubmitBox handleSubmit={handleSubmit} handleRun={handleRun} />
+      {success && (
+        <ReactConfetti
+          gravity={0.3}
+          tweenDuration={4000}
+          width={width - 1}
+          height={height - 1}
+        />
+      )}
     </ResizablePanelGroup>
   );
 };

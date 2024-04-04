@@ -5,7 +5,9 @@ const starterCodeTwoSum = `function twoSum(nums,target){
 // Custom deep equality check to replace assert.deepStrictEqual
 function assertDeepStrictEqual(a, b) {
   if (JSON.stringify(a) !== JSON.stringify(b)) {
-    throw new Error(`AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal: ${JSON.stringify(a)} !== ${JSON.stringify(b)}`);
+    throw new Error(
+      `AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal: ${JSON.stringify(a)} !== ${JSON.stringify(b)}`,
+    );
   }
 }
 
@@ -31,6 +33,27 @@ const handlerTwoSum = (fn) => {
     return true;
   } catch (error) {
     console.log("twoSum handler function error");
+    throw new Error(error);
+  }
+};
+
+const runnerTwoSum = (fn) => {
+  try {
+    const nums = [
+      [2, 7, 11, 15],
+      [3, 2, 4],
+      [3, 3],
+    ];
+
+    const targets = [9, 6, 6];
+
+    for (let i = 0; i < nums.length; i++) {
+      const result = fn(nums[i], targets[i]);
+      return result;
+    }
+    // return true;
+  } catch (error) {
+    console.log("twoSum runner function error");
     throw new Error(error);
   }
 };
@@ -77,6 +100,7 @@ export const twoSum = {
 <strong>Only one valid answer exists.</strong>
 </li>`,
   handlerFunction: handlerTwoSum,
+  runnerFunction: runnerTwoSum,
   starterCode: starterCodeTwoSum,
   order: 1,
   starterFunctionName: "function twoSum(",

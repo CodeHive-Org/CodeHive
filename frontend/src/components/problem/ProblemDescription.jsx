@@ -10,7 +10,6 @@ const ProblemDescription = ({ problem }) => {
   const queryParams = new URLSearchParams(location.search);
   const pid = queryParams.get("pid");
 
-  console.log("params : ", pid);
 
   // {problem.examples.map((example, index) => (
   //   <div key={example.id}>
