@@ -32,6 +32,8 @@ const WorkSpace = ({ problem }) => {
       console.log("hii : ", cb);
       const handler = problem.handlerFunction;
 
+      console.log('handler : ', handler);
+
       if (typeof handler === "function") {
         console.log("reaching till here ?");
         const success = handler(cb);
@@ -88,6 +90,7 @@ const WorkSpace = ({ problem }) => {
             {/* Code Editor */}
             <CodeEditor
               setUserCode={setUserCode}
+              userCode={userCode}
               starterCode={problem.starterCode}
             />
           </ResizablePanel>

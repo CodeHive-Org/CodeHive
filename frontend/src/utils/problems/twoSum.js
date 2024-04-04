@@ -26,6 +26,7 @@ const handlerTwoSum = (fn) => {
 
     for (let i = 0; i < nums.length; i++) {
       const result = fn(nums[i], targets[i]);
+      console.log('result : ', result);
       assertDeepStrictEqual(result, answers[i]);
     }
     return true;

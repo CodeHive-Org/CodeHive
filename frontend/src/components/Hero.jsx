@@ -76,7 +76,7 @@ const Hero = () => {
         A New Way to Solve Challenges and <span>win rewards</span>{" "}
       </h1>
       <p
-        className="hero__body mx-auto mt-6 max-w-md text-balance
+        className="hero__body mx-auto mt-6 max-w-[40%] text-alance
         text-center text-slate-300 opacity-0"
       >
         {`"Solve challenges, reap rewards – it's more than just leveling up your skills"`}
