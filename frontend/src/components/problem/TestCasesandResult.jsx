@@ -1,3 +1,4 @@
+import { outputAtom } from "@/atoms/problemAtom";
 import { resultAtom } from "@/atoms/userAtom";
 import { Check } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -8,7 +9,10 @@ const TestCasesandResult = ({ problem }) => {
   const resultState = useRecoilValue(resultAtom);
 
   const [activeTestCaseId, setActiveTestCaseId] = useState(0); // indexing for testcases from the problem;
+  const [innerNavs, setInnerNavs] = useState(["TestCases"]);
   const [activeBar, setActiveBar] = useState(0);
+
+  const outputState = useRecoilValue(outputAtom);
 
   useEffect(() => {
     setTimeout(() => {
@@ -16,11 +20,11 @@ const TestCasesandResult = ({ problem }) => {
     }, 1000);
   }, []);
 
-  if (resultState) {
-    setTimeout(() => {
-      setLoading(false);
-    }, 3000);
-  }
+  // if (resultState) {
+  //   setTimeout(() => {
+  //     setLoading(false);
+  //   }, 3000);
+  // }
 
   // if (loading) {
   //   return (
@@ -39,7 +43,13 @@ const TestCasesandResult = ({ problem }) => {
   //   );
   // }
 
-  const innerNavs = ["TestCases", "Console"];
+  useEffect(() => {
+    if (innerNavs.length < 2) {
+      {
+        outputState && setInnerNavs((prev) => [...prev, "Console"]);
+      }
+    }
+  }, [outputState]);
 
   return (
     <div className="h-full w-full overflow-auto bg-third px-5 py-2">
@@ -53,8 +63,8 @@ const TestCasesandResult = ({ problem }) => {
             <div
               onClick={() => setActiveBar(index)}
               key={index}
-              className={`text-[1rem]  font-semibold leading-5 pb-2
-          ${activeBar === index ? "text-rose-500 border-b" : "text-gray-500"}
+              className={`pb-2  text-[1rem] font-semibold leading-5
+          ${activeBar === index ? "border-b text-rose-500" : "text-gray-500"}
               `}
             >
               {nav}
@@ -97,8 +107,13 @@ const TestCasesandResult = ({ problem }) => {
           </div>
         </section>
       ) : (
-        <div className="bg-black text-white">
-          <h1>Hi there !</h1>
+        <div className="h-[90%] rounded-md border border-gray-700 bg-[#1E1E1E] text-white">
+          <div className="flex space-x-4 p-5">
+            <h1 className="text-gray-400">Output : </h1>
+            {outputState && (
+              <p className="text-[1.1rem] text-white">{outputState}</p>
+            )}
+          </div>
         </div>
       )}
     </div>

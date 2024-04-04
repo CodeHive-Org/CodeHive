@@ -1,7 +1,7 @@
 import { ChevronUp } from "lucide-react";
 import React from "react";
 
-const SubmitBox = ({ handleSubmit }) => {
+const SubmitBox = ({ handleSubmit, handleRun }) => {
   return (
     <div className="bg-dark-layer-1 absolute bottom-6 z-10 flex w-full">
       <div className="mx-5 my-[10px] flex w-full justify-between">
@@ -15,13 +15,13 @@ const SubmitBox = ({ handleSubmit }) => {
         </div> */}
         <div className="ml-auto flex items-center space-x-4">
           <button
-            className="bg-gray-500 hover:bg-dark-fill-2 text-dark-label-2 inline-flex items-center whitespace-nowrap rounded-lg px-3 py-1.5 text-sm  font-medium transition-all focus:outline-none"
-            onClick={handleSubmit}
+            className="bg-gray-500/50 hover:bg-black text-dark-label-2 inline-flex items-center whitespace-nowrap rounded-lg px-5 py-1.5 text-sm  font-medium transition-all focus:outline-none"
+            onClick={handleRun}
           >
             Run
           </button>
           <button
-            className="bg-green-500 hover:bg-green-3 inline-flex items-center rounded-lg px-3 py-1.5 text-sm font-medium text-white transition-all focus:outline-none"
+            className="bg-green-500 hover:bg-rose-600 inline-flex items-center rounded-lg px-3 py-1.5 text-sm font-medium text-white transition-all focus:outline-none"
             onClick={handleSubmit}
           >
             Submit
