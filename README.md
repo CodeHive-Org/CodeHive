@@ -21,4 +21,4 @@ With our project, colleges can organize activities and challenges for students t
 
 Research suggests that when developers or individuals are offered rewards upon completing or solving a problem, their performance and learning outcomes significantly improve.
 
-**Project Website:** will be updated soon…!
+**Project Website:** will be updated soon...!
