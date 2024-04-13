@@ -40,9 +40,9 @@ const Nav = () => {
           <div className="flex items-center space-x-4 w-full h-full">
             <img
               onClick={() => navigate("/")}
-              src="/assets/logo.png"
+              src="/assets/logo1.png"
               alt="Code Duel"
-              className="w-[180px] h-[100%] cursor-pointer"
+              className="w-[140px] h-[100%] mr-4 cursor-pointer"
             />
 
             <Link

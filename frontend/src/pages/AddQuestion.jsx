@@ -64,11 +64,11 @@ const AddQuestion = () => {
   };
 
   return (
-    <main className="bg-[#0E121A]">
+    <main className="bg-[black]">
       <Nav />
       <MaxWidthWrapper>
         <div className="mx-auto p-4">
-          <h1 className="text-2xl font-bold mb-4 text-primary">Add Question</h1>
+          <h1 className="text-2xl font-bold mb-4 text-white">Add Question</h1>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label htmlFor="question_title" className="block text-gray-200">
@@ -139,7 +139,7 @@ const AddQuestion = () => {
             <div className="mb-4">
               <label htmlFor="reward" className="block text-gray-200">
                 Reward if someone solves the questions (please insert value in
-                sol)
+                Trx)
               </label>
               <input
                 type="text"
@@ -153,7 +153,7 @@ const AddQuestion = () => {
             </div>
             <div className="mb-4">
               <label htmlFor="entrance_fee" className="block text-gray-200">
-                Entry Fee (please insert value in sol)
+                Entry Fee (please insert value in Trx)
               </label>
               <input
                 type="text"
@@ -262,7 +262,7 @@ const AddQuestion = () => {
             <div className="mt-4">
               <button
                 type="submit"
-                className="bg-blue-400 px-10 mt-10 text-black py-2 rounded-md hover:bg-blue-600"
+                className="bg-primary px-10 mt-0 text-black py-2 rounded-md hover:bg-blue-600"
               >
                 Submit
               </button>
