@@ -1,5 +1,4 @@
-import axios from "axios";
-import { useEffect } from "react";
+import { useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import "./index.css";
@@ -11,8 +10,22 @@ import ProblemDesc from "./pages/ProblemDesc";
 import Problems from "./pages/Problems.";
 import Signup from "./pages/Signup";
 //importing buffer tronweb access
-import { Buffer } from 'buffer';
+import { Buffer } from "buffer";
+
+import "@tronweb3/tronwallet-adapter-react-ui/style.css";
+import {
+  WalletModalProvider,
+  WalletSelectButton,
+} from "@tronweb3/tronwallet-adapter-react-ui";
+import { WalletProvider } from "@tronweb3/tronwallet-adapter-react-hooks";
+import {
+  WalletDisconnectedError,
+  WalletNotFoundError,
+} from "@tronweb3/tronwallet-abstract-adapter";
+import { LedgerAdapter, TronLinkAdapter } from "@tronweb3/tronwallet-adapters";
 globalThis.Buffer = Buffer;
+
+// wallet connection imports
 
 function App() {
   const address = null;
@@ -45,21 +58,45 @@ function App() {
   //   userWalletHanlder();
   // }, [address]);
 
+  function onError(e) {
+    if (e instanceof WalletNotFoundError) {
+      // some alert for wallet not found
+    } else if (e instanceof WalletDisconnectedError) {
+      // some alert for wallet not connected
+    } else {
+      console.error(e.message);
+    }
+  }
+  const adapters = useMemo(function () {
+    const tronLink = new TronLinkAdapter();
+    const ledger = new LedgerAdapter({
+      accountNumber: 2,
+    });
+    return [tronLink, ledger];
+  }, []);
+
   return (
-    <main className="dark dm-sans bg-black to-background text-foreground">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="problems/:pid" element={<ProblemDesc />} />
-          <Route path="/signup" element={<Signup />} />{ /* delete this */}
-          <Route path="/login" element={<Login />} />{/* delete this */}
-          <Route path="/accountsettings" element={<AccountSettings />} />{/* this tooo*/}
-          <Route path="/addquestion" element={<AddQuestion />} />
-          <Route path="/problems" element={<Problems />} />
-          <Route path="/problems/problem/*" element={<ProblemDesc />} />
-        </Routes>
-      </BrowserRouter>
-    </main>
+    <>
+      <WalletProvider onError={onError} adapters={adapters}>
+        <WalletModalProvider>
+          {/* Place your app's components here */}
+          <main className="dm-sans dark bg-black to-background text-foreground">
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="problems/:pid" element={<ProblemDesc />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/accountsettings" element={<AccountSettings />} />
+                <Route path="/addquestion" element={<AddQuestion />} />
+                <Route path="/problems" element={<Problems />} />
+                <Route path="/problems/problem/*" element={<ProblemDesc />} />
+              </Routes>
+            </BrowserRouter>
+          </main>
+        </WalletModalProvider>
+      </WalletProvider>
+    </>
   );
 }
 

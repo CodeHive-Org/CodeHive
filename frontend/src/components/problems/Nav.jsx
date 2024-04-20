@@ -1,53 +1,66 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { User } from "lucide-react";
-import React, { useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
+import {
+  WalletConnectButton,
+  WalletDisconnectButton,
+} from "@tronweb3/tronwallet-adapter-react-ui";
+import { WalletConnectAdapter } from "@tronweb3/tronwallet-adapters";
+import { User } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Toaster, toast } from "sonner";
 
 const Nav = () => {
   const navigate = useNavigate();
-  const address = '0x9492823';
-  const loginHandler = () => {
-    return navigate("/login");
-  };
+  const { address, disconnect, connect } = useWallet();
+  console.log("adsfsd : ", address);
 
+  const walletAddress =
+    address && address.slice(0, 5) + "..." + address.slice(address.length - 4);
 
   const [position, setPosition] = useState("bottom");
 
-  const logoutHandler = () => {
-    // disconnect();
-    return <Navigate to="/" />;
-  };
+  if (!address) {
+    toast.info("Please Connect Your Wallet", {
+      position: "bottom-right",
+      duration: 2500,
+      className:
+        "flex items-center justify-center p-6 border-2 rounded-md shadow-lg bg-blue-50 text-blue-700 dark:bg-blue",
+    });
+
+    setTimeout(() => {
+      navigate('/');
+    }, 2500);
+  }
 
   return (
-    <nav className="sticky inset-x-0 bg-secondary pz-2 py-3">
+    <nav className="pz-2 sticky inset-x-0 bg-secondary py-3">
+      <Toaster />
       <MaxWidthWrapper className="">
         <main className="flex items-center justify-between ">
           {/* Logo */}
-          <div className="flex items-center space-x-4 w-full h-full">
+          <div className="flex h-full w-full items-center space-x-4">
             <img
               onClick={() => navigate("/")}
               src="/assets/logo1.png"
               alt="Code Duel"
-              className="w-[140px] h-[100%] mr-4 cursor-pointer"
+              className="mr-4 h-[100%] w-[140px] cursor-pointer"
             />
 
             <Link
               to="/problems"
               className={buttonVariants({
                 variant: "link",
-                className: "text-sm text-second"
+                className: "text-sm text-second",
               })}
             >
               Problems
@@ -56,7 +69,7 @@ const Nav = () => {
               to="/contest"
               className={buttonVariants({
                 variant: "link",
-                className: "text-sm text-second"
+                className: "text-sm text-second",
               })}
             >
               Feeds
@@ -65,7 +78,7 @@ const Nav = () => {
               to="/contest"
               className={buttonVariants({
                 variant: "link",
-                className: "text-sm text-second"
+                className: "text-sm text-second",
               })}
             >
               contest
@@ -74,7 +87,7 @@ const Nav = () => {
               to="/contest"
               className={buttonVariants({
                 variant: "link",
-                className: "text-sm text-second"
+                className: "text-sm text-second",
               })}
             >
               Contact Us
@@ -83,7 +96,7 @@ const Nav = () => {
           {/* right side */}
           {address ? (
             <div className="flex items-center space-x-4">
-              {/* <p className="text-gray-400">{address}</p> */}
+              <p className="text-gray-400">{walletAddress}</p>
               {/* dropdown menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -92,7 +105,7 @@ const Nav = () => {
                     className="text-gray-100 hover:text-primary"
                   />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-max bg-third border-gray-300 text-accent ">
+                <DropdownMenuContent className="w-max border-gray-300 bg-third text-accent ">
                   {/* <DropdownMenuLabel>Panel Position</DropdownMenuLabel> */}
                   <DropdownMenuSeparator />
                   <DropdownMenuRadioGroup
@@ -105,23 +118,18 @@ const Nav = () => {
                     <DropdownMenuItem>
                       <Link to="/addquestion">Add Question</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={logoutHandler}>
-                      Log out
+                    <WalletDisconnectButton />
+                    {/* <DropdownMenuItem onClick={()=>disconnect()}>
+                      Disconnect
                       <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                   </DropdownMenuRadioGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
           ) : (
             <div className="">
-              <Button
-                onClick={loginHandler}
-                className="border-b border-primary
-                                 px-10 py-2"
-              >
-                Login
-              </Button>
+              <WalletConnectButton />
             </div>
           )}
         </main>

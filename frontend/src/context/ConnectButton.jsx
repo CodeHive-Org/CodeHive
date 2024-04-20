@@ -1,32 +1,43 @@
-import React, { useEffect, useState } from 'react';
-import { useTheContext } from '.';
+import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
+import { WalletActionButton } from "@tronweb3/tronwallet-adapter-react-ui";
+import { TronLinkAdapter } from "@tronweb3/tronwallet-adapters";
+import { useMemo } from "react";
+import { Toaster } from "sonner";
 
 const ConnectButton = () => {
-  const { tronWebState, update } = useTheContext();
-  
-  const connectWallet = async () => {
-    if (window.tronWeb && window.tronWeb.ready) {
-      // TronLink is installed and connected
-      console.log('TronLink is installed and connected');
-    } else {
-      // TronLink is not installed or not connected
-        if(tronWebState.installed){
-          //if installed....
-            await window.tronWeb.trx;
-            update((v)=>!v);
-        }   
-        else{
-            console.log('TronLink is not installed or not connected'); 
-        }
-    }
-  };  
-  //creating a loop that constantly checks fro the 
-    //console.log(window.tronWeb.defaultAddress.base58);
+  // const { tronWebState, update } = useTheContext();
+
+  const {
+    wallet,
+    address,
+    connected,
+    select,
+    connect,
+    disconnect,
+    signMessage,
+    signTransaction,
+  } = useWallet();
 
   return (
-    <button onClick={connectWallet}>
-      { !tronWebState.installed ? <span className="bg[#be123ce6] test-white p-2 rounded">Install TronLink</span> : tronWebState.loggedIn ? <span className="bg-[#262626] text-white p-2 rounded">Connected</span> : <span className="bg-[#338c23] text-white p-2 rounded">Connect</span> }
-    </button>
+    <>
+      <WalletActionButton />
+      {/* <button onClick={connect}>
+        {!tronWebState.installed ? (
+          <span className="rounded bg-[#be123ce6] p-2 text-white">
+            Install TronLink
+          </span>
+        ) : tronWebState.loggedIn ? (
+          <span className="rounded bg-[#262626]/50 p-2 text-[0.9rem] text-white">
+            {address.slice(0, 5) + "......" + address.slice(address.length - 4)}
+          </span>
+        ) : (
+          <span className="rounded bg-primary p-2 px-4 text-white">
+            Connect
+          </span>
+        )}
+      </button> */}
+      <Toaster richColors />
+    </>
   );
 };
 
