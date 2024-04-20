@@ -1,5 +1,4 @@
 import Footer from "@/components/Footer";
-import { ConnectWallet, useAddress } from "@thirdweb-dev/react";
 import axios from "axios";
 import React, { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
@@ -11,7 +10,7 @@ const Signup = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const address = useAddress();
+  // const address = useAddress();
 
   const handleSubmit = async (e) => {
     // e.preventDefault();
@@ -148,7 +147,7 @@ const Signup = () => {
 
           <h1 className="text-second text-xl font-semibold text-center">or</h1>
 
-          <ConnectWallet className="connectwallet-class" />
+          {/* <ConnectWallet className="connectwallet-class" /> */}
           
           <div className="mt-6 text-center">
             <p className="text-gray-600">

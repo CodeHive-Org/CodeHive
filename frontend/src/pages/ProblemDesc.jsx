@@ -1,26 +1,48 @@
 import Nav from "@/components/problem/Nav";
 import WorkSpace from "@/components/problem/Workspace";
 import React, { useEffect, useState } from "react";
-import { problems } from "../utils/problems/index";
 import { useParams } from "react-router-dom";
+import { ABI } from "../utils/problems/index.js";
+import { useTheContext } from "@/context/index.jsx";
 
 const ProblemDesc = () => {
-  // if (isNaN(pid)) return <div>Invalid parameter</div>;
+  const { tronWeb } = useTheContext();
   let { pid } = useParams();
+  const [ contract, setContract ] = useState();
   const [Problem, setProblem] = useState(null);
-  console.log("pid : ", pid);
-
+  const getContract = async () => {
+    const instance = await tronWeb.contract(ABI,pid);
+    setContract(instance);
+    console.log(instance);
+  }
   useEffect(() => {
-    const problem = problems[pid];
-    console.log("problem : ", problem);
-
-    if (!problem) {
-      setProblem(null);
-    } else {
-      setProblem(problem);
-    }
+    getContract();
   }, []);
+  useEffect(()=>{
+    if(!contract){
+      console.log("contract not found for the pid:");
+      //todo:create a toast here... with this text
+      return;
+    }
+    contract.QuestionData().call()
+      .then(questionData => {
+        fetchTHeData(questionData);
+        //console.log("url",questionData);
+      })
+      .catch(error => console.error(error));
+  },[contract]);
+  const fetchTHeData = async (url) => {
+    const URL = import.meta.env.VITE_PINATA_URL + url;
 
+    var myHeaders = new Headers();
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+    const data = await (await fetch(URL, requestOptions)).text();
+    setProblem(JSON.parse(data));
+  }
   if (Problem == null) {
     return <div>Question not found !</div>;
   }
@@ -31,7 +53,9 @@ const ProblemDesc = () => {
     pb-4 text-foreground"
     >
       <Nav />
-      <WorkSpace problem={Problem} />
+      {
+        Problem && (<WorkSpace data={Problem} pid={pid} contract={contract}/>)
+      }
     </main>
   );
 };

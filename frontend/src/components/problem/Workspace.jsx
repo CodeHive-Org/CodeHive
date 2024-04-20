@@ -13,16 +13,19 @@ import CodeEditor from "./CodeEditor";
 import ProblemDescription from "./ProblemDescription";
 import SubmitBox from "./SubmitBox";
 import TestCasesandResult from "./TestCasesandResult";
+import { useTheContext } from "@/context";
 // import TestCasesandResult from "./TestCasesandResult";
 
-const WorkSpace = ({ problem }) => {
-  let [userCode, setUserCode] = useState(problem.starterCode);
+const WorkSpace = ({ data, pid, contract }) => {
+  let [userCode, setUserCode] = useState((data?.starterCode)?(data?.starterCode):"/* no startercode error*/");
   const { width, height } = useWindowSize();
   const [success, setSuccess] = useState(false);
+  const { address } = useTheContext();
 
   const [, setOutputState] = useRecoilState(outputAtom);
-  const user = "sdfsf";
+  const user = (address)? address: "not_set_yet";
 
+    console.log(data);
 
   const handleSubmit = async () => {
     if (!user) {
@@ -104,7 +107,7 @@ const WorkSpace = ({ problem }) => {
       <Toaster richColors />
       <ResizablePanel defaultSize={50}>
         {/* Problem Description */}
-        <ProblemDescription problem={problem} />
+        <ProblemDescription problem={data} pid={pid} contract={contract}/>
       </ResizablePanel>
       <ResizableHandle withHandle className="w-[5px] bg-gray-600" />
       <ResizablePanel defaultSize={50}>
@@ -114,13 +117,13 @@ const WorkSpace = ({ problem }) => {
             <CodeEditor
               setUserCode={setUserCode}
               userCode={userCode}
-              starterCode={problem.starterCode}
+              starterCode={data?.starterCode}
             />
           </ResizablePanel>
           <ResizableHandle withHandle className="w-[5px] bg-gray-600" />
           <ResizablePanel defaultSize={50}>
             {/* Test Cases */}
-            <TestCasesandResult problem={problem} />
+            <TestCasesandResult problem={data} />
           </ResizablePanel>
         </ResizablePanelGroup>
       </ResizablePanel>

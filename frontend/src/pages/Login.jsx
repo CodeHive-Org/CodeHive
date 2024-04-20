@@ -1,7 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
 import { Toaster, toast } from "sonner";
-import { ConnectWallet, useAddress } from "@thirdweb-dev/react";
 import Footer from "@/components/Footer";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -9,7 +8,6 @@ const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const address = useAddress();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,11 +27,11 @@ const Login = () => {
     }
   };
 
-  console.log('address : ', address);
+  // console.log('address : ', address);
 
-  if (address) {
-    return navigate('/');
-  }
+  // if (address) {
+  //   return navigate('/');
+  // }
 
   return (
     <main className="flex flex-col justify-between min-h-screen">

@@ -1,4 +1,3 @@
-// import { useAddress } from "@thirdweb-dev/react";
 import axios from "axios";
 import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -11,7 +10,9 @@ import Login from "./pages/Login";
 import ProblemDesc from "./pages/ProblemDesc";
 import Problems from "./pages/Problems.";
 import Signup from "./pages/Signup";
-import { useAddress } from "@thirdweb-dev/react";
+//importing buffer tronweb access
+import { Buffer } from 'buffer';
+globalThis.Buffer = Buffer;
 
 function App() {
   const address = null;
@@ -50,9 +51,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="problems/:pid" element={<ProblemDesc />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/accountsettings" element={<AccountSettings />} />
+          <Route path="/signup" element={<Signup />} />{ /* delete this */}
+          <Route path="/login" element={<Login />} />{/* delete this */}
+          <Route path="/accountsettings" element={<AccountSettings />} />{/* this tooo*/}
           <Route path="/addquestion" element={<AddQuestion />} />
           <Route path="/problems" element={<Problems />} />
           <Route path="/problems/problem/*" element={<ProblemDesc />} />

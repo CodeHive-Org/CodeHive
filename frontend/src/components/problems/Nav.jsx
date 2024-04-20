@@ -1,6 +1,5 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { useAddress, useDisconnect } from "@thirdweb-dev/react";
 import { User } from "lucide-react";
 import React, { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
@@ -23,7 +22,6 @@ const Nav = () => {
     return navigate("/login");
   };
 
-  // const disconnect = useDisconnect();
 
   const [position, setPosition] = useState("bottom");
 

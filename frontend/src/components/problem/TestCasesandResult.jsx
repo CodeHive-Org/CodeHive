@@ -13,35 +13,20 @@ const TestCasesandResult = ({ problem }) => {
   const [activeBar, setActiveBar] = useState(0);
 
   const outputState = useRecoilValue(outputAtom);
-
+  const openTestCases = problem.testcases.filter((el,index)=>{
+    if(!el.hidden){
+      return el;
+    }else{
+      //todo: remove this below line as all test cases are hidden for now so we wont be able to see any
+      return el;
+    }
+  })
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
     }, 1000);
   }, []);
 
-  // if (resultState) {
-  //   setTimeout(() => {
-  //     setLoading(false);
-  //   }, 3000);
-  // }
-
-  // if (loading) {
-  //   return (
-  //     <h1 className="mx-auto py-5 text-center text-xl">
-  //       waiting for Your Output ...
-  //     </h1>
-  //   );
-  // }
-
-  // if (!resultState) {
-  //   setLoading(true);
-  //   return (
-  //     <h1 className="mx-auto py-5 text-center text-xl">
-  //       Waiting for your code submission !
-  //     </h1>
-  //   );
-  // }
 
   useEffect(() => {
     if (innerNavs.length < 2) {
@@ -76,10 +61,10 @@ const TestCasesandResult = ({ problem }) => {
       {activeBar === 0 ? (
         <section>
           <div className="mt-4 flex rounded-md bg-black">
-            {problem.examples.map((example, index) => (
+            {openTestCases.map((example, index) => (
               <div
                 className="mr-2 mt-2 items-start "
-                key={example.id}
+                key={index}
                 onClick={() => setActiveTestCaseId(index)}
               >
                 <div className="flex flex-wrap items-center gap-y-4">
@@ -98,11 +83,12 @@ const TestCasesandResult = ({ problem }) => {
           <div className="my-4 font-semibold">
             <p className="mt-4 text-sm font-medium text-white">Input:</p>
             <div className="mt-2 w-full cursor-text rounded-lg border border-transparent bg-gray-400/20 px-3 py-[10px] text-white">
-              {problem.examples[activeTestCaseId].inputText}
+              {/* todo: heree the input.strs is not valid is to be removed later when we got a new contract deloyed */}
+              {problem.testcases[activeTestCaseId].input.strs.toString()}
             </div>
             <p className="mt-4 text-sm font-medium text-white">Output:</p>
             <div className="mt-2 w-full cursor-text rounded-lg border border-transparent bg-gray-400/20 px-3 py-[10px] text-white">
-              {problem.examples[activeTestCaseId].outputText}
+              {problem.testcases[activeTestCaseId].output.toString()}
             </div>
           </div>
         </section>
