@@ -1,0 +1,144 @@
+{
+  "id": 15,
+  "name": "Valid Parentheses",
+  "defaultCode": "/**\n * @param {string} s\n * @return {boolean}\n */\nvar isValid = function(s) {\n\n};",
+  "i_o_schema": "{string},{boolean}",
+  "compileFunctionName": "isValid",
+  "tags": ["easy"],
+  "description": "Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.\n\nAn input string is valid if:\n\n- Open brackets must be closed by the same type of brackets.\n- Open brackets must be closed in the correct order.\n- Every close bracket has a corresponding open bracket of the same type.",
+  "examples": [
+    {
+      "input": "()",
+      "output": true,
+      "explanation": "The input string contains a pair of valid parentheses, so the output is true."
+    },
+    {
+      "input": "()[]{}",
+      "output": true,
+      "explanation": "The input string contains valid pairs of parentheses, brackets, and curly braces, so the output is true."
+    },
+    {
+      "input": "(]",
+      "output": false,
+      "explanation": "The input string contains mismatched parentheses, so the output is false."
+    }
+  ],
+  "constraints": [
+    "1 <= s.length <= 104",
+    "s consists of parentheses only '()[]{}'."
+  ],
+  "testcases": [
+    {
+      "id": 0,
+      "input": {
+        "s": "()"
+      },
+      "output": true,
+      "hidden": false
+    },
+    {
+      "id": 1,
+      "input": {
+        "s": "()[]{}"
+      },
+      "output": true,
+      "hidden": false
+    },
+    {
+      "id": 2,
+      "input": {
+        "s": "(]"
+      },
+      "output": false,
+      "hidden": false
+    },
+    {
+      "id": 3,
+      "input": {
+        "s": "(({{}}))"
+      },
+      "output": true,
+      "hidden": true
+    },
+    {
+      "id": 4,
+      "input": {
+        "s": "[{()}"
+      },
+      "output": false,
+      "hidden": true
+    },
+    {
+      "id": 5,
+      "input": {
+        "s": "(()()()"
+      },
+      "output": false,
+      "hidden": true
+    },
+    {
+      "id": 6,
+      "input": {
+        "s": "(((((("
+      },
+      "output": false,
+      "hidden": true
+    },
+    {
+      "id": 7,
+      "input": {
+        "s": "({[]})"
+      },
+      "output": true,
+      "hidden": true
+    },
+    {
+      "id": 8,
+      "input": {
+        "s": "{[()]()}"
+      },
+      "output": true,
+      "hidden": true
+    },
+    {
+      "id": 9,
+      "input": {
+        "s": "([)]"
+      },
+      "output": false,
+      "hidden": true
+    },
+    {
+      "id": 10,
+      "input": {
+        "s": "(){}[]"
+      },
+      "output": true,
+      "hidden": true
+    },
+    {
+      "id": 11,
+      "input": {
+        "s": "((())])"
+      },
+      "output": false,
+      "hidden": true
+    },
+    {
+      "id": 12,
+      "input": {
+        "s": "{[[]]}"
+      },
+      "output": true,
+      "hidden": true
+    },
+    {
+      "id": 13,
+      "input": {
+        "s": "((((((((((((((((((()))))))))))))))))))"
+      },
+      "output": true,
+      "hidden": true
+    }
+  ]
+}

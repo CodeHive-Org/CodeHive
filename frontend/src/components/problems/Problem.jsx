@@ -5,12 +5,12 @@ import { ChevronDown } from "lucide-react";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const Problem = ({ id, title, fees, description, isOpen, handleOpen }) => {
+const Problem = ({ id, title, address, difficulty, isOpen, handleOpen}) => {
   const navigate = useNavigate();
 
   const clickHandler = (e, id) => {
     e.preventDefault();
-    navigate(`/problems/${title}`);
+    navigate(`/problems/${address}`);
   };
 
   const isEven = id % 2 === 0;
@@ -22,20 +22,24 @@ const Problem = ({ id, title, fees, description, isOpen, handleOpen }) => {
           "bg-white/10": isEven,
         })}
       >
-        <TableCell className="">{id}</TableCell>
+        <TableCell className="">{id+1}</TableCell>
         <TableCell
           onClick={(e) => clickHandler(e, id)}
           className="cursor-pointer hover:text-second"
         >
           {title}
         </TableCell>
-        <TableCell>{fees}</TableCell>
+        <TableCell
+          className="cursor-pointer hover:text-second"
+        >
+          {parseInt(difficulty._hex) }🐑
+        </TableCell>
         <TableCell className="">
           <Link
             className={buttonVariants({
               variant: "link",
             })}
-            to="problem/1"
+            to={`${address}`}
           >
             Participate
           </Link>
@@ -57,8 +61,8 @@ const Problem = ({ id, title, fees, description, isOpen, handleOpen }) => {
         )}
       >
         <TableCell className="" colSpan={4}>
-          <span className="text-md text-second">Problem Description : </span>
-          {description}
+          <span className="text-md text-second">Problem address : </span>
+          {address}
         </TableCell>
       </TableRow>
     </>

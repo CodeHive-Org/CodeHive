@@ -13,7 +13,6 @@ const ProblemDesc = () => {
   const getContract = async () => {
     const instance = await tronWeb.contract(ABI,pid);
     setContract(instance);
-    console.log(instance);
   }
   useEffect(() => {
     getContract();

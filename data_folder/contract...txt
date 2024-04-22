@@ -1,0 +1,63 @@
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity >=0.7.0 <0.9.0;
+
+contract Question {
+    //predefiners...
+    string public QuestionData;//ipfs data goes here....
+    string public topicName;//name of the bounty....
+    address moderator;//owner of the bounty....
+    address webHandler;
+    
+    //non static data...
+    struct CodeData{
+        address by;
+        string code;
+        uint256 submitTime;
+        uint256 runTime;
+    }
+    uint256 public bountyValue;
+    bool public claimed = false;// initially the bounty will be unclaimed....
+    address public bountyWinner = address(0);
+    string public winnerCode;
+    mapping(address => CodeData) codes;
+    CodeData[] submissions;
+    uint16 public difficulty;
+
+    modifier onlyModerator(){
+        require(msg.sender == moderator, "Not authoresised.");
+        _;
+    }
+    modifier onlyWebHandler(){
+        require(msg.sender == webHandler, "Not authoresised.");
+        _;
+    }
+    constructor(string memory _name, string memory _quesData, address _mod, uint16 _diff, address _webHandler)payable{
+        QuestionData = _quesData;
+        topicName = _name;
+        moderator = _mod;
+        //funding the question....
+        bountyValue = msg.value;
+        claimed = false;
+        difficulty = _diff;
+        webHandler = _webHandler;
+    }
+    function submitCode(string memory _codeHash, address _sender, uint256 runTime)public onlyWebHandler{
+        require(codes[_sender].by == _sender,"code allready submitted.");
+        codes[_sender] = CodeData( _sender, _codeHash, block.timestamp, runTime);
+        submissions.push(CodeData( _sender, _codeHash, block.timestamp, runTime));
+    }
+    function giveAway(address _winner)public onlyModerator returns(bool){
+        require(codes[_winner].by != address(0),"not one of submiters");
+        require(!claimed, "allready claimed");
+        (bool se, ) = _winner.call{value: bountyValue}("");
+        claimed = se;
+        bountyWinner == _winner;
+        winnerCode = codes[_winner].code;
+        return se;
+    }
+    function haveSubmitted()public view returns(bool){
+        return (codes[msg.sender].by != address(0));
+    }
+    
+}

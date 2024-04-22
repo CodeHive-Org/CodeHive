@@ -25,7 +25,6 @@ const WorkSpace = ({ data, pid, contract }) => {
   const [, setOutputState] = useRecoilState(outputAtom);
   const user = (address)? address: "not_set_yet";
 
-    console.log(data);
 
   const handleSubmit = async () => {
     if (!user) {

@@ -11,12 +11,9 @@ const ProblemDescription = ({ problem, pid, contract}) => {
   const location = useLocation();
   const [ claimer,  setClaimer ] = useState(); 
   const [ bounty,  setBounty ] = useState(); 
-  console.log(pid);
   useEffect(()=>{
-    //fetching the number of attempts
     contract.bountyWinner().call()
     .then(winner => {
-      console.log(winner)
       if(winner !=  "410000000000000000000000000000000000000000"){
         setClaimer(winner);
       }
@@ -64,7 +61,7 @@ const ProblemDescription = ({ problem, pid, contract}) => {
               {/* Examples */}
               <div className="mt-4 rounded-md bg-gray-400/40 p-4">
                 {problem.examples.map((example, index) => (
-                  <div key={example.id}>
+                  <div key={index}>
                     <p className="font-medium text-white ">
                       Example {index + 1}:{" "}
                     </p>
@@ -110,7 +107,7 @@ const ProblemDescription = ({ problem, pid, contract}) => {
                 </div>
                 <div className="flex rounded-md bg-orange-400 p-2 px-4 font-semibold text-red-700">
                   <h1 className="mr-2 font-medium text-black">
-                    Reward if you solve this : {bounty}
+                    Reward if you solve this : {bounty/1000000} TRX
                   </h1>
                 </div>
               </div>
