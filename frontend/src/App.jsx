@@ -5,23 +5,20 @@ import "./index.css";
 import AccountSettings from "./pages/AccountSettings";
 import AddQuestion from "./pages/AddQuestion";
 import Landing from "./pages/Landing";
-import Login from "./pages/Login";
 import ProblemDesc from "./pages/ProblemDesc";
 import Problems from "./pages/Problems.";
-import Signup from "./pages/Signup";
 //importing buffer tronweb access
 import { Buffer } from "buffer";
 
-import "@tronweb3/tronwallet-adapter-react-ui/style.css";
-import {
-  WalletModalProvider,
-  WalletSelectButton,
-} from "@tronweb3/tronwallet-adapter-react-ui";
-import { WalletProvider } from "@tronweb3/tronwallet-adapter-react-hooks";
 import {
   WalletDisconnectedError,
   WalletNotFoundError,
 } from "@tronweb3/tronwallet-abstract-adapter";
+import { WalletProvider } from "@tronweb3/tronwallet-adapter-react-hooks";
+import {
+  WalletModalProvider
+} from "@tronweb3/tronwallet-adapter-react-ui";
+import "@tronweb3/tronwallet-adapter-react-ui/style.css";
 import { LedgerAdapter, TronLinkAdapter } from "@tronweb3/tronwallet-adapters";
 globalThis.Buffer = Buffer;
 
@@ -85,8 +82,6 @@ function App() {
               <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="problems/:pid" element={<ProblemDesc />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/login" element={<Login />} />
                 <Route path="/accountsettings" element={<AccountSettings />} />
                 <Route path="/addquestion" element={<AddQuestion />} />
                 <Route path="/problems" element={<Problems />} />
