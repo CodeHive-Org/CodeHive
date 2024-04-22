@@ -10,7 +10,7 @@ const Signup = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  // const address = useAddress();
+  const address = "sdfsdcs";
 
   const handleSubmit = async (e) => {
     // e.preventDefault();
