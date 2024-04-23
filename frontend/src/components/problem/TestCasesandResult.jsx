@@ -36,6 +36,8 @@ const TestCasesandResult = ({ problem }) => {
     }
   }, [outputState]);
 
+  console.log('problem : ', problem);
+
   return (
     <div className="h-full w-full overflow-auto bg-third px-5 py-2">
       {/* testcase heading */}
@@ -80,6 +82,7 @@ const TestCasesandResult = ({ problem }) => {
             ))}
           </div>
 
+          {/* Output Section */}
           <div className="my-4 font-semibold">
             <p className="mt-4 text-sm font-medium text-white">Input:</p>
             <div className="mt-2 w-full cursor-text rounded-lg border border-transparent bg-gray-400/20 px-3 py-[10px] text-white">

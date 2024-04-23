@@ -14,18 +14,24 @@ import ProblemDescription from "./ProblemDescription";
 import SubmitBox from "./SubmitBox";
 import TestCasesandResult from "./TestCasesandResult";
 import { useTheContext } from "@/context";
+import axios from "axios";
 // import TestCasesandResult from "./TestCasesandResult";
 
+
 const WorkSpace = ({ data, pid, contract }) => {
-  let [userCode, setUserCode] = useState((data?.starterCode)?(data?.starterCode):"/* no startercode error*/");
+  let [userCode, setUserCode] = useState(
+    data?.starterCode ? data?.starterCode : "/* no startercode error*/",
+  );
   const { width, height } = useWindowSize();
   const [success, setSuccess] = useState(false);
   const { address } = useTheContext();
 
   const [, setOutputState] = useRecoilState(outputAtom);
-  const user = (address)? address: "not_set_yet";
+  const user = address ? address : "not_set_yet";
 
-    console.log(data);
+  const [processing, setProcessing] = useState();
+
+  console.log("data : ", data);
 
   const handleSubmit = async () => {
     if (!user) {
@@ -37,12 +43,12 @@ const WorkSpace = ({ data, pid, contract }) => {
       return;
     }
     try {
-      userCode = userCode.slice(userCode.indexOf(problem.starterFunctionName));
+      // userCode = userCode.slice(userCode.indexOf(problem.starterFunctionName));
       const cb = new Function(`return ${userCode}`)();
-      const handler = problem.handlerFunction;
+      const handler = "function";
 
       if (typeof handler === "function") {
-        const success = handler(cb);
+        const success = null;
         if (success) {
           toast.success("Congrats! All tests passed!", {
             position: "top-center",
@@ -79,24 +85,93 @@ const WorkSpace = ({ data, pid, contract }) => {
     }
   };
 
-  const handleRun = async () => {
+  const checkStatus = async (token) => {
+    const options = {
+      method: "GET",
+      url: "https://judge0-ce.p.rapidapi.com/submissions/" + token,
+      params: { base64_encoded: "true", fields: "*" },
+      headers: {
+        "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
+        "X-RapidAPI-Key": "5d554234f7mshd75e9c988490a60p18022cjsna5cd1d593132",
+      },
+    };
     try {
-      userCode = userCode.slice(userCode.indexOf(problem.starterFunctionName));
-      const cb = new Function(`return ${userCode}`)();
-      const handler = problem.runnerFunction;
+      let response = await axios.request(options);
+      let statusId = response.data.status?.id;
 
-      if (typeof handler === "function") {
-        const output = handler(cb);
-        setOutputState(JSON.stringify(output));
+      // Processed - we have a result
+      if (statusId === 1 || statusId === 2) {
+        // still processing
+        setTimeout(() => {
+          checkStatus(token)
+        }, 2000)
+        return
+      } else {
+        setProcessing(false)
+        setOutputState(response.data)
+        toast.success(`Compiled Successfully!`)
+        console.log('response.data', response.data)
+        return
       }
-    } catch (error) {
-      console.log(error.message);
-      toast.error(error.message, {
-        position: "top-center",
-        autoClose: 3000,
-        theme: "dark",
-      });
+    } catch (err) {
+      console.log("err", err);
+      setProcessing(false);
+      toast.error('Error in the code !');
     }
+  };
+
+  const handleRun = async () => {
+    // try {
+    // userCode = userCode.slice(userCode.indexOf(problem.starterFunctionName));
+    //   const cb = new Function(`return ${userCode}`)();
+    //   const handler = "function";
+    //   if (typeof handler === "function") {
+    //     const output = false;
+    //     setOutputState(JSON.stringify(output));
+    //   }
+    // } catch (error) {
+    //   console.log(error.message);
+    //   toast.error(error.message, {
+    //     position: "top-center",
+    //     autoClose: 3000,
+    //     theme: "dark",
+    //   });
+    // }
+
+    setProcessing(true);
+    const formData = {
+      language_id: 63,
+      // encode source code in base64
+      source_code: btoa(userCode),
+      // stdin: btoa(customInput),
+    };
+    const options = {
+      method: "POST",
+      url: "https://judge0-ce.p.rapidapi.com/submissions",
+      params: { base64_encoded: "true", fields: "*" },
+      headers: {
+        "content-type": "application/json",
+        "Content-Type": "application/json",
+        "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
+        "X-RapidAPI-Key": "5d554234f7mshd75e9c988490a60p18022cjsna5cd1d593132",
+      },
+      data: formData,
+    };
+
+    axios
+      .request(options)
+      .then(function (response) {
+        console.log("res.data", response.data);
+        const token = response.data.token;
+        checkStatus(token);
+      })
+      .catch((err) => {
+        let error = err.response ? err.response.data : err;
+        setProcessing(false);
+        console.log(error);
+      });
+
+    console.log('usercode : ', userCode);
   };
 
   return (
@@ -107,7 +182,7 @@ const WorkSpace = ({ data, pid, contract }) => {
       <Toaster richColors />
       <ResizablePanel defaultSize={50}>
         {/* Problem Description */}
-        <ProblemDescription problem={data} pid={pid} contract={contract}/>
+        <ProblemDescription problem={data} pid={pid} contract={contract} />
       </ResizablePanel>
       <ResizableHandle withHandle className="w-[5px] bg-gray-600" />
       <ResizablePanel defaultSize={50}>
