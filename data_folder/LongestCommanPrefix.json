@@ -1,0 +1,105 @@
+{
+    "id": 14,
+    "name": "Longest Common Prefix",
+    "defaultCode": "/**\n* @param {string[]} strs\n* @return {string}\n*/\nvar longestCommonPrefix = function(strs) {\n};",
+    "i_o_schema": "{string[]},{string}",
+    "compileFunctionName": "longestCommonPrefix",
+    "tags": ["easy", "arrays"],
+    "description": "Write a function to find the longest common prefix string amongst an array of strings.\n\nIf there is no common prefix, return an empty string \"\".",
+    "examples": [
+      {
+        "input": ["flower", "flow", "flight"],
+        "output": "fl",
+        "explanation": "The longest common prefix among the input strings is 'fl'."
+      },
+      {
+        "input": ["dog", "racecar", "car"],
+        "output": "",
+        "explanation": "There is no common prefix among the input strings."
+      }
+    ],
+    "constraints": ["1 <= strs.length <= 200", "0 <= strs[i].length <= 200", "strs[i] consists of only lowercase English letters."],
+    "testcases": [
+      {
+        "id": 0,
+        "input": {
+          "strs": ["apple", "apricot", "apparel"]
+        },
+        "output": "app",
+        "hidden": true
+      },
+      {
+        "id": 1,
+        "input": {
+          "strs": ["banana", "band", "bank"]
+        },
+        "output": "ban",
+        "hidden": true
+      },
+      {
+        "id": 2,
+        "input": {
+          "strs": ["code", "coding", "coder"]
+        },
+        "output": "cod",
+        "hidden": true
+      },
+      {
+        "id": 3,
+        "input": {
+          "strs": ["programming", "program", "progress"]
+        },
+        "output": "prog",
+        "hidden": true
+      },
+      {
+        "id": 4,
+        "input": {
+          "strs": ["apple", "apricot", "application"]
+        },
+        "output": "appl",
+        "hidden": true
+      },
+      {
+        "id": 5,
+        "input": {
+          "strs": ["ball", "bat", "basket"]
+        },
+        "output": "ba",
+        "hidden": true
+      },
+      {
+        "id": 6,
+        "input": {
+          "strs": ["computation", "compute", "computer"]
+        },
+        "output": "comput",
+        "hidden": true
+      },
+      {
+        "id": 7,
+        "input": {
+          "strs": ["directory", "director", "direct"]
+        },
+        "output": "direct",
+        "hidden": true
+      },
+      {
+        "id": 8,
+        "input": {
+          "strs": ["electronics", "electric", "electricity"]
+        },
+        "output": "electric",
+        "hidden": true
+      },
+      {
+        "id": 9,
+        "input": {
+          "strs": ["fantastic", "fan", "fancy"]
+        },
+        "output": "fan",
+        "hidden": true
+      }
+    ]
+  }
+  

@@ -8,10 +8,11 @@ const tronWeb = new TronWeb({
 console.log(tronWeb);
 const thisContext = createContext();
 
-// console.log(tronWeb);
-
 export default function ContextProvierAllOver({ children }) {
     const [ address, setAddress ] = useState();
+    const [ BankContract, setContract  ] = useState();//the bank  contract here....
+    const [ ABI, setABI ] = useState([]);
+    const [ ABI_Bank, setABI_Bank ] = useState([]);
     
     const [tronWebState, setTronWebState] = useState({
         installed: false,
@@ -32,6 +33,52 @@ export default function ContextProvierAllOver({ children }) {
     }
     useEffect(() => {
         update();
+        //fetching the abi....
+        fetch(import.meta.env.VITE_TRONQL_ENDPOINT+'wallet/getcontractinfo', {
+            method: 'POST',
+            headers: {
+                'Authorization': import.meta.env.VITE_TRONQL_API_KEY,
+                'accept': 'application/json',
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                value: 'TV1emh8NCzQt5yiiSWyxg8hg18J3wjMQZ4',
+                visible: true
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                console.log("cant fetch the abi....");
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => setABI(data.smart_contract.abi.entrys))
+        .catch(error => {console.error('There was a problem with the fetch operation:', error)});
+        //fetching the bank abi..
+        fetch(import.meta.env.VITE_TRONQL_ENDPOINT+'wallet/getcontractinfo', {
+            method: 'POST',
+            headers: {
+                'Authorization': import.meta.env.VITE_TRONQL_API_KEY,
+                'accept': 'application/json',
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                value: import.meta.env.VITE_NILE_BANK_ADD,
+                visible: true
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                console.log("cant fetch the abi....");
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {setABI_Bank(data.smart_contract.abi.entrys);console.log(data.smart_contract);})
+        .catch(error => {console.error('There was a problem with the fetch operation:', error)});
+
+
     }, []);
 
     return (
@@ -40,7 +87,9 @@ export default function ContextProvierAllOver({ children }) {
                 address,
                 tronWebState, setTronWebState,
                 update, 
-                tronWeb
+                tronWeb,
+                ABI_Bank,
+                ABI
             }}
         >
             {children}

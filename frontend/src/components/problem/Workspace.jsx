@@ -31,7 +31,6 @@ const WorkSpace = ({ data, pid, contract }) => {
 
   const [processing, setProcessing] = useState();
 
-  console.log("data : ", data);
 
   const handleSubmit = async () => {
     if (!user) {
