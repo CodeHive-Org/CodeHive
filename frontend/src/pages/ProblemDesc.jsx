@@ -2,21 +2,41 @@ import Nav from "@/components/problem/Nav";
 import WorkSpace from "@/components/problem/Workspace";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { ABI } from "../utils/problems/index.js";
+// import { ABI } from "../utils/problems/index.js";
 import { useTheContext } from "@/context/index.jsx";
 
 const ProblemDesc = () => {
-  const { tronWeb } = useTheContext();
+  const { tronWeb, ABI, getContract } = useTheContext();
   let { pid } = useParams();
   const [ contract, setContract ] = useState();
   const [Problem, setProblem] = useState(null);
-  const getContract = async () => {
+  const getAsyncContract = async () => {
+                  fetch(import.meta.env.VITE_TRONQL_ENDPOINT+'wallet/getcontract', {
+                    method: 'POST',
+                    headers: {
+                        'accept': 'application/json',
+                        'content-type': 'application/json',
+                        'Authorization': import.meta.env.VITE_TRONQL_API_KEY // Replace 'your_authorization_token_here' with your actual authorization token
+                    },
+                    body: JSON.stringify({
+                        value: pid,
+                        visible: true
+                    })
+                  })
+                  .then((res) => {
+                    const data = res?.contract;
+                  })
+                  .catch(error => {
+                      console.error('There was a problem with the fetch operation:', error);
+                  });
     const instance = await tronWeb.contract(ABI,pid);
     setContract(instance);
   }
   useEffect(() => {
-    getContract();
-  }, []);
+    if(ABI.length>0){
+      getAsyncContract();
+    }
+  }, [ABI]);
   useEffect(()=>{
     if(!contract){
       console.log("contract not found for the pid:");

@@ -81,6 +81,7 @@ const ProblemsContainer = () => {
   const [ problems, setProblems ] = useState([]);
   useEffect(()=>{
     //calling the contract to detch the data of the problems.
+    if(ABI_Bank.length == 0){console.log("hehe");return;}
     const getQuestions = async () => {
       const contract = await tronWeb.contract(ABI_Bank, import.meta.env.VITE_NILE_BANK_ADD);
       const questions = await contract.questionList().call()
@@ -88,7 +89,7 @@ const ProblemsContainer = () => {
       setProblems(questions)
     };
     getQuestions();
-  },[]);
+  },[ABI_Bank]);
   const isAnyOpen = activeIndex !== null;
   console.log("active INdex : ", activeIndex);
 
