@@ -16,9 +16,6 @@ const TestCasesandResult = ({ problem }) => {
   const openTestCases = problem.testcases.filter((el,index)=>{
     if(!el.hidden){
       return el;
-    }else{
-      //todo: remove this below line as all test cases are hidden for now so we wont be able to see any
-      return el;
     }
   })
   useEffect(() => {
@@ -83,7 +80,6 @@ const TestCasesandResult = ({ problem }) => {
           <div className="my-4 font-semibold">
             <p className="mt-4 text-sm font-medium text-white">Input:</p>
             <div className="mt-2 w-full cursor-text rounded-lg border border-transparent bg-gray-400/20 px-3 py-[10px] text-white">
-              {/* todo: heree the input.strs is not valid is to be removed later when we got a new contract deloyed */}
               {problem.testcases[activeTestCaseId].input.toString()}
             </div>
             <p className="mt-4 text-sm font-medium text-white">Output:</p>

@@ -17,7 +17,8 @@ import { useTheContext } from "@/context";
 // import TestCasesandResult from "./TestCasesandResult";
 
 const WorkSpace = ({ data, pid, contract }) => {
-  let [userCode, setUserCode] = useState((data?.starterCode)?(data?.starterCode):"/* no startercode error*/");
+  console.log(data);
+  let [userCode, setUserCode] = useState((data?.defaultCode)?(data?.defaultCode):"/* no startercode error*/");
   const { width, height } = useWindowSize();
   const [success, setSuccess] = useState(false);
   const { address } = useTheContext();
@@ -80,7 +81,8 @@ const WorkSpace = ({ data, pid, contract }) => {
 
   const handleRun = async () => {
     try {
-      userCode = userCode.slice(userCode.indexOf(problem.starterFunctionName));
+      userCode = userCode.slice(userCode.indexOf(data.compileFunctionName));
+      console.log(userCode);
       const cb = new Function(`return ${userCode}`)();
       const handler = problem.runnerFunction;
 
@@ -89,7 +91,7 @@ const WorkSpace = ({ data, pid, contract }) => {
         setOutputState(JSON.stringify(output));
       }
     } catch (error) {
-      console.log(error.message);
+      console.error(error.message);
       toast.error(error.message, {
         position: "top-center",
         autoClose: 3000,
@@ -116,7 +118,7 @@ const WorkSpace = ({ data, pid, contract }) => {
             <CodeEditor
               setUserCode={setUserCode}
               userCode={userCode}
-              starterCode={data?.starterCode}
+              starterCode={data?.defaultCode}
             />
           </ResizablePanel>
           <ResizableHandle withHandle className="w-[5px] bg-gray-600" />
