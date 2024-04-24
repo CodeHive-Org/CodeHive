@@ -20,9 +20,15 @@ import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 
 const WorkSpace = ({ data, pid, contract }) => {
   console.log(data);
-  let [userCode, setUserCode] = useState(
-    data?.defaultCode ? data?.defaultCode : "/* no startercode error*/",
-  );
+  let [userCode, setUserCode] = useState(`hi there !`); // default template of the starterCode
+
+  let testInput =
+    typeof data?.testcases[0].input == "object"
+      ? Object.values(data.testcases[0].input).toString()
+      : data.testcases[0].input.toString();
+
+  const wrappedCode = `function default(input) {\n${null}\n}\n console.log(default(${null}))`;
+  // setUserCode(wrappedCode);
 
   const { width, height } = useWindowSize();
   const [success, setSuccess] = useState(false);
@@ -122,7 +128,7 @@ const WorkSpace = ({ data, pid, contract }) => {
       language_id: 63,
       // encode source code in base64
       source_code: btoa(userCode),
-      // stdin: btoa(customInput),
+      stdin: btoa(testInput),
     };
     const options = {
       method: "POST",
@@ -139,9 +145,9 @@ const WorkSpace = ({ data, pid, contract }) => {
 
     axios
       .request(options)
-      .then(function (response) {
+      .then(async function (response) {
         const token = response.data.token;
-        let output = checkStatus(token);
+        let output = await checkStatus(token);
         console.log("outpout : ", output);
       })
       .catch((err) => {
