@@ -13,17 +13,16 @@ const TestCasesandResult = ({ problem }) => {
   const [activeBar, setActiveBar] = useState(0);
 
   const outputState = useRecoilValue(outputAtom);
-  const openTestCases = problem.testcases.filter((el,index)=>{
-    if(!el.hidden){
+  const openTestCases = problem.testcases.filter((el, index) => {
+    if (!el.hidden) {
       return el;
     }
-  })
+  });
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
     }, 1000);
   }, []);
-
 
   useEffect(() => {
     if (innerNavs.length < 2) {
@@ -33,7 +32,38 @@ const TestCasesandResult = ({ problem }) => {
     }
   }, [outputState]);
 
-  console.log('problem : ', problem);
+  const getOutput = () => {
+    let statusId = outputState?.status?.id;
+
+    if (statusId === 6) {
+      // compilation error
+      return (
+        <pre className="px-2 py-1 text-[1.1rem] font-normal text-red-500">
+          {atob(outputState?.compile_output)}
+        </pre>
+      );
+    } else if (statusId === 3) {
+      return (
+        <pre className="px-2 py-1 text-[1.1rem] font-normal text-green-500">
+          {atob(outputState.stdout) !== null
+            ? `${atob(outputState.stdout)}`
+            : null}
+        </pre>
+      );
+    } else if (statusId === 5) {
+      return (
+        <pre className="px-2 py-1 text-[1.1rem] font-normal text-red-500">
+          {`Time Limit Exceeded`}
+        </pre>
+      );
+    } else {
+      return (
+        <pre className="px-2 py-1 text-[1.1rem] font-normal text-red-500">
+          {atob(outputState?.stderr)}
+        </pre>
+      );
+    }
+  };
 
   return (
     <div className="h-full w-full overflow-auto bg-third px-5 py-2">
@@ -93,11 +123,11 @@ const TestCasesandResult = ({ problem }) => {
         </section>
       ) : (
         <div className="h-[90%] rounded-md border border-gray-700 bg-[#1E1E1E] text-white">
-          <div className="flex space-x-4 p-5">
-            <h1 className="text-gray-400">Output : </h1>
-            {outputState && (
-              <p className="text-[1.1rem] text-white">{outputState}</p>
-            )}
+          <div className="flex flex-col space-x-1 p-5">
+            <h1 className="text-gray-200">Output : </h1>
+            <div className="mt-4 w-full overflow-y-auto rounded-md bg-[#06090f] text-sm font-normal text-white">
+              {outputState ? <div className="flex">{getOutput()}</div> : null}
+            </div>
           </div>
         </div>
       )}

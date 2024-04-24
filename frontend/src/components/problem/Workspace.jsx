@@ -15,6 +15,7 @@ import SubmitBox from "./SubmitBox";
 import TestCasesandResult from "./TestCasesandResult";
 import { useTheContext } from "@/context";
 import axios from "axios";
+import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 // import TestCasesandResult from "./TestCasesandResult";
 
 const WorkSpace = ({ data, pid, contract }) => {
@@ -25,73 +26,20 @@ const WorkSpace = ({ data, pid, contract }) => {
 
   const { width, height } = useWindowSize();
   const [success, setSuccess] = useState(false);
-  const { address } = useTheContext();
+  const { address } = useWallet();
 
   const [, setOutputState] = useRecoilState(outputAtom);
-  const user = address ? address : "not_set_yet";
 
   const [processing, setProcessing] = useState();
-
-  const handleSubmit = async () => {
-    if (!user) {
-      toast.error("Please login to submit your code", {
-        position: "top-center",
-        autoClose: 3000,
-        theme: "dark",
-      });
-      return;
-    }
-    try {
-      // userCode = userCode.slice(userCode.indexOf(problem.starterFunctionName));
-      const cb = new Function(`return ${userCode}`)();
-      const handler = "function";
-
-      if (typeof handler === "function") {
-        const success = null;
-        if (success) {
-          toast.success("Congrats! All tests passed!", {
-            position: "top-center",
-            autoClose: 3000,
-            theme: "dark",
-          });
-          setSuccess(true);
-          setTimeout(() => {
-            setSuccess(false);
-          }, 4000);
-
-          // setSolved(true);
-        }
-      }
-    } catch (error) {
-      console.log(error.message);
-      if (
-        error.message.startsWith(
-          "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:",
-        )
-      ) {
-        toast.error("Oops! One or more test cases failed", {
-          position: "top-center",
-          autoClose: 3000,
-          theme: "dark",
-        });
-      } else {
-        toast.error(error.message, {
-          position: "top-center",
-          autoClose: 3000,
-          theme: "dark",
-        });
-      }
-    }
-  };
 
   const checkStatus = async (token) => {
     const options = {
       method: "GET",
-      url: "https://judge0-ce.p.rapidapi.com/submissions/" + token,
+      url: import.meta.env.VITE_RAPID_API_URL + "/" + token,
       params: { base64_encoded: "true", fields: "*" },
       headers: {
-        "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
-        "X-RapidAPI-Key": "5d554234f7mshd75e9c988490a60p18022cjsna5cd1d593132",
+        "X-RapidAPI-Host": import.meta.env.VITE_RAPID_API_HOST,
+        "X-RapidAPI-Key": import.meta.env.VITE_RAPID_API_KEY,
       },
     };
     try {
@@ -119,22 +67,54 @@ const WorkSpace = ({ data, pid, contract }) => {
     }
   };
 
-  const handleRun = async () => {
+  const handleSubmit = async () => {
+    if (!address) {
+      toast.error("Please login to submit your code", {
+        position: "top-center",
+        autoClose: 3000,
+        theme: "dark",
+      });
+      return;
+    }
     // try {
-    // userCode = userCode.slice(userCode.indexOf(problem.starterFunctionName));
     //   const cb = new Function(`return ${userCode}`)();
     //   const handler = "function";
+
     //   if (typeof handler === "function") {
-    //     const output = false;
-    //     setOutputState(JSON.stringify(output));
+    //     const success = null;
+    //     if (success) {
+    //       toast.success("Congrats! All tests passed!", {
+    //         position: "top-center",
+    //         autoClose: 3000,
+    //         theme: "dark",
+    //       });
+    //       setSuccess(true);
+    //       setTimeout(() => {
+    //         setSuccess(false);
+    //       }, 4000);
+
+    //       // setSolved(true);
+    //     }
     //   }
     // } catch (error) {
     //   console.log(error.message);
-    //   toast.error(error.message, {
-    //     position: "top-center",
-    //     autoClose: 3000,
-    //     theme: "dark",
-    //   });
+    //   if (
+    //     error.message.startsWith(
+    //       "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:",
+    //     )
+    //   ) {
+    //     toast.error("Oops! One or more test cases failed", {
+    //       position: "top-center",
+    //       autoClose: 3000,
+    //       theme: "dark",
+    //     });
+    //   } else {
+    //     toast.error(error.message, {
+    //       position: "top-center",
+    //       autoClose: 3000,
+    //       theme: "dark",
+    //     });
+    //   }
     // }
 
     setProcessing(true);
@@ -146,13 +126,48 @@ const WorkSpace = ({ data, pid, contract }) => {
     };
     const options = {
       method: "POST",
-      url: "https://judge0-ce.p.rapidapi.com/submissions",
+      url: import.meta.env.VITE_RAPID_API_URL,
       params: { base64_encoded: "true", fields: "*" },
       headers: {
         "content-type": "application/json",
         "Content-Type": "application/json",
-        "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
-        "X-RapidAPI-Key": "5d554234f7mshd75e9c988490a60p18022cjsna5cd1d593132",
+        "X-RapidAPI-Host": import.meta.env.VITE_RAPID_API_HOST,
+        "X-RapidAPI-Key": import.meta.env.VITE_RAPID_API_KEY,
+      },
+      data: formData,
+    };
+
+    axios
+      .request(options)
+      .then(function (response) {
+        const token = response.data.token;
+        let output = checkStatus(token);
+        console.log("outpout : ", output);
+      })
+      .catch((err) => {
+        let error = err.response ? err.response.data : err;
+        setProcessing(false);
+        console.log(error);
+      });
+  };
+
+  const handleRun = async () => {
+    setProcessing(true);
+    const formData = {
+      language_id: 63,
+      // encode source code in base64
+      source_code: btoa(userCode),
+      // stdin: btoa(customInput),
+    };
+    const options = {
+      method: "POST",
+      url: import.meta.env.VITE_RAPID_API_URL,
+      params: { base64_encoded: "true", fields: "*" },
+      headers: {
+        "content-type": "application/json",
+        "Content-Type": "application/json",
+        "X-RapidAPI-Host": import.meta.env.VITE_RAPID_API_HOST,
+        "X-RapidAPI-Key": import.meta.env.VITE_RAPID_API_KEY,
       },
       data: formData,
     };
@@ -169,8 +184,6 @@ const WorkSpace = ({ data, pid, contract }) => {
         setProcessing(false);
         console.log(error);
       });
-
-    console.log("usercode : ", userCode);
   };
 
   return (

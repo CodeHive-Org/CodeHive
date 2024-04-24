@@ -22,7 +22,6 @@ import { Toaster, toast } from "sonner";
 const Nav = () => {
   const navigate = useNavigate();
   const { address, disconnect, connect } = useWallet();
-  console.log("adsfsd : ", address);
 
   const walletAddress =
     address && address.slice(0, 5) + "..." + address.slice(address.length - 4);
