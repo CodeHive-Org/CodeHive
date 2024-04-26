@@ -15,26 +15,66 @@ import SubmitBox from "./SubmitBox";
 import TestCasesandResult from "./TestCasesandResult";
 import { useTheContext } from "@/context";
 import axios from "axios";
+import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 // import TestCasesandResult from "./TestCasesandResult";
 
-
 const WorkSpace = ({ data, pid, contract }) => {
-
   console.log(data);
-  let [userCode, setUserCode] = useState((data?.defaultCode)?(data?.defaultCode):"/* no startercode error*/");
+  let [userCode, setUserCode] = useState(`hi there !`); // default template of the starterCode
+
+  let testInput =
+    typeof data?.testcases[0].input == "object"
+      ? Object.values(data.testcases[0].input).toString()
+      : data.testcases[0].input.toString();
+
+  const wrappedCode = `function default(input) {\n${null}\n}\n console.log(default(${null}))`;
+  // setUserCode(wrappedCode);
 
   const { width, height } = useWindowSize();
   const [success, setSuccess] = useState(false);
-  const { address } = useTheContext();
+  const { address } = useWallet();
 
   const [, setOutputState] = useRecoilState(outputAtom);
-  const user = address ? address : "not_set_yet";
 
   const [processing, setProcessing] = useState();
 
+  const checkStatus = async (token) => {
+    const options = {
+      method: "GET",
+      url: import.meta.env.VITE_RAPID_API_URL + "/" + token,
+      params: { base64_encoded: "true", fields: "*" },
+      headers: {
+        "X-RapidAPI-Host": import.meta.env.VITE_RAPID_API_HOST,
+        "X-RapidAPI-Key": import.meta.env.VITE_RAPID_API_KEY,
+      },
+    };
+    try {
+      let response = await axios.request(options);
+      let statusId = response.data.status?.id;
+
+      // Processed - we have a result
+      if (statusId === 1 || statusId === 2) {
+        // still processing
+        setTimeout(() => {
+          checkStatus(token);
+        }, 2000);
+        return;
+      } else {
+        setProcessing(false);
+        setOutputState(response.data);
+        toast.success(`Compiled Successfully!`);
+        console.log("response.data", response.data);
+        return;
+      }
+    } catch (err) {
+      console.log("err", err);
+      setProcessing(false);
+      toast.error("Error in the code !");
+    }
+  };
 
   const handleSubmit = async () => {
-    if (!user) {
+    if (!address) {
       toast.error("Please login to submit your code", {
         position: "top-center",
         autoClose: 3000,
@@ -42,67 +82,114 @@ const WorkSpace = ({ data, pid, contract }) => {
       });
       return;
     }
-    try {
-      // userCode = userCode.slice(userCode.indexOf(problem.starterFunctionName));
-      const cb = new Function(`return ${userCode}`)();
-      const handler = "function";
+    // try {
+    //   const cb = new Function(`return ${userCode}`)();
+    //   const handler = "function";
 
-      if (typeof handler === "function") {
-        const success = null;
-        if (success) {
-          toast.success("Congrats! All tests passed!", {
-            position: "top-center",
-            autoClose: 3000,
-            theme: "dark",
-          });
-          setSuccess(true);
-          setTimeout(() => {
-            setSuccess(false);
-          }, 4000);
+    //   if (typeof handler === "function") {
+    //     const success = null;
+    //     if (success) {
+    //       toast.success("Congrats! All tests passed!", {
+    //         position: "top-center",
+    //         autoClose: 3000,
+    //         theme: "dark",
+    //       });
+    //       setSuccess(true);
+    //       setTimeout(() => {
+    //         setSuccess(false);
+    //       }, 4000);
 
-          // setSolved(true);
-        }
-      }
-    } catch (error) {
-      console.log(error.message);
-      if (
-        error.message.startsWith(
-          "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:",
-        )
-      ) {
-        toast.error("Oops! One or more test cases failed", {
-          position: "top-center",
-          autoClose: 3000,
-          theme: "dark",
-        });
-      } else {
-        toast.error(error.message, {
-          position: "top-center",
-          autoClose: 3000,
-          theme: "dark",
-        });
-      }
-    }
+    //       // setSolved(true);
+    //     }
+    //   }
+    // } catch (error) {
+    //   console.log(error.message);
+    //   if (
+    //     error.message.startsWith(
+    //       "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:",
+    //     )
+    //   ) {
+    //     toast.error("Oops! One or more test cases failed", {
+    //       position: "top-center",
+    //       autoClose: 3000,
+    //       theme: "dark",
+    //     });
+    //   } else {
+    //     toast.error(error.message, {
+    //       position: "top-center",
+    //       autoClose: 3000,
+    //       theme: "dark",
+    //     });
+    //   }
+    // }
+
+    setProcessing(true);
+    const formData = {
+      language_id: 63,
+      // encode source code in base64
+      source_code: btoa(userCode),
+      stdin: btoa(testInput),
+    };
+    const options = {
+      method: "POST",
+      url: import.meta.env.VITE_RAPID_API_URL,
+      params: { base64_encoded: "true", fields: "*" },
+      headers: {
+        "content-type": "application/json",
+        "Content-Type": "application/json",
+        "X-RapidAPI-Host": import.meta.env.VITE_RAPID_API_HOST,
+        "X-RapidAPI-Key": import.meta.env.VITE_RAPID_API_KEY,
+      },
+      data: formData,
+    };
+
+    axios
+      .request(options)
+      .then(async function (response) {
+        const token = response.data.token;
+        let output = await checkStatus(token);
+        console.log("outpout : ", output);
+      })
+      .catch((err) => {
+        let error = err.response ? err.response.data : err;
+        setProcessing(false);
+        console.log(error);
+      });
   };
 
   const handleRun = async () => {
-    try {
-      userCode = userCode.slice(userCode.indexOf(problem.starterFunctionName));
-      const cb = new Function(`return ${userCode}`)();
-      const handler = problem.runnerFunction;
+    setProcessing(true);
+    const formData = {
+      language_id: 63,
+      // encode source code in base64
+      source_code: btoa(userCode),
+      // stdin: btoa(customInput),
+    };
+    const options = {
+      method: "POST",
+      url: import.meta.env.VITE_RAPID_API_URL,
+      params: { base64_encoded: "true", fields: "*" },
+      headers: {
+        "content-type": "application/json",
+        "Content-Type": "application/json",
+        "X-RapidAPI-Host": import.meta.env.VITE_RAPID_API_HOST,
+        "X-RapidAPI-Key": import.meta.env.VITE_RAPID_API_KEY,
+      },
+      data: formData,
+    };
 
-      if (typeof handler === "function") {
-        const output = handler(cb);
-        setOutputState(JSON.stringify(output));
-      }
-    } catch (error) {
-      console.log(error.message);
-      toast.error(error.message, {
-        position: "top-center",
-        autoClose: 3000,
-        theme: "dark",
+    axios
+      .request(options)
+      .then(function (response) {
+        console.log("res.data", response.data);
+        const token = response.data.token;
+        checkStatus(token);
+      })
+      .catch((err) => {
+        let error = err.response ? err.response.data : err;
+        setProcessing(false);
+        console.log(error);
       });
-    }
   };
 
   return (

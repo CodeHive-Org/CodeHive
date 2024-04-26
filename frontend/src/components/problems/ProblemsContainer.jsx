@@ -6,7 +6,7 @@ import {
   TableFooter,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from "@/components/ui/table";
 import MaxWidthWrapper from "../MaxWidthWrapper";
 import axios from "axios";
@@ -78,26 +78,33 @@ const ProblemsContainer = () => {
   //       "Given the head of a linked list, remove the nth node from the end of the list and return its head."
   //   }
   // ]);
-  const [ problems, setProblems ] = useState([]);
-  useEffect(()=>{
+  const [problems, setProblems] = useState([]);
+  useEffect(() => {
     //calling the contract to detch the data of the problems.
-    if(ABI_Bank.length == 0){console.log("hehe");return;}
+    console.log("asdf s : ", import.meta.env.VITE_NILE_BANK_ADD);
+    if (ABI_Bank.length == 0) {
+      console.log("hehe");
+      return;
+    }
     const getQuestions = async () => {
-      const contract = await tronWeb.contract(ABI_Bank, import.meta.env.VITE_NILE_BANK_ADD);
-      const questions = await contract.questionList().call()
-      console.log("yoooman",questions, contract);
-      setProblems(questions)
+      const contract = await tronWeb.contract(
+        ABI_Bank,
+        import.meta.env.VITE_NILE_BANK_ADD,
+      );
+      const questions = await contract.questionList().call();
+      console.log("yoooman", questions, contract);
+      setProblems(questions);
     };
     getQuestions();
-  },[ABI_Bank]);
+  }, [ABI_Bank]);
   const isAnyOpen = activeIndex !== null;
   console.log("active INdex : ", activeIndex);
 
   return (
-    <main className="flex-1 p-2 relative">
-      <Table className="text-white max-w-[1000px] mr-auto px-4 w-full">
+    <main className="relative flex-1 p-2">
+      <Table className="mr-auto w-full max-w-[1000px] px-4 text-white">
         <TableHeader>
-          <TableRow className="text-white border-gray-500 text-left">
+          <TableRow className="border-gray-500 text-left text-white">
             <TableHead>Id</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Difficulty (Mesured in 🐑)</TableHead>
@@ -105,7 +112,8 @@ const ProblemsContainer = () => {
           </TableRow>
         </TableHeader>
         <TableBody className="relative">
-          {problems && problems.length > 0 &&
+          {problems &&
+            problems.length > 0 &&
             problems.map((p, i) => {
               const handleOpen = () => {
                 setActiveIndex(activeIndex === i ? null : i);
@@ -129,7 +137,7 @@ const ProblemsContainer = () => {
       </Table>
 
       {problems && !problems.length > 0 && (
-        <h1 className="text-primary text-center top-1 px-2 pt-5 text-xl w-full">
+        <h1 className="top-1 w-full px-2 pt-5 text-center text-xl text-primary">
           There are no Questions as of now ! come back later or add your own
           question
         </h1>
