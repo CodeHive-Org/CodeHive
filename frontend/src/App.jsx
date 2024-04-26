@@ -15,16 +15,16 @@ import {
   WalletNotFoundError,
 } from "@tronweb3/tronwallet-abstract-adapter";
 import { WalletProvider } from "@tronweb3/tronwallet-adapter-react-hooks";
-import {
-  WalletModalProvider
-} from "@tronweb3/tronwallet-adapter-react-ui";
+import { WalletModalProvider } from "@tronweb3/tronwallet-adapter-react-ui";
 import "@tronweb3/tronwallet-adapter-react-ui/style.css";
-import { LedgerAdapter, TronLinkAdapter } from "@tronweb3/tronwallet-adapters";
+import { TronLinkAdapter } from "@tronweb3/tronwallet-adapter-tronlink";
 globalThis.Buffer = Buffer;
 
 // wallet connection imports
 
 function App() {
+  window.global = window;
+
   const address = null;
   const data = JSON.parse(localStorage.getItem("user"));
 
@@ -66,10 +66,7 @@ function App() {
   }
   const adapters = useMemo(function () {
     const tronLink = new TronLinkAdapter();
-    const ledger = new LedgerAdapter({
-      accountNumber: 2,
-    });
-    return [tronLink, ledger];
+    return [tronLink];
   }, []);
 
   return (

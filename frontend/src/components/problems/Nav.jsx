@@ -13,7 +13,6 @@ import {
   WalletConnectButton,
   WalletDisconnectButton,
 } from "@tronweb3/tronwallet-adapter-react-ui";
-import { WalletConnectAdapter } from "@tronweb3/tronwallet-adapters";
 import { User } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";

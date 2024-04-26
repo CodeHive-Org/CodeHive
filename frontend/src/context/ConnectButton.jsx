@@ -1,7 +1,5 @@
 import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 import { WalletActionButton } from "@tronweb3/tronwallet-adapter-react-ui";
-import { TronLinkAdapter } from "@tronweb3/tronwallet-adapters";
-import { useMemo } from "react";
 import { Toaster } from "sonner";
 
 const ConnectButton = () => {
