@@ -20,7 +20,7 @@ import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 
 const WorkSpace = ({ data, pid, contract }) => {
   console.log(data);
-  let [userCode, setUserCode] = useState(`hi there !`); // default template of the starterCode
+  let [userCode, setUserCode] = useState();
 
   let testInput =
     typeof data?.testcases[0].input == "object"
@@ -62,9 +62,8 @@ const WorkSpace = ({ data, pid, contract }) => {
       } else {
         setProcessing(false);
         setOutputState(response.data);
-        toast.success(`Compiled Successfully!`);
-        console.log("response.data", response.data);
-        return;
+        toast(`Compiled Successfully!`);
+        return response.data;
       }
     } catch (err) {
       console.log("err", err);
@@ -72,6 +71,8 @@ const WorkSpace = ({ data, pid, contract }) => {
       toast.error("Error in the code !");
     }
   };
+
+  const testcaseInput = JSON.stringify(data?.examples[0]?.input);
 
   const handleSubmit = async () => {
     if (!address) {
@@ -82,52 +83,23 @@ const WorkSpace = ({ data, pid, contract }) => {
       });
       return;
     }
-    // try {
-    //   const cb = new Function(`return ${userCode}`)();
-    //   const handler = "function";
 
-    //   if (typeof handler === "function") {
-    //     const success = null;
-    //     if (success) {
-    //       toast.success("Congrats! All tests passed!", {
-    //         position: "top-center",
-    //         autoClose: 3000,
-    //         theme: "dark",
-    //       });
-    //       setSuccess(true);
-    //       setTimeout(() => {
-    //         setSuccess(false);
-    //       }, 4000);
+    // default template + starter code
+    const sourceCode = `
+      function defaultFunc(inputs) {
+        ${userCode}
 
-    //       // setSolved(true);
-    //     }
-    //   }
-    // } catch (error) {
-    //   console.log(error.message);
-    //   if (
-    //     error.message.startsWith(
-    //       "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:",
-    //     )
-    //   ) {
-    //     toast.error("Oops! One or more test cases failed", {
-    //       position: "top-center",
-    //       autoClose: 3000,
-    //       theme: "dark",
-    //     });
-    //   } else {
-    //     toast.error(error.message, {
-    //       position: "top-center",
-    //       autoClose: 3000,
-    //       theme: "dark",
-    //     });
-    //   }
-    // }
+        return ${data?.compileFunctionName}(inputs)
+      }
+
+      console.log(defaultFunc(${testcaseInput}));
+    `;
 
     setProcessing(true);
     const formData = {
       language_id: 63,
       // encode source code in base64
-      source_code: btoa(userCode),
+      source_code: btoa(sourceCode),
       stdin: btoa(testInput),
     };
     const options = {
@@ -148,7 +120,33 @@ const WorkSpace = ({ data, pid, contract }) => {
       .then(async function (response) {
         const token = response.data.token;
         let output = await checkStatus(token);
-        console.log("outpout : ", output);
+        // the main output checking between the usersCode and the questioners code is done here !
+        let statusId = output?.status?.id;
+
+        console.log("output ; ", atob(output?.stdout));
+
+        if (statusId !== 3) {
+          // ! Dont run the contract if their is run time
+          toast.error(
+            "RunTime Error | Please Check your Code before submission !",
+          );
+          return;
+        }
+ 
+        if (atob(output.stdout) && atob(output.stdout) != null) {
+          const outputString = String(atob(output?.stdout)).trim();
+          const expectedOutput = String(data?.examples[0]?.output).trim();
+
+          console.log("Output from API:", outputString);
+          console.log("Expected Output:", expectedOutput);
+
+          if (outputString === expectedOutput) {
+            setSuccess(true);
+            toast.success("Congratulations your submission was accepted ! 🥳");
+          } else {
+            toast.error("Submission Failed ! 🚫");
+          }
+        }
       })
       .catch((err) => {
         let error = err.response ? err.response.data : err;
@@ -181,7 +179,6 @@ const WorkSpace = ({ data, pid, contract }) => {
     axios
       .request(options)
       .then(function (response) {
-        console.log("res.data", response.data);
         const token = response.data.token;
         checkStatus(token);
       })
@@ -191,6 +188,8 @@ const WorkSpace = ({ data, pid, contract }) => {
         console.log(error);
       });
   };
+
+  console.log("data : ", data);
 
   return (
     <ResizablePanelGroup

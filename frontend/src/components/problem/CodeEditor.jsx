@@ -29,22 +29,22 @@ const CodeEditor = ({ starterCode, setUserCode, userCode }) => {
   const editorRef = useRef(null);
   var restrictions = [];
 
-  function handleEditorDidMount(editor, monaco) {
-    try {
-      editorRef.current = editor;
-      const constrainedInstance = constrainedEditor(monaco);
-      const model = editor.getModel();
-      constrainedInstance.initializeIn(editor);
-      restrictions.push({
-        // range : [startLine, startColumn, endLine, endColumn];
-        range: [0, 1, 1, 1],
-        allowMultiline: true,
-      });
-      constrainedInstance.addRestrictionsTo(model, restrictions);
-    } catch (error) {
-      console.error("Failed to initialize editor with constraints:", error);
-    }
-  }
+  // function handleEditorDidMount(editor, monaco) {
+  //   try {
+  //     editorRef.current = editor;
+  //     const constrainedInstance = constrainedEditor(monaco);
+  //     const model = editor.getModel();
+  //     constrainedInstance.initializeIn(editor);
+  //     restrictions.push({
+  //       // range : [startLine, startColumn, endLine, endColumn];
+  //       range: [0, 1, 1, 1],
+  //       allowMultiline: true,
+  //     });
+  //     constrainedInstance.addRestrictionsTo(model, restrictions);
+  //   } catch (error) {
+  //     console.error("Failed to initialize editor with constraints:", error);
+  //   }
+  // }
 
   const onChange = (value) => {
     setUserCode(value);
@@ -73,7 +73,7 @@ const CodeEditor = ({ starterCode, setUserCode, userCode }) => {
         height="85vh"
         width={`100%`}
         language={"javascript"}
-        onMount={handleEditorDidMount}
+        // onMount={handleEditorDidMount}
         theme={"vs-dark"}
         defaultValue="// some comment"
         onChange={onChange}

@@ -11,6 +11,7 @@ const __dirname = dirname(__filename);
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  // base: "CodeHive",
   optimizeDeps: {
     esbuildOptions: {
       // Node.js global to browser globalThis
