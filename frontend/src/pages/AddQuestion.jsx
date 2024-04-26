@@ -8,24 +8,27 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from "@/components/ui/tooltip";
+import { useTheContext } from "@/context";
 
 const AddQuestion = () => {
+  const { Pinata } = useTheContext(); 
+  //not so imp consts...
+  const [In,setIn]=useState("");
+  const [Out,setOut]=useState("");
+  const [Exp,setExp]=useState("");
+  const [Cons,setCons]=useState("");
+  //consts ends...
   const [formData, setFormData] = useState({
-    rival_id: 31,
-    question_title: "",
-    question_body: "",
-    deadline: "",
-    question_status: 0,
-    daredevil: 0,
-    category: "Rust",
-    reward: 0,
-    entrance_fee: 0,
-    executable_solution: "",
-    solution_executer: "",
-    test_inputs: "",
-    test_outputs: "",
-    status: 1
+    name: "",
+    description: "",
+    defaultCode: "",
+    compileFunctionName: "",
+    tags:[],
+    examples: [],
+    constraints: [],
+    testcases: [],
   });
+  const [formSelector, setFormSelector ] = useState(0);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,241 +36,207 @@ const AddQuestion = () => {
   };
 
   const handleSubmit = async (e) => {
-    // e.preventDefault();
-    // try {
-    //   await axios.post("http://localhost:8000/api/add_question", formData, {
-    //     headers: {
-    //       "Content-Type": "application/x-www-form-urlencoded"
-    //     }
-    //   });
-    //   // Reset form after successful submission
-    //   setFormData({
-    //     rival_id: 0,
-    //     question_title: "",
-    //     question_body: "",
-    //     deadline: "",
-    //     question_status: 0,
-    //     daredevil: 0,
-    //     category: "Rust",
-    //     reward: 0,
-    //     entrance_fee: 0,
-    //     executable_solution: "",
-    //     solution_executer: "",
-    //     test_inputs: "",
-    //     test_outputs: ""
-    //   });
-    //   // Handle success or redirect user
-    // } catch (error) {
-    //   // Handle error
-    //   console.error("Error adding question:", error);
-    // }
+    // setLoading(true);
+    const re = confirm("you sure doing this...");
+    if(!re) return;
+
+    //creating a ipfs deploy getting the hash ccode for that... then deploying the contract from here....
+    const res = await Pinata.pinJSONToIPFS(formData);
+    console.log(res);
+    //working man
+
   };
 
-  return (
-    <main className="bg-[black]">
+  return (  
+    <main className="bg-[black] h-screen">
       <Nav />
-      <MaxWidthWrapper>
-        <div className="mx-auto p-4">
-          <h1 className="text-2xl font-bold mb-4 text-white">Add Question</h1>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label htmlFor="question_title" className="block text-gray-200">
-                Question Title
+      <MaxWidthWrapper className="flex flex-col items-center justify-center">
+        <div className="w-[60%] pt-[30px] h-[500px] flex flex-col items-center">
+          {formSelector==0 &&
+            <div className="w-full">
+              <label htmlFor="question_title" className="block text-[24px] text-gray-200">
+                Question Name
               </label>
               <input
                 type="text"
-                id="question_title"
-                name="question_title"
-                value={formData.question_title}
+                id="name"
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
                 className="mt-1 p-2 border bg-black/40 rounded-md w-full"
                 required
               />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="question_body" className="block text-gray-200">
-                Question Desciption
+              <label htmlFor="question_title" className="block mt-2 text-gray-200">
+                Description
               </label>
               <input
                 type="text"
-                id="question_body"
-                name="question_body"
-                value={formData.question_body}
+                id="description"
+                name="description"
+                value={formData.description}
                 onChange={handleChange}
                 className="mt-1 p-2 border bg-black/40 rounded-md w-full"
                 required
               />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="deadline" className="block text-gray-200">
-                Deadline to solve the question
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span className="text-second"> (See Example)</span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{`"2015-09-05 23:56:04"`}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+            </div>  
+          }
+          { formSelector==1 &&
+            <div className="w-full">
+              <label htmlFor="none" className="block text-[24px] text-gray-200">
+                Examples
               </label>
-              <input
-                type="text"
-                id="deadline"
-                name="deadline"
-                value={formData.deadline}
-                onChange={handleChange}
-                className="mt-1 p-2 border bg-black/40 rounded-md w-full"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="category" className="block text-gray-200">
-                Category
+              <br />
+              <div className="flex flex-col gap-2">
+                <div className="flex gap-2">
+                  <div className="w-full">
+                    <label className="block text-gray-200">Input</label>
+                    <input type="text" placeholder="Input" className="mt-1 p-2 border bg-black/40 rounded-md w-full" onChange={(e)=>setIn(e.target.value)}/>
+                  </div>
+                  <div className="w-full">
+                    <label className="block text-gray-200">Output</label>
+                    <input type="text" placeholder="Output" className="mt-1 p-2 border bg-black/40 rounded-md w-full" onChange={(e)=>setOut(e.target.value)}/>
+                  </div>
+                </div>
+                <div>
+                  <label className="pt-[10px] block text-gray-200">Explanation</label>
+                  <div className="flex gap-2 items-center">
+                    <input type="text" placeholder="Explanation" className="mt-1 p-2 border bg-black/40 rounded-md w-full" onChange={(e)=>setExp(e.target.value)}/>
+                    <button className="rounded-[7px] border border-white p-2 mt-1 px-4" onClick={()=>{
+                      //function to add a example
+                      const dataEntry = { "input": In, "output": Out, "explanation": Exp }
+                      setFormData({...formData, examples: [...formData.examples, dataEntry]})
+                    }}>Add</button>
+                  </div>
+                </div>
+              </div>
+              <div className="overflow-y-scroll h-[220px] mt-2">
+                { formData.examples.map((example, index) => (
+                  <div key={index} className="pl-[7px] py-2 border-b flex flex-col gap-1 border-white">
+                    <div className="flex gap-[10px]">
+                      <h1>In: {example.input}</h1>
+                      <h1>Out: {example.output}</h1>
+                    </div>
+                    Exp : {example.explanation}
+                  </div>
+                ))
+                }
+              </div>
+            </div> 
+          }
+          { formSelector==2 &&
+            <div className="w-full">
+              <label htmlFor="none" className="block text-[24px] text-gray-200">
+                Testcases
               </label>
-              <input
-                type="text"
-                id="category"
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="mt-1 p-2 border bg-black/40 rounded-md w-full"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="reward" className="block text-gray-200">
-                Reward if someone solves the questions (please insert value in
-                Trx)
+              <br />
+              <div className="flex flex-col gap-2">
+                <div className="flex gap-2">
+                  <div className="w-full">
+                    <label className="block text-gray-200">Input</label>
+                    <textarea type="text" placeholder="Input" className="mt-1 p-2 border bg-black/40 rounded-md w-full h-[200px]" onChange={(e)=>setIn(e.target.value)}/>
+                  </div>
+                  <div className="w-full">
+                    <label className="block text-gray-200">Output</label>
+                    <textarea type="text" placeholder="Output" className="mt-1 p-2 border bg-black/40 rounded-md w-full h-[200px]" onChange={(e)=>setOut(e.target.value)}/>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex gap-2 items-center justify-end">
+                    <button className="rounded-[7px] border border-white p-2 mt-1 px-4" onClick={()=>{
+                      //function to add a example
+                      const dataEntry = { "id":formData.testcases.length , "input": In, "output": Out }
+                      setFormData({...formData, testcases: [...formData.testcases, dataEntry]})
+                    }}>Add</button>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-1 overflow-y-scroll h-[110px]">
+                { formData.testcases.map((testcase, index) => (
+                  <div key={index} className="pl-[7px] py-2 border-b flex flex-col gap-1 border-white">
+                    <div className="flex gap-[10px]">
+                      <h1>In: {testcase.input}</h1>
+                      <h1>Out: {testcase.output}</h1>
+                    </div>
+                    ID : {testcase.id}
+                  </div>
+                ))
+                }
+              </div>
+            </div> 
+          }
+          { formSelector==3 &&
+            <div className="w-full">
+              <label htmlFor="none" className="block text-[24px] text-gray-200">
+                Constraints
               </label>
-              <input
-                type="text"
-                id="reward"
-                name="reward"
-                value={formData.reward}
-                onChange={handleChange}
-                className="mt-1 p-2 border bg-black/40 rounded-md w-full"
-                required
-              />
+              <br />
+              <div className="flex flex-col gap-2">
+                <div className="flex gap-1">
+                  <input type="text" placeholder="Input" className="mt-1 p-2 border bg-black/40 rounded-md w-full" onChange={(e)=>setCons(e.target.value)}/>
+                  <button className="rounded-[7px] border border-white p-2 mt-1 px-4" onClick={()=>{
+                      setFormData({...formData, constraints: [...formData.constraints, Cons]})
+                    }}>Add</button>
+                </div>
+                <div>
+                  <div className="mt-1 overflow-y-scroll h-[110px]">
+                    { formData.constraints.map((cons, index) => (
+                      <div key={index} className="pl-[7px] py-2 border-b flex flex-col gap-1 border-white">
+                          <h1>⁜ {cons}</h1>
+                      </div>
+                    ))
+                    }
+                  </div>
+                </div> 
+              </div>
             </div>
-            <div className="mb-4">
-              <label htmlFor="entrance_fee" className="block text-gray-200">
-                Entry Fee (please insert value in Trx)
+          }
+          { formSelector==4 &&
+            <div className="w-full">
+              <label htmlFor="none" className="block text-[24px] text-gray-200">
+                Minor paramerters:
               </label>
-              <input
-                type="text"
-                id="entrance_fee"
-                name="entrance_fee"
-                value={formData.entrance_fee}
-                onChange={handleChange}
-                className="mt-1 p-2 border bg-black/40 rounded-md w-full"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="executable_solution"
-                className="block text-gray-200"
-              >
-                Executable Solution
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span className="text-second"> (See Example)</span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>
-                        {`mod executable;
-                        use executable::hello;
-                        fn main(){
-                            hello();
-                            println!("true")
-                        }`}
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </label>
-              <input
-                type="text"
-                id="executable_solution"
-                name="executable_solution"
-                value={formData.executable_solution}
-                onChange={handleChange}
-                className="mt-1 p-2 border bg-black/40 rounded-md w-full"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="solution_executer"
-                className="block text-gray-200"
-              >
-                Solution Executor
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span className="text-second"> (See Example)</span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>
-                        {`pub fn hello () {
-                            println!("hello from postman")
-                        }`}
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </label>
-              <input
-                type="text"
-                id="solution_executer"
-                name="solution_executer"
-                value={formData.solution_executer}
-                onChange={handleChange}
-                className="mt-1 p-2 border bg-black/40 rounded-md w-full"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="test_inputs" className="block text-gray-200">
-                Test Inputs
-              </label>
-              <input
-                type="text"
-                id="test_inputs"
-                name="test_inputs"
-                value={formData.test_inputs}
-                onChange={handleChange}
-                className="mt-1 p-2 border bg-black/40 rounded-md w-full"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="test_outputs" className="block text-gray-200">
-                Test Outputs
-              </label>
-              <input
-                type="text"
-                id="test_outputs"
-                name="test_outputs"
-                value={formData.test_outputs}
-                onChange={handleChange}
-                className="mt-1 p-2 border bg-black/40 rounded-md w-full"
-                required
-              />
-            </div>
-            {/* Add other input fields for other parameters similarly */}
-            <div className="mt-4">
-              <button
-                type="submit"
-                className="bg-primary px-10 mt-0 text-black py-2 rounded-md hover:bg-blue-600"
-              >
+              <br />
+              <div className="flex flex-col gap-2">
+                <div className="w-full">
+                  <label className="block text-gray-200">Function Name</label>
+                  <input type="text" placeholder="This function will be called...." className="mt-1 p-2 border bg-black/40 rounded-md w-full"
+                    onChange={(e)=>{
+                      setFormData({...formData, compileFunctionName: e.target.value})
+                    }}
+                  />
+                </div>
+                <div className="w-full">
+                  <label className="block text-gray-200">Tags {"(comma separated)"}</label>
+                  <input type="text" placeholder="Hard,Array, ...." className="mt-1 p-2 border bg-black/40 rounded-md w-full" 
+                    onChange={(e)=>{
+                      //compling the fields....
+                      const arr = e.target.value.split(",");
+                      setFormData({...formData, tags:arr});
+                    }}/>
+                </div>
+                <div className="w-full">
+                  <label className="block text-gray-200">Default Code {"(comma separated)"}</label>
+                  <textarea type="text" placeholder={`/*\nhello default code here\n basic info\n*/`} className="h-[120px] mt-1 p-2 border bg-black/40 rounded-md w-full" 
+                    onChange={(e)=>{
+                      setFormData({...formData, defaultCode:e.target.value});
+                    }}/>
+                </div>
+              </div>
+            </div> 
+          }
+        </div>
+        <div className="flex justify-between w-[60%]">
+          <button onClick={()=>setFormSelector(parseInt(formSelector)-1)} className={`${formSelector==0?"pointer-events-none opacity-50 cursor-none":""} rounded-[7px] border-[3px] border-white p-2 px-4`}>
+            Prev
+          </button>
+          {
+            formSelector == 4?
+            <button onClick={()=>{handleSubmit()}} className="rounded-[7px] font-bold border-[3px] text-black bg-white p-2 px-4 hover:bg-black hover:text-white"> 
                 Submit
               </button>
-            </div>
-          </form>
+                :
+              <button onClick={()=>setFormSelector(val=>parseInt(val)+1)} className="rounded-[7px] border-[3px] border-white p-2 px-4">Next</button>
+          }
         </div>
       </MaxWidthWrapper>
     </main>

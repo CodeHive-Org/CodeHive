@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect  } from "react";
 import { TronWeb } from "tronweb";
+import pinataSDK from '@pinata/sdk';
 
 const tronWeb = new TronWeb({
     fullHost: import.meta.env.VITE_TRON_HOST, // Full node http endpoint
@@ -9,6 +10,7 @@ console.log(tronWeb);
 const thisContext = createContext();
 
 export default function ContextProvierAllOver({ children }) {
+    const Pinata = new pinataSDK({ pinataJWTKey: import.meta.env.VITE_PINATA_JWT});
     const [ address, setAddress ] = useState();
     const [ BankContract, setContract  ] = useState();//the bank  contract here....
     const [ ABI, setABI ] = useState([]);
@@ -89,7 +91,8 @@ export default function ContextProvierAllOver({ children }) {
                 update, 
                 tronWeb,
                 ABI_Bank,
-                ABI
+                ABI,
+                Pinata
             }}
         >
             {children}
