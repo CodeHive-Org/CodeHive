@@ -1,30 +1,32 @@
 "use client";
 
-import { useTheContext } from "@/context";
-import { Check } from "lucide-react";
-import { useParams } from "next/navigation";
-import React, { useState, useEffect } from "react";
+import { useTheContext } from "../../context/index";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-const ProblemDescription = ({ problem, pid, contract}) => {
+const ProblemDescription = ({ problem, pid, contract }) => {
   const { tronWeb } = useTheContext();
   const location = useLocation();
-  const [ claimer,  setClaimer ] = useState(); 
-  const [ bounty,  setBounty ] = useState(); 
-  useEffect(()=>{
-    contract.bountyWinner().call()
-    .then(winner => {
-      if(winner !=  "410000000000000000000000000000000000000000"){
-        setClaimer(winner);
-      }
-    })
-    .catch(error => console.error(error));
-    contract.bountyValue().call()
-    .then(value => {
-      setBounty(parseInt(value._hex));
-    })
+  const [claimer, setClaimer] = useState();
+  const [bounty, setBounty] = useState();
+  useEffect(() => {
+    contract
+      .bountyWinner()
+      .call()
+      .then((winner) => {
+        if (winner != "410000000000000000000000000000000000000000") {
+          setClaimer(winner);
+        }
+      })
+      .catch((error) => console.error(error));
+    contract
+      .bountyValue()
+      .call()
+      .then((value) => {
+        setBounty(parseInt(value._hex));
+      });
     //
-  },[]);
+  }, []);
 
   return (
     <main>
@@ -47,7 +49,6 @@ const ProblemDescription = ({ problem, pid, contract}) => {
                 <div className="mr-2 flex-1 text-xl font-medium text-white">
                   {problem?.name}
                   <span className="text-[0.5rem]"> {pid}</span>{" "}
-                  
                 </div>
               </div>
 
@@ -102,12 +103,16 @@ const ProblemDescription = ({ problem, pid, contract}) => {
               <div className="flex max-w-max flex-col space-y-4">
                 <div className="flex rounded-md bg-rose-600 p-2 px-4 font-semibold text-white">
                   <h1 className="mr-2 font-medium text-black">
-                    Bounty Claimed :<span> {claimer?"Allready claimed":"Is yet to be claimed."}</span>
+                    Bounty Claimed :
+                    <span>
+                      {" "}
+                      {claimer ? "Allready claimed" : "Is yet to be claimed."}
+                    </span>
                   </h1>
                 </div>
                 <div className="flex rounded-md bg-orange-400 p-2 px-4 font-semibold text-red-700">
                   <h1 className="mr-2 font-medium text-black">
-                    Reward if you solve this : {bounty/1000000} TRX
+                    Reward if you solve this : {bounty / 1000000} TRX
                   </h1>
                 </div>
               </div>

@@ -1,8 +1,7 @@
 "use client";
 
-import { resultAtom } from "@/atoms/userAtom";
+import { resultAtom } from "../../atoms/problemAtom";
 import { Editor } from "@monaco-editor/react";
-import { constrainedEditor } from "constrained-editor-plugin";
 import { Code } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
