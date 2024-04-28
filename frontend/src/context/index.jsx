@@ -1,19 +1,18 @@
 import { createContext, useContext, useState, useEffect  } from "react";
 import { TronWeb } from "tronweb";
-import pinataSDK from '@pinata/sdk';
 
 const tronWeb = new TronWeb({
-    fullHost: import.meta.env.VITE_TRON_HOST, // Full node http endpoint
+    fullHost: import.meta.env.VITE_TRON_HOST,
     privateKey: import.meta.env.VITE_TRON_PRIVATE_KEY
 });
 console.log(tronWeb);
 const thisContext = createContext();
 
 export default function ContextProvierAllOver({ children }) {
-    const Pinata = new pinataSDK({ pinataJWTKey: import.meta.env.VITE_PINATA_JWT});
     const [ address, setAddress ] = useState();
     const [ BankContract, setContract  ] = useState();//the bank  contract here....
     const [ ABI, setABI ] = useState([]);
+    const [ QuesBYTECODE, setQuesBYTECODE] = useState();
     const [ ABI_Bank, setABI_Bank ] = useState([]);
     
     const [tronWebState, setTronWebState] = useState({
@@ -55,7 +54,7 @@ export default function ContextProvierAllOver({ children }) {
             }
             return response.json();
         })
-        .then(data => setABI(data.smart_contract.abi.entrys))
+        .then(data => {setQuesBYTECODE(data.smart_contract.bytecode);setABI(data.smart_contract.abi.entrys)})
         .catch(error => {console.error('There was a problem with the fetch operation:', error)});
         //fetching the bank abi..
         fetch(import.meta.env.VITE_TRONQL_ENDPOINT+'wallet/getcontractinfo', {
@@ -92,7 +91,7 @@ export default function ContextProvierAllOver({ children }) {
                 tronWeb,
                 ABI_Bank,
                 ABI,
-                Pinata
+                QuesBYTECODE,
             }}
         >
             {children}

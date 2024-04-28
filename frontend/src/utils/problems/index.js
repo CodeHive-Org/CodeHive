@@ -2,7 +2,7 @@
 
 export const problems = {
     Longest_Common_Prefix: "TTYWGCYqyfmySVytAWzJGjqkqqFyG2VCR9",
-}
+} 
 export const ABI = [
 	{
 		"inputs": [

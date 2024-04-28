@@ -17,6 +17,7 @@ export default defineConfig({
       // Node.js global to browser globalThis
       define: {
         global: "globalThis",
+ // This will effectively remove references to 'Buffer'
       },
       // Enable esbuild polyfill plugins
       plugins: [
