@@ -12,15 +12,26 @@ const __dirname = dirname(__filename);
 // https://vitejs.dev/config/
 export default defineConfig({
   // base: "CodeHive",
+  build: {
+    sourcemap: true,
+    rollupOptions: {
+      onwarn(warning, defaultHandler) {
+        if (warning.code === "SOURCEMAP_ERROR") {
+          return;
+        }
+
+        defaultHandler(warning);
+      },
+    },
+  },
   optimizeDeps: {
     esbuildOptions: {
-      // Node.js global to browser globalThis
       define: {
         global: "globalThis",
       },
-      // Enable esbuild polyfill plugins
       plugins: [
         NodeGlobalsPolyfillPlugin({
+          include: ["url", "zlib"],
           buffer: true,
         }),
       ],

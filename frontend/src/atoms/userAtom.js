@@ -7,8 +7,3 @@ export const userAtom = atom({
         data: null
     },
 });
-  
-export const resultAtom = atom({
-    key: 'resultAtom',
-    default: false 
-});

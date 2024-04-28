@@ -1,8 +1,6 @@
-import { outputAtom } from "@/atoms/problemAtom";
-import { resultAtom } from "@/atoms/userAtom";
-import { Check } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
+import { outputAtom, resultAtom } from "../../atoms/problemAtom";
 
 const TestCasesandResult = ({ problem }) => {
   const [loading, setLoading] = useState(true);

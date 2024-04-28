@@ -1,15 +1,8 @@
-"use client";
-
-import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { Button, buttonVariants } from "@/components/ui/button";
-import ConnectButton from "@/context/ConnectButton";
+import ConnectButton from "../../context/ConnectButton";
 import {
-  ArrowLeft,
   ChevronLeft,
-  ChevronRight,
-  MoveLeft,
+  ChevronRight
 } from "lucide-react";
-import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const Nav = () => {
