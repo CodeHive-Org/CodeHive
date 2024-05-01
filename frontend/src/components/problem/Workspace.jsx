@@ -21,6 +21,8 @@ import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 const WorkSpace = ({ data, pid, contract }) => {
   console.log(data);
   let [userCode, setUserCode] = useState();
+  
+  const [ lastUserValidCode, setLastUserValidCode ] = useState(""); 
 
   let testInput =
     typeof data?.testcases[0].input == "object"
@@ -140,9 +142,11 @@ const WorkSpace = ({ data, pid, contract }) => {
           console.log("Output from API:", outputString);
           console.log("Expected Output:", expectedOutput);
 
-          if (outputString === expectedOutput) {
+          if (outputString === expectedOutput) { 
             setSuccess(true);
             toast.success("Congratulations your submission was accepted ! 🥳");
+            // create a pop up for a upload code option...
+            setLastUserValidCode(userCode);
           } else {
             toast.error("Submission Failed ! 🚫");
           }
@@ -154,6 +158,33 @@ const WorkSpace = ({ data, pid, contract }) => {
         console.log(error);
       });
   };
+  const handleUpload = async () => {
+    if( lastUserValidCode && userCode == lastUserValidCode ){
+      alert("submit the code before uploding to chain..");
+      return;
+    }
+    // converting it to a IPFS File.apply...
+    const options = {
+      method: 'POST',
+      headers: {Authorization: `Bearer ${import.meta.env.VITE_PINATA_JWT}`, 'Content-Type': 'application/json'},
+      body: `{"pinataOptions":{"cidVersion":1},"pinataMetadata":{"name":"${address}.json"},"pinataContent":${JSON.stringify({code : lastUserValidCode})}}`
+    };
+    const ipfsHash = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', options)
+    console.log(ipfsHash);
+    //calling the contract function  using the tronLink....
+    
+
+    //
+    const functionSelector = 'transfer(address,uint256)';
+    const parameter = [{type:'address',value:'ACCOUNT_ADDRESS'},{type:'uint256',value:100}]
+    const tx = await tronWeb.transactionBuilder.triggerSmartContract('USDT_ADDRESS', functionSelector, {}, parameter);
+    const signedTx = await tronWeb.trx.sign(tx.transaction);
+    const result = await tronWeb.trx.sendRawTransaction(signedTx);
+
+
+
+
+  }
 
   const handleRun = async () => {
     setProcessing(true);
