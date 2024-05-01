@@ -5,6 +5,7 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 import tailwindcss from "tailwindcss";
 import NodeGlobalsPolyfillPlugin from "@esbuild-plugins/node-globals-polyfill";
+import babel from '@rollup/plugin-babel';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -38,7 +39,14 @@ export default defineConfig({
       ],
     },
   },
-  plugins: [react()],
+  plugins: [
+    react(),
+    babel({
+      babelrc: false,
+      presets: ['@babel/preset-env', '@babel/preset-react'],
+      plugins: ['transform-remove-console']
+    })
+  ],
   css: {
     postcss: {
       plugins: [tailwindcss()],
