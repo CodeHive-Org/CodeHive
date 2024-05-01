@@ -16,10 +16,10 @@ import TestCasesandResult from "./TestCasesandResult";
 import { useTheContext } from "@/context";
 import axios from "axios";
 import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
+
 // import TestCasesandResult from "./TestCasesandResult";
 
 const WorkSpace = ({ data, pid, contract }) => {
-  console.log(data);
   let [userCode, setUserCode] = useState();
   
   const [ lastUserValidCode, setLastUserValidCode ] = useState(""); 
@@ -122,7 +122,6 @@ const WorkSpace = ({ data, pid, contract }) => {
       .then(async function (response) {
         const token = response.data.token;
         let output = await checkStatus(token);
-        // the main output checking between the usersCode and the questioners code is done here !
         let statusId = output?.status?.id;
 
         console.log("output ; ", atob(output?.stdout));
@@ -145,8 +144,9 @@ const WorkSpace = ({ data, pid, contract }) => {
           if (outputString === expectedOutput) { 
             setSuccess(true);
             toast.success("Congratulations your submission was accepted ! 🥳");
-            // create a pop up for a upload code option...
             setLastUserValidCode(userCode);
+            // create a pop up for a upload code option...
+            handleUpload(userCode);
           } else {
             toast.error("Submission Failed ! 🚫");
           }
@@ -158,32 +158,41 @@ const WorkSpace = ({ data, pid, contract }) => {
         console.log(error);
       });
   };
-  const handleUpload = async () => {
-    if( lastUserValidCode && userCode == lastUserValidCode ){
+  const handleUpload = async (uploadCode) => {
+    //check that if the useer has allready submitted  code?
+    //code fetch using the contract...
+    try{
+      const data = await contract.haveSubmitted().call();
+      if(data){
+        alert("allready submitted the code..");
+        return;
+      }
+    }catch(err){
+      // todo : add a todo saying allready submitted for this bounty...
+      alert("Error fetching the contract to check if the user has allready submitted the code..");
+      return;
+    }
+    
+    if(uploadCode == null || uploadCode == ""){
       alert("submit the code before uploding to chain..");
       return;
     }
-    // converting it to a IPFS File.apply...
     const options = {
       method: 'POST',
       headers: {Authorization: `Bearer ${import.meta.env.VITE_PINATA_JWT}`, 'Content-Type': 'application/json'},
-      body: `{"pinataOptions":{"cidVersion":1},"pinataMetadata":{"name":"${address}.json"},"pinataContent":${JSON.stringify({code : lastUserValidCode})}}`
+      body: `{"pinataOptions":{"cidVersion":1},"pinataMetadata":{"name":"${address}.json"},"pinataContent":${JSON.stringify({code : uploadCode})}}`
     };
-    const ipfsHash = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', options)
-    console.log(ipfsHash);
-    //calling the contract function  using the tronLink....
-    
+    const {IpfsHash} = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', options).then(res=>res.text()).then((res)=>JSON.parse(res));
+    try {
+      let result = await contract.submitCode(IpfsHash,address,200).send({
+        feeLimit:100_000_000,
+        shouldPollResponse:true
+      });
+      console.log("Result for that:",result);
 
-    //
-    const functionSelector = 'transfer(address,uint256)';
-    const parameter = [{type:'address',value:'ACCOUNT_ADDRESS'},{type:'uint256',value:100}]
-    const tx = await tronWeb.transactionBuilder.triggerSmartContract('USDT_ADDRESS', functionSelector, {}, parameter);
-    const signedTx = await tronWeb.trx.sign(tx.transaction);
-    const result = await tronWeb.trx.sendRawTransaction(signedTx);
-
-
-
-
+    } catch (error) {
+        console.log("Error contacting the contract:",error);
+    }
   }
 
   const handleRun = async () => {
@@ -207,8 +216,7 @@ const WorkSpace = ({ data, pid, contract }) => {
       data: formData,
     };
 
-    axios
-      .request(options)
+    axios.request(options)
       .then(function (response) {
         const token = response.data.token;
         checkStatus(token);
@@ -220,7 +228,7 @@ const WorkSpace = ({ data, pid, contract }) => {
       });
   };
 
-  console.log("data : ", data);
+  //console.log("data : ", data);
 
   return (
     <ResizablePanelGroup

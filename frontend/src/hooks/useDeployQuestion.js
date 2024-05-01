@@ -4,7 +4,6 @@ import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 
 export default function useDeployQuestion(){
     const { wallet, address, connected, select, connect, disconnect, signMessage, signTransaction } = useWallet();
-    console.log(address);
     const { ABI, QuesBYTECODE } = useTheContext(); 
     const [ error, setError ] = useState(null);
     const [ deployedAddress, setDeployedAddress ] = useState(null);
@@ -24,7 +23,6 @@ export default function useDeployQuestion(){
         };
         if(!window.tron.tronWeb.ready){
             console.error("cant deploy tron undefined.");
-            console.log(window.tron.tronWeb);
             return;
         }
         fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', options)

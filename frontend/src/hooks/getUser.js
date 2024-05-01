@@ -8,7 +8,6 @@ export const useGetUser = () => {
     () => JSON.parse(localStorage.getItem("user")) || {},
     []
   );
-  console.log("user : ", user);
 
   // useEffect(() => {
   //   var myHeaders = new Headers();

@@ -50,6 +50,41 @@ export const ABI = [
 	},
 	{
 		"inputs": [],
+		"name": "allCodes",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "by",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "code",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "submitTime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "runTime",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct Question.CodeData[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "bountyValue",
 		"outputs": [
 			{
@@ -82,6 +117,40 @@ export const ABI = [
 				"internalType": "bool",
 				"name": "",
 				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "codes",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "by",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "code",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "submitTime",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "runTime",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -127,6 +196,40 @@ export const ABI = [
 				"internalType": "bool",
 				"name": "",
 				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "submissions",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "by",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "code",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "submitTime",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "runTime",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -188,6 +291,11 @@ export const ABI_Bank = [
 			{
 				"internalType": "address",
 				"name": "_web",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_mod",
 				"type": "address"
 			}
 		],

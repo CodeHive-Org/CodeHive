@@ -33,7 +33,6 @@ export default function ProblemForum({ DEPLOY }){
         const re = confirm("you sure doing this...");
         if(!re) return;
         //define bounty value and difficulty here..... man bounty in trx... make sure of that...
-        console.log("its done babe...");
         DEPLOY(difficulty, formData, bountyValue);
         //working man
 

@@ -5,10 +5,11 @@ const tronWeb = new TronWeb({
     fullHost: import.meta.env.VITE_TRON_HOST,
     privateKey: import.meta.env.VITE_TRON_PRIVATE_KEY
 });
-console.log(tronWeb);
 const thisContext = createContext();
 
 export default function ContextProvierAllOver({ children }) {
+    // console.log("secret here",import.meta.env.VITE_CRYPTR_SECRET);
+    // const cryptr = new Cryptr(import.meta.env.VITE_CRYPTR_SECRET);
     const [ address, setAddress ] = useState();
     const [ BankContract, setContract  ] = useState();//the bank  contract here....
     const [ ABI, setABI ] = useState([]);
@@ -43,7 +44,7 @@ export default function ContextProvierAllOver({ children }) {
                 'content-type': 'application/json'
             },
             body: JSON.stringify({
-                value: 'TV1emh8NCzQt5yiiSWyxg8hg18J3wjMQZ4',
+                value: 'TRwde9WB4R14aqeLs4pa8iiwEhv84QryhW',
                 visible: true
             })
         })
@@ -54,7 +55,7 @@ export default function ContextProvierAllOver({ children }) {
             }
             return response.json();
         })
-        .then(data => {setQuesBYTECODE(data.smart_contract.bytecode);setABI(data.smart_contract.abi.entrys)})
+        .then(data => {setQuesBYTECODE(data.smart_contract.bytecode);setABI(data.smart_contract.abi)})
         .catch(error => {console.error('There was a problem with the fetch operation:', error)});
         //fetching the bank abi..
         fetch(import.meta.env.VITE_TRONQL_ENDPOINT+'wallet/getcontractinfo', {
@@ -92,6 +93,7 @@ export default function ContextProvierAllOver({ children }) {
                 ABI_Bank,
                 ABI,
                 QuesBYTECODE,
+                // cryptr,
             }}
         >
             {children}

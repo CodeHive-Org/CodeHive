@@ -2,11 +2,11 @@ import Nav from "@/components/problem/Nav";
 import WorkSpace from "@/components/problem/Workspace";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-// import { ABI } from "../utils/problems/index.js";
+import { ABI } from "../utils/problems/index.js";
 import { useTheContext } from "@/context/index.jsx";
 
 const ProblemDesc = () => {
-  const { tronWeb, ABI, getContract } = useTheContext();
+  // const { getContract } = useTheContext();
   let { pid } = useParams();
   const [ contract, setContract ] = useState();
   const [Problem, setProblem] = useState(null);
@@ -29,7 +29,7 @@ const ProblemDesc = () => {
                   .catch(error => {
                       console.error('There was a problem with the fetch operation:', error);
                   });
-    const instance = await tronWeb.contract(ABI,pid);
+    const instance = await window.tronLink.tronWeb.contract(ABI,pid);
     setContract(instance);
   }
   useEffect(() => {

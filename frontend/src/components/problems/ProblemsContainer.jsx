@@ -16,7 +16,7 @@ import { ABI_Bank } from "@/utils/problems";
 
 const ProblemsContainer = () => {
   const [activeIndex, setActiveIndex] = useState(null);
-  const { tronWeb } = useTheContext();
+  // const { tronWeb } = useTheContext();
   //   {
   //     title: "TTYWGCYqyfmySVytAWzJGjqkqqFyG2VCR9",
   //     fees: 0,
@@ -81,24 +81,21 @@ const ProblemsContainer = () => {
   const [problems, setProblems] = useState([]);
   useEffect(() => {
     //calling the contract to detch the data of the problems.
-    console.log("asdf s : ", import.meta.env.VITE_NILE_BANK_ADD);
     if (ABI_Bank.length == 0) {
-      console.log("hehe");
+      console.error("Something horible happened cant access the Bank_address.");
       return;
     }
     const getQuestions = async () => {
-      const contract = await tronWeb.contract(
+      const contract = await window.tronLink.tronWeb.contract(
         ABI_Bank,
         import.meta.env.VITE_NILE_BANK_ADD,
       );
       const questions = await contract.questionList().call();
-      console.log("yoooman", questions, contract);
       setProblems(questions);
     };
     getQuestions();
   }, [ABI_Bank]);
   const isAnyOpen = activeIndex !== null;
-  console.log("active INdex : ", activeIndex);
 
   return (
     <main className="relative flex-1 p-2">
