@@ -23,10 +23,10 @@ const TestCasesandResult = ({ problem }) => {
   }, []);
 
   useEffect(() => {
-    if (innerNavs.length < 2) {
-      {
-        outputState && setInnerNavs((prev) => [...prev, "Console"]);
-      }
+    console.log("innerNavs : ", innerNavs);
+
+    if (innerNavs.length < 2 && outputState && !innerNavs.includes("Console")) {
+      setInnerNavs((prev) => [...prev, "Console"]);
     }
   }, [outputState]);
 
@@ -71,17 +71,22 @@ const TestCasesandResult = ({ problem }) => {
         <div
           className={`relative flex h-full cursor-pointer items-center justify-center space-x-4`}
         >
-          {innerNavs.map((nav, index) => (
-            <div
-              onClick={() => setActiveBar(index)}
-              key={index}
-              className={`pb-2  text-[1rem] font-semibold leading-5
-          ${activeBar === index ? "border-b text-rose-500" : "text-gray-500"}
+          <div
+            onClick={() => setActiveBar(0)}
+            className={`pb-2  text-[1rem] font-semibold leading-5
+          ${activeBar === 0 ? "border-b text-primary" : "text-gray-500"}
               `}
-            >
-              {nav}
-            </div>
-          ))}
+          >
+            {innerNavs[0]}
+          </div>
+          <div
+            onClick={() => setActiveBar(1)}
+            className={`pb-2  text-[1rem] font-semibold leading-5
+          ${activeBar === 1 ? "border-b text-primary" : "text-gray-500"}
+              `}
+          >
+            {innerNavs[1]}
+          </div>
         </div>
       </div>
 
@@ -112,7 +117,9 @@ const TestCasesandResult = ({ problem }) => {
             <p className="mt-4 text-sm font-medium text-white">Input:</p>
             <div className="mt-2 w-full cursor-text rounded-lg border border-transparent bg-gray-400/20 px-3 py-[10px] text-white">
               {typeof problem.testcases[activeTestCaseId].input == "object"
-                ? Object.values(problem.testcases[activeTestCaseId].input)
+                ? "[" +
+                  problem.testcases[activeTestCaseId]?.input.strs.toString() +
+                  "]"
                 : problem.testcases[activeTestCaseId].input.toString()}
             </div>
             <p className="mt-4 text-sm font-medium text-white">Output:</p>

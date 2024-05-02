@@ -28,14 +28,14 @@ const Navbar = () => {
   // }, []);
 
   return (
-    <div className="w-full px-5 py-4 xl:px-10">
+    <div className="w-full px-14 py-4 xl:px-18">
       <main className="flex items-center justify-between text-white">
         {/* Logo */}
         <div className="h-full w-full">
           <img
             onClick={() => navigate("/")}
             src="/assets/logo1.png"
-            alt="CodeHive"
+            alt="CodeHive"    // set this true to appear the alertBox
             className="w-[160px] object-fill cursor-pointer"
           />
           {/* <h1 className="text-2xl font-semibold">CodeHive</h1> */}

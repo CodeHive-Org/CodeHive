@@ -72,12 +72,16 @@ const Hero = () => {
     flex-col items-center"
     >
       <StarGrid />
-      <h1 className="hero__heading mx-auto w-[90%] text-balance text-center text-5xl font-medium text-white opacity-0 md:text-7xl">
-        A New Way to Solve Challenges and <span>win rewards</span>{" "}
-      </h1>
+      <div className="hero__heading mx-auto w-[90%] text-balance text-center text-5xl font-medium opacity-0 md:text-7xl">
+        <h1 className="text-white text-[3.2rem] max-sm:text-[1.6rem]">Solving problems the old way,</h1>
+        <span className="block bg-gradient-to-r from-orange-400 via-primary to-blue-500 bg-clip-text text-transparent font-bold ">
+          winning rewards the new way
+        </span>
+      </div>
+
       <p
-        className="hero__body mx-auto mt-6 max-w-[40%] text-alance
-        text-center text-slate-300 opacity-0"
+        className="hero__body text-alance mx-auto mt-6 max-w-[40%]
+        text-center text-slate-300 opacity-0 max-md:max-w-[90%]"
       >
         {`"Solve challenges, reap rewards – it's more than just leveling up your skills"`}
       </p>
@@ -87,7 +91,7 @@ const Hero = () => {
         className="text-medium z-10 mt-5 cursor-pointer
       rounded-full bg-rose-700/90 px-10 py-2 text-white hover:bg-primary"
       >
-        Lets goo
+        Lets solve
       </Button>
       <div className="hero__image glass-container mt-16 w-fit opacity-0 max-sm:w-[90%]">
         <div className="hero__glow absolute inset-0 -z-10 bg-rose-600/30 opacity-0 blur-2xl filter" />

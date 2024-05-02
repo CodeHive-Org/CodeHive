@@ -18,6 +18,7 @@ import { WalletProvider } from "@tronweb3/tronwallet-adapter-react-hooks";
 import { WalletModalProvider } from "@tronweb3/tronwallet-adapter-react-ui";
 import "@tronweb3/tronwallet-adapter-react-ui/style.css";
 import { TronLinkAdapter } from "@tronweb3/tronwallet-adapter-tronlink";
+import AlertModal from "./components/ui/AlertModal";
 globalThis.Buffer = Buffer;
 
 // wallet connection imports
@@ -75,6 +76,8 @@ function App() {
         <WalletModalProvider>
           {/* Place your app's components here */}
           <main className="dm-sans dark bg-black to-background text-foreground">
+            <AlertModal />
+
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Landing />} />
