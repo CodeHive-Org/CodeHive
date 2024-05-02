@@ -16,15 +16,15 @@ export function Faq() {
                         text-[1.2rem] hover:text-primary
                         hover:text-[1.3rem] xl:hover:text-[1.5rem]'>Is the Platform Free?</AccordionTrigger>
                         <AccordionContent>
-                            Yes. the platform is free to use.
+                            Well yes. It is, You just use your own energy for that.
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-2">
                         <AccordionTrigger className='xl:text-[1.4rem] 
                         text-[1.2rem] hover:text-primary
                         hover:text-[1.3rem] xl:hover:text-[1.5rem]'>What is Minimum cost to participate in contest?</AccordionTrigger>
-                        <AccordionContent>
-                            0.001Eth.
+                        <AccordionContent className="pt-2">
+                            The only cost is the energy you use. <span className="text-[20px]">😀</span>  well you know that gets renewed every 24 hours.
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-3">
@@ -32,7 +32,7 @@ export function Faq() {
                         text-[1.2rem] hover:text-primary
                         hover:text-[1.3rem] xl:hover:text-[1.5rem]'>How many Members can take part in contest?</AccordionTrigger>
                         <AccordionContent>
-                            There is no Max limit as of now
+                            This is independent of any question, By default you can take part in any contest, unless the creator has a cap for that.
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-4">
@@ -40,15 +40,15 @@ export function Faq() {
                         text-[1.2rem] hover:text-primary
                         hover:text-[1.3rem] xl:hover:text-[1.5rem]'>Can one take part in multiple contest?</AccordionTrigger>
                         <AccordionContent>
-                            Yes.
+                            Yes, you can take part in multiple contest at the same time.
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-5">
                         <AccordionTrigger className='xl:text-[1.4rem] 
                         text-[1.2rem] hover:text-primary
-                        hover:text-[1.3rem] xl:hover:text-[1.5rem]'>What is the fee to participate in any contest ?</AccordionTrigger>
-                        <AccordionContent>
-                            The Fees is 0.002 for now
+                        hover:text-[1.3rem] xl:hover:text-[1.5rem]'>What is the expected Bandwidth consumption?</AccordionTrigger>
+                        <AccordionContent className="pt-2">
+                            <span className="text-[20px]">😅</span> That require about 245 bandwidth, and about 200k energy. 
                         </AccordionContent>
                     </AccordionItem>
                 </Accordion>

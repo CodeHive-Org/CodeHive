@@ -41,7 +41,7 @@ export default function AllSubmittion({ contract, claimer, loader }){
                 </div>
                 {codes && codes.length>0? 
                         <Accordion type="single" collapsible className="p-4 flex flex-col gap-3 w-full">
-                            {codes.map((code) =><Code item={code}/>)}
+                            {codes.map((code, index) =><Code key={index} item={code}/>)}
                         </Accordion>
                     :
                         <div className="">
