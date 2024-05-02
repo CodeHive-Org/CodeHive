@@ -5,7 +5,7 @@ import { ChevronDown } from "lucide-react";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const Problem = ({ id, title, address, difficulty, isOpen, handleOpen}) => {
+const Problem = ({ id, title, address, difficulty, isOpen, handleOpen }) => {
   const navigate = useNavigate();
 
   const clickHandler = (e, id) => {
@@ -19,20 +19,13 @@ const Problem = ({ id, title, address, difficulty, isOpen, handleOpen}) => {
       <TableRow
         className={cn("relative h-16 border-none text-white", {
           "border-none": isOpen,
-          "bg-white/10": isEven,
+          "bg-black/50": isEven,
         })}
       >
-        <TableCell className="">{id+1}</TableCell>
-        <TableCell
-          onClick={(e) => clickHandler(e, id)}
-          className="cursor-pointer hover:text-second"
-        >
-          {title}
-        </TableCell>
-        <TableCell
-          className="cursor-pointer hover:text-second"
-        >
-          {parseInt(difficulty._hex) }🐑
+        <TableCell className="">{id + 1}</TableCell>
+        <TableCell className="hover:text-second">{title}</TableCell>
+        <TableCell className="hover:text-second">
+          {parseInt(difficulty._hex)}🐑
         </TableCell>
         <TableCell className="">
           <Link

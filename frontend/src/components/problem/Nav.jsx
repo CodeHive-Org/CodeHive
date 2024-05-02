@@ -1,8 +1,5 @@
 import ConnectButton from "../../context/ConnectButton";
-import {
-  ChevronLeft,
-  ChevronRight
-} from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Nav = () => {
@@ -13,14 +10,14 @@ const Nav = () => {
   };
   const userId = "sfdsd";
   return (
-    <nav className="pz-2 sticky inset-x-0 bg-background px-6 py-3">
+    <nav className="sticky inset-x-0 bg-background px-6 py-2">
       <main className="flex items-center justify-between py-1">
         {/* Logo */}
         <img
           onClick={() => navigate("/")}
           src="/assets/logo1.png"
           alt="Code Duel"
-          className="object-contain w-[140px] cursor-pointer"
+          className="w-[140px] cursor-pointer object-contain"
         />
         <div className="flex h-full w-full items-center space-x-4">
           {/* prev and next problem buttons */}

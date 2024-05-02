@@ -1,7 +1,6 @@
-import { DollarSign, HelpCircle, Play, Users } from "lucide-react";
-import { Button } from "./ui/button";
+import { BugPlay, DollarSign, Play, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import { Button } from "./ui/button";
 
 const BannerGrids = () => {
   const Navigate = useNavigate();
@@ -18,41 +17,65 @@ const BannerGrids = () => {
       >
         <div className="col-span-1 space-y-4 rounded-md bg-black/30 p-8 sm:col-span-2 lg:col-span-1">
           <div className="flex items-start border-b border-gray-800 py-2">
-            <HelpCircle
-              size={50}
-              className="mr-3 rounded-full  text-primary "
-            />
-            <h2 className="mb-2 text-2xl font-bold">Questions</h2>
+            <BugPlay size={50} className="mr-3 rounded-full  text-primary " />
+            <h2 className="mb-2 text-2xl font-bold">Innovative Challenges</h2>
           </div>
           <p className="mb-4">
-            Providing coding questions witha tint of blockchain, this utilises blockchain to post questions on the platforn and reap the reward for that. 
+            Code Hive is the pioneering platform on the Tron blockchain,
+            offering developers unique challenges to showcase and enhance their
+            skills, while solving coding problems that integrate blockchain
+            technology.
           </p>
-          <Button variant="outline" className="rounded-md px-4 py-2 " onClick={()=>Navigate("/problems")}>
-            Questions
+          <Button
+            variant="outline"
+            className="rounded-md px-4 py-2 "
+            onClick={() => Navigate("/problems")}
+          >
+            Explore Challenges
           </Button>
         </div>
         <div className="col-span-1 space-y-4 rounded-md bg-black/30 p-8 sm:col-span-2 lg:col-span-1">
           <div className="flex items-start border-b border-gray-800 py-2">
             <Users size={50} className="mr-3 rounded-full  text-primary " />
-            <h2 className="mb-2 text-2xl font-bold">Communities</h2>
+            <h2 className="mb-2 text-2xl font-bold">Community Collaboration</h2>
           </div>
           <p className="mb-4">
-            Creating a well verse community around tron ecosystem and the coding culture around DSA/CP questions.          
+            Join a thriving community of developers, businesses, and tech
+            enthusiasts. Collaborate, share knowledge, and push the boundaries
+            of what’s possible with blockchain technology and coding.
           </p>
-          <Button variant="outline" className="rounded-md px-4 py-2 " onClick={()=>{window.open("https://forum.trondao.org/t/codehive-crack-the-code-reap-the-rewards/23646","_blank")}}>
-            Visit Community
+          <Button
+            variant="outline"
+            className="rounded-md px-4 py-2 "
+            onClick={() => {
+              window.open(
+                "https://forum.trondao.org/t/codehive-crack-the-code-reap-the-rewards/23646",
+                "_blank",
+              );
+            }}
+          >
+            Join Our Community
           </Button>
         </div>
         <div className="col-span-1 space-y-4 rounded-md bg-black/30 p-8 sm:col-span-2 lg:col-span-1">
           <div className="flex items-start border-b border-gray-800 py-2">
             <Play size={50} className="mr-3 rounded-full  text-primary " />
-            <h2 className="mb-2 text-2xl font-bold">Contest</h2>
+            <h2 className="mb-2 text-2xl font-bold">Engage in Contests</h2>
           </div>
           <p className="mb-4">
-            Currently a Idea, making the platform more interactive and engaging by hosting contests and hackathons. look for updates on twitter for this.
+            Dive into regular contests and hackathons that challenge your skills
+            and offer substantial rewards. Stay tuned for updates and upcoming
+            events that keep the coding excitement alive.
           </p>
-          <Button variant="outline" className="rounded-md px-4 py-2 " onClick={()=>{window.open("https://twitter.com/Codehive01","_blank")}}>
-            Check for Updates
+          <Button
+            variant="outline"
+            className="rounded-md px-4 py-2 "
+            onClick={() => {
+              window.open("https://twitter.com/Codehive01", "_blank");
+            }}
+            disabled={true}
+          >
+            Upcoming Events
           </Button>
         </div>
         <div className="col-span-1 space-y-4 rounded-md bg-black/30 p-8 sm:col-span-2 lg:col-span-1">
@@ -61,13 +84,24 @@ const BannerGrids = () => {
               size={50}
               className="mr-3 rounded-full  text-primary "
             />
-            <h2 className="mb-2 text-2xl font-bold">Rewards</h2>
+            <h2 className="mb-2 text-2xl font-bold">Earn Rewards</h2>
           </div>
           <p className="mb-4">
-            The rewards are equvialent to the difficulty of the question and the number of people who have solved it. The rewards are in TRX and TRC20 tokens and are been designated by the question creator itself.
+            Earn rewards in TRX for your achievements on the platform. The
+            harder the challenges, the greater the rewards—fuel your coding
+            journey with tangible incentives.
           </p>
-          <Button variant="outline" className="rounded-md px-4 py-2 " onClick={()=>{window.open("https://forum.trondao.org/t/codehive-crack-the-code-reap-the-rewards/23646","_blank")}}>
-            INTRESTING , Check Forum for Dicussion?
+          <Button
+            variant="outline"
+            className="rounded-md px-4 py-2 "
+            onClick={() => {
+              window.open(
+                "https://forum.trondao.org/t/codehive-crack-the-code-reap-the-rewards/23646",
+                "_blank",
+              );
+            }}
+          >
+            Learn More About Rewards
           </Button>
         </div>
       </div>

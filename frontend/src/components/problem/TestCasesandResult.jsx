@@ -76,7 +76,7 @@ const TestCasesandResult = ({ problem }) => {
               onClick={() => setActiveBar(index)}
               key={index}
               className={`pb-2  text-[1rem] font-semibold leading-5
-          ${activeBar === index ? "border-b text-rose-500" : "text-gray-500"}
+          ${activeBar === index ? "border-b text-primary" : "text-gray-500"}
               `}
             >
               {nav}
@@ -112,7 +112,9 @@ const TestCasesandResult = ({ problem }) => {
             <p className="mt-4 text-sm font-medium text-white">Input:</p>
             <div className="mt-2 w-full cursor-text rounded-lg border border-transparent bg-gray-400/20 px-3 py-[10px] text-white">
               {typeof problem.testcases[activeTestCaseId].input == "object"
-                ? Object.values(problem.testcases[activeTestCaseId].input)
+                ? "[" +
+                  problem.testcases[activeTestCaseId]?.input.strs.toString() +
+                  "]"
                 : problem.testcases[activeTestCaseId].input.toString()}
             </div>
             <p className="mt-4 text-sm font-medium text-white">Output:</p>

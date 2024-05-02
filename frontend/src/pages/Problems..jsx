@@ -9,10 +9,8 @@ import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 // import AddQuestionBox from "@/components/problems/AddQuestionBox";
 
 const Problems = () => {
-  
-
   return (
-    <main className="dark relative min-h-screen w-full bg-gradient-to-br from-[#0F1522] to-background pb-4">
+    <main className="dark relative min-h-screen w-full bg-gradient-to-br from-[#0f0f0f] to-background pb-4">
       <Nav />
       <MaxWidthWrapper className="flex items-start justify-between gap-10 py-16 max-lg:flex-col">
         <ProblemsContainer />

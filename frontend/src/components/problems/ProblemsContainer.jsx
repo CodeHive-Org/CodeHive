@@ -35,6 +35,8 @@ const ProblemsContainer = () => {
   }, [ABI_Bank]);
   const isAnyOpen = activeIndex !== null;
 
+  console.log("problem : ", problems);
+
   return (
     <main className="relative flex-1 p-2">
       <Table className="mr-auto w-full max-w-[1000px] px-4 text-white">

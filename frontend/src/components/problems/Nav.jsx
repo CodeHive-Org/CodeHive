@@ -36,12 +36,12 @@ const Nav = () => {
     });
 
     setTimeout(() => {
-      navigate('/');
+      navigate("/");
     }, 2500);
   }
 
   return (
-    <nav className="pz-2 sticky inset-x-0 bg-secondary py-3">
+    <nav className="pz-2 sticky inset-x-0 bg-black py-5">
       <Toaster />
       <MaxWidthWrapper className="">
         <main className="flex items-center justify-between ">
@@ -54,7 +54,7 @@ const Nav = () => {
               className="mr-4 h-[100%] w-[140px] cursor-pointer"
             />
 
-            <Link
+            {/* <Link
               to="/problems"
               className={buttonVariants({
                 variant: "link",
@@ -62,8 +62,8 @@ const Nav = () => {
               })}
             >
               Problems
-            </Link>
-            <Link
+            </Link> */}
+            {/* <Link
               to="/contest"
               className={buttonVariants({
                 variant: "link",
@@ -89,7 +89,7 @@ const Nav = () => {
               })}
             >
               Contact Us
-            </Link>
+            </Link> */}
           </div>
           {/* right side */}
           {address ? (
