@@ -4,16 +4,22 @@ import { Link } from "react-router-dom";
 
 const Footer = ({ className }) => {
   return (
-    <div className={cn("w-full p-4 px-4 text-gray-400 bg-black/90", className)}>
-      <div className="py-2 flex justify-between items-center">
+    <div className={cn("w-full bg-black/90 p-4 px-4 text-gray-400", className)}>
+      <div className="flex items-center justify-between py-2">
         {/* copyright */}
         <h2>Copyright &copy; 2024 codehive.online</h2>
         {/* right Side */}
         <div className="flex items-center space-x-4">
-          <Link to="/help">Help</Link>
-          <Link to="/discord">Discord</Link>
-          <Link to="/instagram">Instagram</Link>
-          <Link to="/Github">Github</Link>
+          <Link
+            target="_blank"
+            to="https://forum.trondao.org/t/codehive-crack-the-code-reap-the-rewards/23646"
+          >
+            Help
+          </Link>
+          {/* <Link to="/discord">Discord</Link> */}
+          <Link target="_blank" to="https://github.com/CodeHive-Org/CodeHive">
+            Github
+          </Link>
         </div>
       </div>
     </div>
