@@ -67,7 +67,7 @@ export default function MySubmittion({ contract, claimer, loader }){
                         }
                     </div>
                     {allData && 
-                        <div>Submitted on: {parseInt(allData.submitTime._hex, 16)}</div>
+                        <div>t#_ {parseInt(allData.submitTime._hex, 16)}</div>
                     }
                 </div>
 

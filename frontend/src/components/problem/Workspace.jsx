@@ -185,7 +185,7 @@ const WorkSpace = ({ data, pid, contract }) => {
     const {IpfsHash} = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', options).then(res=>res.text()).then((res)=>JSON.parse(res));
     try {
       let result = await contract.submitCode(IpfsHash,address,200).send({
-        feeLimit:100_000_000,
+        feeLimit:100_000_000_0,
         shouldPollResponse:true
       });
       console.log("Result for that:",result);

@@ -111,7 +111,7 @@ const Nav = () => {
                     onValueChange={setPosition}
                   >
                     <DropdownMenuItem>
-                      <Link to="/accountsettings">Account Settings</Link>
+                      <Link to="/myquestion">My Questions</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                       <Link to="/addquestion">Add Question</Link>

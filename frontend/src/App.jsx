@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import "./index.css";
-import AccountSettings from "./pages/AccountSettings";
+import MyQuestions from "./pages/MyQuestions";
 import AddQuestion from "./pages/AddQuestion";
 import Landing from "./pages/Landing";
 import ProblemDesc from "./pages/ProblemDesc";
@@ -79,7 +79,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="problems/:pid" element={<ProblemDesc />} />
-                <Route path="/accountsettings" element={<AccountSettings />} />
+                <Route path="/myquestion" element={<MyQuestions />} />
                 <Route path="/addquestion" element={<AddQuestion />} />
                 <Route path="/problems" element={<Problems />} />
                 <Route path="/problems/problem/*" element={<ProblemDesc />} />
