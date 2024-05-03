@@ -5,7 +5,6 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion"
-import { SkeletonPage } from "../SkeletonPage";
 
 
 export default function AllSubmittion({ contract, claimer, loader }){
@@ -28,9 +27,6 @@ export default function AllSubmittion({ contract, claimer, loader }){
             loader(false);
         });
     },[]);
-    if(computeAddress.lenght == 0){
-        return <SkeletonPage/>
-    }
     return (
         <div className="h-[calc(100vh-94px)] overflow-y-hidden px-0 py-4 w-full">
             <div className="px-5">
@@ -83,21 +79,19 @@ function Code({item, index}){
        fetchTHeData(item[1], setCode);
     },[]);
     return (
-        <div className="flex-col rounded-[10px]">
-                <AccordionItem value={index}>
-                    <AccordionTrigger className='xl:text-[1.4rem] 
-                    text-[0.86rem] hover:text-primary
-                    hover:text-[0.9rem] xl:hover:text-[1.5rem] px-4'>
-                        <div className="flex justify-between items-center w-full">
-                            <p>{"Claimer: "+ item[0].slice(0,4)+"....."+item[0].slice(-6)}</p>
-                            <p>t#_{parseInt(item.submitTime._hex,16)}</p>                            
-                        </div>    
-                    </AccordionTrigger>
-                    <AccordionContent className="whitespace-pre-wrap px-6 bg-gray-500 py-3 rounded-t-[10px]">
-                        {code}
-                    </AccordionContent>
-                </AccordionItem>
-        </div>
+        <AccordionItem className="flex-col rounded-[10px]" value={index.toString()}>
+            <AccordionTrigger className='xl:text-[1.4rem] 
+            text-[0.86rem] hover:text-primary
+            hover:text-[0.9rem] xl:hover:text-[1.5rem] px-4'>
+                <div className="flex justify-between items-center w-full">
+                    <p>{"Claimer: "+ item[0].slice(0,4)+"....."+item[0].slice(-6)}</p>
+                    <p>t#_{parseInt(item.submitTime._hex,16)}</p>                            
+                </div>    
+            </AccordionTrigger>
+            <AccordionContent className="whitespace-pre-wrap px-6 bg-gray-500 py-3 rounded-t-[10px]">
+                {code}
+            </AccordionContent>
+        </AccordionItem>
     )
 }
 

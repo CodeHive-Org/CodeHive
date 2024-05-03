@@ -7,6 +7,7 @@ import AllSubmittion from "./AllSubmittion";
 import MySubmittion from "./MySubmittion";
 import { Button } from "../ui/button";
 import ReportModal from "../ReportModal";
+import { SubSkeletonPage } from "../SubSkeletonPage";
 
 const ProblemDescription = ({ problem, pid, contract }) => {
   const [ loading ,setLoading ] = useState(false);
@@ -34,15 +35,9 @@ const ProblemDescription = ({ problem, pid, contract }) => {
       });
     //
   }, []);
-
   return (
-    <main className="relative">
-       {loading && (
-        <div className="absolute inset-0 flex justify-center items-center bg-opacity-50 bg-white z-50">
-          <div className="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-20 w-20"></div>
-        </div>
-      )}
-      <div className="bg-third">
+    <main className="relative h-full">
+      <div className="bg-third h-full">
         {/* TAB */}
         <div className="flex h-11 gap-2 w-full items-center overflow-x-hidden border-b border-gray-500 bg-secondary pt-2 text-white">
           <div
@@ -68,7 +63,8 @@ const ProblemDescription = ({ problem, pid, contract }) => {
             My Submittion
           </div>
         </div>
-        {selector == 0 &&
+        {loading && <SubSkeletonPage/>}
+        {selector == 0 && !loading &&
           <div className="flex h-[calc(100vh-94px)]  relative overflow-y-hidden px-0 py-4">
             <div className="px-5">
               <div className="flex w-full flex-col gap-4">
@@ -153,10 +149,10 @@ const ProblemDescription = ({ problem, pid, contract }) => {
             </div>
           </div>
         }
-        {selector == 1 &&
+        {selector == 1 && !loading &&
           <AllSubmittion contract ={contract} claimer={claimer} loader={setLoading}/>
         }
-        {selector == 2 &&
+        {selector == 2 && !loading &&
           <MySubmittion contract ={contract} claimer={claimer} loader={setLoading}/>
         }
         
