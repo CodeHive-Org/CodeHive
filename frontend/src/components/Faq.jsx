@@ -48,8 +48,7 @@ export function Faq() {
             <AccordionContent>
               Rewards are distributed based on challenge rules set by the
               challenge creators. Typically, rewards are given for solutions
-              that meet the challenge criteria, with special bonuses for
-              creativity and efficiency.
+              that meet the challenge criteria.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-5">
@@ -58,7 +57,8 @@ export function Faq() {
             </AccordionTrigger>
             <AccordionContent>
               Yes, companies and educational institutions can use Code Hive to
-              run internal competitions and challenges to foster innovation and
+              run
+              internal competitions and challenges to foster innovation and
               team-building among their members. PS: will be rolling out this
               feature in future updates !
             </AccordionContent>
