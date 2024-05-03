@@ -1,16 +1,19 @@
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
-import { outputAtom, resultAtom } from "../../atoms/problemAtom";
+import { outputAtom } from "../../atoms/problemAtom";
 
 const TestCasesandResult = ({ problem }) => {
-  const [loading, setLoading] = useState(true);
-  const resultState = useRecoilValue(resultAtom);
+  const [, setLoading] = useState(true);
 
   const [activeTestCaseId, setActiveTestCaseId] = useState(0); // indexing for testcases from the problem;
   const [innerNavs, setInnerNavs] = useState(["TestCases"]);
   const [activeBar, setActiveBar] = useState(0);
+  const [showDetails, setShowDetails] = useState(false);
 
-  const outputState = useRecoilValue(outputAtom);
+  const output = useRecoilValue(outputAtom);
+  const outputState = output?.data;
+
   const openTestCases = problem.testcases.filter((el, index) => {
     if (!el.hidden) {
       return el;
@@ -23,8 +26,6 @@ const TestCasesandResult = ({ problem }) => {
   }, []);
 
   useEffect(() => {
-    console.log("innerNavs : ", innerNavs);
-
     if (innerNavs.length < 2 && outputState && !innerNavs.includes("Console")) {
       setInnerNavs((prev) => [...prev, "Console"]);
     }
@@ -62,6 +63,8 @@ const TestCasesandResult = ({ problem }) => {
       );
     }
   };
+
+  console.log("outptusute stete : ", outputState);
 
   return (
     <div className="h-full w-full overflow-auto bg-third px-5 py-2">
@@ -136,33 +139,54 @@ const TestCasesandResult = ({ problem }) => {
               {outputState ? <div className="flex">{getOutput()}</div> : null}
             </div>
           </div>
+
+          {/* output details :  */}
+          <div
+            className="ml-5 mt-4 flex items-center space-x-3 text-gray-300 hover:text-white"
+            onClick={() => setShowDetails((prev) => !prev)}
+          >
+            <h3>Output Details</h3>
+            {showDetails ? <ChevronUp /> : <ChevronDown />}
+          </div>
+
+          {showDetails ? (
+            <div className="metrics-container ml-10 mt-4 flex flex-col space-y-3">
+              {output?.type == "submit" && (
+                <>
+                  <p className="text-sm">
+                    ExpectedOutput:{" "}
+                    <span className="ml-1 rounded-md bg-black/30 px-2 py-1 font-semibold">
+                      {output?.expectedOutput}
+                    </span>
+                  </p>
+                  {/* <p className="text-sm">
+                    Status:{" "}
+                    <span className="ml-1 rounded-md bg-black/30 px-2 py-1 font-semibold">
+                      {outputState?.status?.description}
+                    </span>
+                  </p> */}
+                </>
+              )}
+
+              <p className="text-sm">
+                Memory:{" "}
+                <span className="ml-1 rounded-md bg-black/30 px-2 py-1 font-semibold">
+                  {outputState?.memory}
+                </span>
+              </p>
+              <p className="text-sm">
+                Time:{" "}
+                <span className="ml-1 rounded-md bg-black/30 px-2 py-1 font-semibold">
+                  {outputState?.time}
+                </span>
+              </p>
+            </div>
+          ) : (
+            ""
+          )}
         </div>
       )}
     </div>
-
-    // <main className="w-full overflow-auto h-full relative bg-third">
-    //   <nav>
-    //     <div className="flex w-full items-center bg-secondary text-white overflow-x-hidden border-b border-gray-500">
-    //       <div
-    //         className={
-    //           "rounded-t-[5px] px-5 py-[10px] flex items-center text-sm cursor-pointer"
-    //         }
-    //       >
-    //         <Check className="text-green-500 mr-3" /> Result
-    //       </div>
-    //     </div>
-    //   </nav>
-    //   <h2 className="text-red-400 text-[1.4rem] px-2 py-4">
-    //     {"Wrong Output :( "}
-    //   </h2>
-    //   <p className="pl-3 text-red-300">Hello there !</p>
-    //   <div className="flex flex-col p-3 text-gray-300 gap-4">
-    //     <h1 className="text-[1rem] border-b border-gray-400 text-white font-semibold">
-    //       Expected Result :{" "}
-    //     </h1>
-    //     <p>Hello world !</p>
-    //   </div>
-    // </main>
   );
 };
 

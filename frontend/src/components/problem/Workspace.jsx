@@ -22,7 +22,7 @@ import { ErrorAlert } from "../ErrorAlert";
 
 const WorkSpace = ({ data, pid, contract }) => {
   const [alert, setAlert] = useRecoilState(alertAtom);
-  const [submissionError, setSubmissionError] = useRecoilState(submissionErrorAtom); 
+  const [, setSubmissionError] = useRecoilState(submissionErrorAtom);
   let [userCode, setUserCode] = useState();
 
   const [lastUserValidCode, setLastUserValidCode] = useState("");
@@ -32,18 +32,15 @@ const WorkSpace = ({ data, pid, contract }) => {
       ? Object.values(data.testcases[0].input).toString()
       : data.testcases[0].input.toString();
 
-  const wrappedCode = `function default(input) {\n${null}\n}\n console.log(default(${null}))`;
-  // setUserCode(wrappedCode);
-
   const { width, height } = useWindowSize();
   const [success, setSuccess] = useState(false);
   const { address } = useWallet();
 
   const [, setOutputState] = useRecoilState(outputAtom);
 
-  const [processing, setProcessing] = useState();
+  const [submissionProcessing, setSubmissionProcessing] = useState(false);
 
-  const checkStatus = async (token) => {
+  const checkStatus = async (token, type) => {
     const options = {
       method: "GET",
       url: import.meta.env.VITE_RAPID_API_URL + "/" + token,
@@ -59,20 +56,22 @@ const WorkSpace = ({ data, pid, contract }) => {
 
       // Processed - we have a result
       if (statusId === 1 || statusId === 2) {
-        // still processing
         setTimeout(() => {
           checkStatus(token);
         }, 2000);
         return;
       } else {
-        setProcessing(false);
-        setOutputState(response.data);
+        setOutputState({
+          type: type,
+          data: response.data,
+          expectedOutput: String(data?.examples[0]?.output).trim(),
+        });
         toast.success(`Compiled Successfully!`, { position: "top-center" });
         return response.data;
       }
     } catch (err) {
       console.log("err", err);
-      setProcessing(false);
+      setSubmissionProcessing(false);
       toast.error("Error in the code !");
     }
   };
@@ -80,8 +79,6 @@ const WorkSpace = ({ data, pid, contract }) => {
   const testcaseInput = JSON.stringify(data?.examples[0]?.input);
 
   const [temp, setTemp] = useState(true); // make sures that the alert pop ups only once.
-
-  console.log("open ;", alert);
 
   const handleSubmit = async () => {
     if (!address) {
@@ -105,6 +102,7 @@ const WorkSpace = ({ data, pid, contract }) => {
       return;
     }
 
+    setSubmissionProcessing(true);
     // default template + starter code
     const sourceCode = `
       function defaultFunc(inputs) {
@@ -116,7 +114,6 @@ const WorkSpace = ({ data, pid, contract }) => {
       console.log(defaultFunc(${testcaseInput}));
     `;
 
-    setProcessing(true);
     const formData = {
       language_id: 63,
       // encode source code in base64
@@ -140,13 +137,14 @@ const WorkSpace = ({ data, pid, contract }) => {
       .request(options)
       .then(async function (response) {
         const token = response.data.token;
-        let output = await checkStatus(token);
+        let output = await checkStatus(token, "submit");
         let statusId = output?.status?.id;
 
         console.log("output ; ", atob(output?.stdout));
 
         if (statusId !== 3) {
           // ! Dont run the contract if their is run time
+          setSubmissionProcessing(false);
           toast.error(
             "RunTime Error | Please Check your Code before submission !",
           );
@@ -157,21 +155,19 @@ const WorkSpace = ({ data, pid, contract }) => {
           const outputString = String(atob(output?.stdout)).trim();
           const expectedOutput = String(data?.examples[0]?.output).trim();
 
-          console.log("Output from API:", outputString);
-          console.log("Expected Output:", expectedOutput);
-
           if (outputString === expectedOutput) {
             setLastUserValidCode(userCode);
             // create a pop up for a upload code option...
             handleUpload(userCode);
           } else {
+            setSubmissionProcessing(false);
             toast.error("Submission Failed ! 🚫");
           }
         }
       })
       .catch((err) => {
         let error = err.response ? err.response.data : err;
-        setProcessing(false);
+        setSubmissionProcessing(false);
         console.log(error);
       });
   };
@@ -180,11 +176,13 @@ const WorkSpace = ({ data, pid, contract }) => {
     //code fetch using the contract...
     try {
       const data = await contract.haveSubmitted().call();
+
       if (data) {
         setSubmissionError({
           isError: true,
           message: `You have already Submitted this Problem's Solution`,
-        })
+        });
+        setSubmissionProcessing(false);
         return;
         // alert("allready submitted the code..");
       }
@@ -192,13 +190,17 @@ const WorkSpace = ({ data, pid, contract }) => {
       setSubmissionError({
         isError: true,
         message: "Error Occured when fetching the submission contract info !",
-      })
+      });
+      setSubmissionProcessing(false);
       console.log("error : ", err);
       return;
     }
 
     if (uploadCode == null || uploadCode == "") {
-      alert("submit the code before uploding to chain..");
+      setSubmissionError({
+        isError: true,
+        message: "submit the code before uploding to chain..",
+      });
       return;
     }
     const options = {
@@ -222,14 +224,16 @@ const WorkSpace = ({ data, pid, contract }) => {
       });
       setSuccess(true);
       toast.success("Congratulations your submission was accepted ! 🥳");
+      setSubmissionProcessing(false);
       console.log("Result for that:", result);
     } catch (error) {
+      setSubmissionProcessing(false);
       console.log("Error contacting the contract:", error);
     }
   };
 
   const handleRun = async () => {
-    setProcessing(true);
+    // setProcessing(true);
 
     const sourceCode = `
     function defaultFunc(inputs) {
@@ -264,11 +268,11 @@ const WorkSpace = ({ data, pid, contract }) => {
       .request(options)
       .then(function (response) {
         const token = response.data.token;
-        checkStatus(token);
+        checkStatus(token, "run");
       })
       .catch((err) => {
         let error = err.response ? err.response.data : err;
-        setProcessing(false);
+        // setProcessing(false);
         console.log(error);
       });
   };
@@ -309,7 +313,11 @@ const WorkSpace = ({ data, pid, contract }) => {
           </ResizablePanel>
         </ResizablePanelGroup>
       </ResizablePanel>
-      <SubmitBox handleSubmit={handleSubmit} handleRun={handleRun} />
+      <SubmitBox
+        handleSubmit={handleSubmit}
+        loading={submissionProcessing}
+        handleRun={handleRun}
+      />
       {success && (
         <ReactConfetti
           gravity={0.3}
