@@ -1,3 +1,4 @@
+import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 import ConnectButton from "../../context/ConnectButton";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";

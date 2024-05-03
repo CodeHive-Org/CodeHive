@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import AllSubmittion from "./AllSubmittion";
 import MySubmittion from "./MySubmittion";
+import { Button } from "../ui/button";
+import ReportModal from "../ReportModal";
 
 const ProblemDescription = ({ problem, pid, contract }) => {
   const [ loading ,setLoading ] = useState(false);
@@ -67,7 +69,7 @@ const ProblemDescription = ({ problem, pid, contract }) => {
           </div>
         </div>
         {selector == 0 &&
-          <div className="flex h-[calc(100vh-94px)] overflow-y-hidden px-0 py-4">
+          <div className="flex h-[calc(100vh-94px)]  relative overflow-y-hidden px-0 py-4">
             <div className="px-5">
               <div className="flex w-full flex-col gap-4">
                 <div className="flex space-x-4">
@@ -85,11 +87,11 @@ const ProblemDescription = ({ problem, pid, contract }) => {
                 </div>
 
                 {/* Examples */}
-                <div className="mt-4 rounded-md bg-gray-400/40 p-4">
+                <div className="mt-4 rounded-md bg-black/20 border border-black p-4">
                   {problem.examples.map((example, index) => (
                     <div key={index}>
                       <p className="font-medium text-white ">
-                        Example {index + 1}:{" "}
+                        Example {index + 1}:{""}
                       </p>
                       {example.img && (
                         <img src={example.img} alt="" className="mt-3" />
@@ -141,6 +143,12 @@ const ProblemDescription = ({ problem, pid, contract }) => {
                     </h1>
                   </div>
                 </div>
+
+                {/* report button section */}
+                <ReportModal />
+                {/* <section className='absolute bottom-5 mb-1'>
+                      <Button variant='destructive' className='text-white relative px-5 h-[35px]'>Report</Button>
+                </section> */}
               </div>
             </div>
           </div>
