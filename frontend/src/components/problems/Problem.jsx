@@ -25,7 +25,7 @@ const Problem = ({ id, title, address, difficulty, isOpen, handleOpen }) => {
         <TableCell className="">{id + 1}</TableCell>
         <TableCell className="hover:text-second">{title}</TableCell>
         <TableCell className="hover:text-second">
-          {parseInt(difficulty._hex)}🐑
+          {parseInt(difficulty?._hex)}🐑
         </TableCell>
         <TableCell className="">
           <Link

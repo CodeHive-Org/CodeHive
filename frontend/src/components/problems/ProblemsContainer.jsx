@@ -16,6 +16,7 @@ import { ABI_Bank } from "@/utils/problems";
 
 const ProblemsContainer = () => {
   const [activeIndex, setActiveIndex] = useState(null);
+  const { ABI_Bank:a_b } = useTheContext();
   const [problems, setProblems] = useState([]);
   useEffect(() => {
     //calling the contract to detch the data of the problems.
