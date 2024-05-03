@@ -15,12 +15,14 @@ import CodeEditor from "./CodeEditor";
 import ProblemDescription from "./ProblemDescription";
 import SubmitBox from "./SubmitBox";
 import TestCasesandResult from "./TestCasesandResult";
-import { alertAtom } from "@/atoms/userAtom";
+import { alertAtom, submissionErrorAtom } from "@/atoms/userAtom";
+import { ErrorAlert } from "../ErrorAlert";
 
 // import TestCasesandResult from "./TestCasesandResult";
 
 const WorkSpace = ({ data, pid, contract }) => {
   const [alert, setAlert] = useRecoilState(alertAtom);
+  const [submissionError, setSubmissionError] = useRecoilState(submissionErrorAtom); 
   let [userCode, setUserCode] = useState();
 
   const [lastUserValidCode, setLastUserValidCode] = useState("");
@@ -179,14 +181,19 @@ const WorkSpace = ({ data, pid, contract }) => {
     try {
       const data = await contract.haveSubmitted().call();
       if (data) {
-        alert("allready submitted the code..");
+        setSubmissionError({
+          isError: true,
+          message: `You have already Submitted this Problem's Solution`,
+        })
         return;
+        // alert("allready submitted the code..");
       }
     } catch (err) {
-      // todo : add a todo saying allready submitted for this bounty...
-      alert(
-        "Error fetching the contract to check if the user has allready submitted the code..",
-      );
+      setSubmissionError({
+        isError: true,
+        message: "Error Occured when fetching the submission contract info !",
+      })
+      console.log("error : ", err);
       return;
     }
 
@@ -278,6 +285,7 @@ const WorkSpace = ({ data, pid, contract }) => {
       direction="horizontal"
       className="max-w-full rounded-lg border-none"
     >
+      <ErrorAlert />
       <Toaster richColors />
       <ResizablePanel defaultSize={50}>
         {/* Problem Description */}

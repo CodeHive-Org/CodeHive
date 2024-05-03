@@ -89,7 +89,7 @@ const ProblemDesc = () => {
         <WorkSpace data={Problem} pid={pid} contract={contract} />
       ) : (
         <div className="h-full w-full text-center text-2xl font-medium text-white">
-          <h2 className="mt-20">Problem Not Found !</h2>
+          <h2 className="mt-20">Problem Not Found ☹️!</h2>
         </div>
       )}
     </main>

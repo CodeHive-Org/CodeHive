@@ -13,6 +13,14 @@ export const alertAtom = atom({
   default: {
     isOpen: false,
     title: "",
-    description: ""
-  }
+    description: "",
+  },
+});
+
+export const submissionErrorAtom = atom({
+  key: "submissionErrorAtom",
+  default: {
+    isError: false,
+    message: "",
+  },
 });

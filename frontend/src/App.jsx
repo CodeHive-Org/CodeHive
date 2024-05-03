@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import "./index.css";
@@ -19,6 +19,9 @@ import { WalletModalProvider } from "@tronweb3/tronwallet-adapter-react-ui";
 import "@tronweb3/tronwallet-adapter-react-ui/style.css";
 import { TronLinkAdapter } from "@tronweb3/tronwallet-adapter-tronlink";
 import AlertModal from "./components/ui/AlertModal";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "./firebaseConfig";
+
 globalThis.Buffer = Buffer;
 
 // wallet connection imports
@@ -26,35 +29,26 @@ globalThis.Buffer = Buffer;
 function App() {
   window.global = window;
 
-  const address = null;
-  const data = JSON.parse(localStorage.getItem("user"));
+  console.log("db : ", db);
 
-  const userWalletHanlder = async () => {
-    // try {
-    //   const reponse = await axios.post(
-    //     "http://localhost:8000/api/add_user_wallet",
-    //     {
-    //       user_id: data.user.user_id,
-    //       sol_addr: String(address)
-    //     },
-    //     {
-    //       headers: {
-    //         "Content-Type": "application/x-www-form-urlencoded"
-    //       }
-    //     }
-    //   );
-    //   console.log('response : ', reponse);
-    //   // Reset form after successful submission
-    //   // Handle success or redirect user
-    // } catch (error) {
-    //   // Handle error
-    //   console.error("Error adding user wallet:", error);
-    // }
+  const fetch = async () => {
+    try {
+      await getDocs(collection(db, "Reports")).then((querySnapshot) => {
+        const newData = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          // id: doc.id,
+        }));
+        // setTodos(newData);
+        console.log("data", newData);
+      });
+    } catch (err) {
+      console.log("error : ", err);
+    }
   };
 
-  // useEffect(() => {
-  //   userWalletHanlder();
-  // }, [address]);
+  useEffect(() => {
+    fetch();
+  }, []);
 
   function onError(e) {
     if (e instanceof WalletNotFoundError) {
