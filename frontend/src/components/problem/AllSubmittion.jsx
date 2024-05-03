@@ -41,7 +41,7 @@ export default function AllSubmittion({ contract, claimer, loader }){
                 </div>
                 {codes && codes.length>0? 
                         <Accordion type="single" collapsible className="p-4 flex flex-col gap-3 w-full">
-                            {codes.map((code, index) =><Code key={index} item={code}/>)}
+                            {codes.map((code, index) =><Code key={index} index={index} item={code}/>)}
                         </Accordion>
                     :
                         <div className="">
@@ -73,7 +73,7 @@ const fetchTHeData = async (url, fxn) => {
     fxn(JSON.parse(data).code);
 }
 
-function Code({item}){
+function Code({item, index}){
     console.log(item);
     const [ code, setCode ] = useState("Loading...");
     useEffect(()=>{
@@ -81,7 +81,7 @@ function Code({item}){
     },[]);
     return (
         <div className="flex-col rounded-[10px]">
-                <AccordionItem value=" item-1 pb-1">
+                <AccordionItem value={index}>
                     <AccordionTrigger className='xl:text-[1.4rem] 
                     text-[0.86rem] hover:text-primary
                     hover:text-[0.9rem] xl:hover:text-[1.5rem] px-4'>
