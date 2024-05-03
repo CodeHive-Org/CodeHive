@@ -5,6 +5,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion"
+import { SkeletonPage } from "../SkeletonPage";
 
 
 export default function AllSubmittion({ contract, claimer, loader }){
@@ -27,7 +28,9 @@ export default function AllSubmittion({ contract, claimer, loader }){
             loader(false);
         });
     },[]);
-    console.log(codes);
+    if(computeAddress.lenght == 0){
+        return <SkeletonPage/>
+    }
     return (
         <div className="h-[calc(100vh-94px)] overflow-y-hidden px-0 py-4 w-full">
             <div className="px-5">
