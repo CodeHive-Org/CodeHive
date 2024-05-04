@@ -6,7 +6,6 @@ import MyQuestionDesc from "./pages/MyQuestionDesc";
 import MyQuestions from "./pages/MyQuestions";
 import AddQuestion from "./pages/AddQuestion";
 import Landing from "./pages/Landing";
-import MyQuestions from "./pages/MyQuestions";
 import ProblemDesc from "./pages/ProblemDesc";
 import Problems from "./pages/Problems.";
 //importing buffer tronweb access
