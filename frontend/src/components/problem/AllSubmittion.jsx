@@ -35,7 +35,7 @@ export default function AllSubmittion({ contract, claimer, loader }) {
         <div className="flex w-full flex-col gap-4">
           <div className="flex space-x-4">
             <div className="mr-2 flex text-xl font-medium text-white">
-              All Submittions Here:
+              All Submissions Here:
             </div>
           </div>
         </div>
@@ -99,7 +99,7 @@ function Code({ item, index }) {
           <p>t#_{parseInt(item.submitTime._hex, 16)}</p>
         </div>
       </AccordionTrigger>
-      <AccordionContent className="whitespace-pre-wrap rounded-t-[10px] bg-gray-500 px-6 py-3">
+      <AccordionContent className="whitespace-pre-wrap rounded-t-[10px] bg-black/20 px-6 py-3">
         {code}
       </AccordionContent>
     </AccordionItem>
