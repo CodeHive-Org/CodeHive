@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import "./index.css";
+import MyQuestionDesc from "./pages/MyQuestionDesc";
 import MyQuestions from "./pages/MyQuestions";
 import AddQuestion from "./pages/AddQuestion";
 import Landing from "./pages/Landing";
@@ -76,6 +77,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="problems/:pid" element={<ProblemDesc />} />
+                <Route path="myquestion/:pid" element={<MyQuestionDesc />} />
                 <Route path="/myquestion" element={<MyQuestions />} />
                 <Route path="/addquestion" element={<AddQuestion />} />
                 <Route path="/problems" element={<Problems />} />
