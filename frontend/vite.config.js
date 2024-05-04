@@ -5,6 +5,7 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 import tailwindcss from "tailwindcss";
 import NodeGlobalsPolyfillPlugin from "@esbuild-plugins/node-globals-polyfill";
+import { terser } from "rollup-plugin-terser";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -28,7 +29,7 @@ export default defineConfig({
     esbuildOptions: {
       define: {
         global: "globalThis",
- // This will effectively remove references to 'Buffer'
+        // This will effectively remove references to 'Buffer'
       },
       plugins: [
         NodeGlobalsPolyfillPlugin({
@@ -38,7 +39,14 @@ export default defineConfig({
       ],
     },
   },
-  plugins: [react()],
+  plugins: [
+    react(),
+    terser({
+      compress: {
+        drop_console: true, // Remove console logs
+      },
+    }),
+  ],
   css: {
     postcss: {
       plugins: [tailwindcss()],

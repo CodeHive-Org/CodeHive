@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import "./index.css";
@@ -6,6 +6,7 @@ import MyQuestionDesc from "./pages/MyQuestionDesc";
 import MyQuestions from "./pages/MyQuestions";
 import AddQuestion from "./pages/AddQuestion";
 import Landing from "./pages/Landing";
+import MyQuestions from "./pages/MyQuestions";
 import ProblemDesc from "./pages/ProblemDesc";
 import Problems from "./pages/Problems.";
 //importing buffer tronweb access
@@ -20,8 +21,6 @@ import { WalletModalProvider } from "@tronweb3/tronwallet-adapter-react-ui";
 import "@tronweb3/tronwallet-adapter-react-ui/style.css";
 import { TronLinkAdapter } from "@tronweb3/tronwallet-adapter-tronlink";
 import AlertModal from "./components/ui/AlertModal";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "./firebaseConfig";
 
 globalThis.Buffer = Buffer;
 
@@ -29,27 +28,6 @@ globalThis.Buffer = Buffer;
 
 function App() {
   window.global = window;
-
-  console.log("db : ", db);
-
-  const fetch = async () => {
-    try {
-      await getDocs(collection(db, "Reports")).then((querySnapshot) => {
-        const newData = querySnapshot.docs.map((doc) => ({
-          ...doc.data(),
-          // id: doc.id,
-        }));
-        // setTodos(newData);
-        console.log("data", newData);
-      });
-    } catch (err) {
-      console.log("error : ", err);
-    }
-  };
-
-  useEffect(() => {
-    fetch();
-  }, []);
 
   function onError(e) {
     if (e instanceof WalletNotFoundError) {

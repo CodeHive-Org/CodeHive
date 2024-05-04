@@ -6,8 +6,12 @@ const Footer = ({ className }) => {
   return (
     <div className={cn("w-full bg-black/90 p-4 px-4 text-gray-400", className)}>
       <div className="flex items-center justify-between py-2">
-        {/* copyright */}
-        <h2>Copyright &copy; 2024 codehive.online</h2>
+        <div className='flex items-center space-x-4'>
+          <img src="/assets/logo.png" alt="logo" className="w-[40px] " />
+          {/* copyright */}
+          <h2>Copyright &copy; 2024 codehive.online</h2>
+        </div>
+
         {/* right Side */}
         <div className="flex items-center space-x-4">
           <Link

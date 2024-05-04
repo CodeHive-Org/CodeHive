@@ -47,14 +47,14 @@ export default function MySubmittion({ contract, claimer, loader }){
                 <div className="flex w-full flex-col gap-4">
                     <div className="flex space-x-4">
                         <div className="mr-2 flex-1 text-xl font-medium text-white">
-                            My Submittions:
+                            My Submissions:
                         
                         </div>
                     </div>
                 </div>
                 <div className="flex flex-col gap-1">
                     <br />
-                    <div className="border-2 border-gray-700 rounded-[16px] bg-gray-600">
+                    <div className="border-2 border-gray-700 rounded-[16px] bg-black/20">
                         {myCode? 
                                 <div className="p-4 flex flex-col gap-1">
                                     {myCode.map((el,i)=>(<span key={i} className="whitespace-pre-wrap">{el}</span>))}
@@ -79,7 +79,7 @@ export default function MySubmittion({ contract, claimer, loader }){
 
 function Code({code}){
     return (
-        <div className="flex-col rounded-[10px] border-2 border-gray-600">
+        <div className="flex-col rounded-[10px] border-2 border-black/20">
                 code code code code{code}
         </div>
     )

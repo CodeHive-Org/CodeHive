@@ -60,7 +60,7 @@ const ProblemDescription = ({ problem, pid, contract }) => {
             }
             onClick={()=>setSelector(2)}
           >
-            My Submittion
+            My Submissions
           </div>
         </div>
         {loading && <SubSkeletonPage/>}
@@ -124,8 +124,8 @@ const ProblemDescription = ({ problem, pid, contract }) => {
 
                 {/* more info regarding problem  */}
                 <div className="flex max-w-max flex-col space-y-4">
-                  <div className="flex rounded-md bg-rose-600 p-2 px-4 font-semibold text-white">
-                    <h1 className="mr-2 font-medium text-black">
+                  <div className="flex rounded-md bg-black/40 border-gray-400 border-dotted border p-2 px-4 font-semibold text-white">
+                    <h1 className="mr-2 font-medium">
                       Bounty Claimed :
                       <span>
                         {" "}

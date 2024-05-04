@@ -40,7 +40,7 @@ const ReportModal = () => {
       <Toaster />
       <Button
         variant="destructive"
-        className="absolute bottom-6 z-50 h-[35px] cursor-pointer border border-gray-700 px-5 text-white"
+        className="absolute xl:bottom-10 bottom-6 z-50 h-[35px] cursor-pointer border border-gray-700 px-5 text-white"
         onClick={toggleModal}
       >
         Report
