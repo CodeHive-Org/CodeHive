@@ -58,6 +58,7 @@ const Hero = () => {
         "-=1",
       );
     },
+    
     { scope: container },
   );
 

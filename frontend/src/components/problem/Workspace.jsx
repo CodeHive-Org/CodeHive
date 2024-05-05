@@ -39,6 +39,7 @@ const WorkSpace = ({ data, pid, contract }) => {
   const [, setOutputState] = useRecoilState(outputAtom);
 
   const [submissionProcessing, setSubmissionProcessing] = useState(false);
+  const [executionProcessing, setExecutionProcessing] = useState(false);
 
   const checkStatus = async (token, type) => {
     const options = {
@@ -72,6 +73,7 @@ const WorkSpace = ({ data, pid, contract }) => {
     } catch (err) {
       console.log("err", err);
       setSubmissionProcessing(false);
+      setExecutionProcessing(false);
       toast.error("Error in the code !");
     }
   };
@@ -234,6 +236,7 @@ const WorkSpace = ({ data, pid, contract }) => {
 
   const handleRun = async () => {
     // setProcessing(true);
+    setExecutionProcessing(true);
 
     const sourceCode = `
     function defaultFunc(inputs) {
@@ -268,11 +271,12 @@ const WorkSpace = ({ data, pid, contract }) => {
       .request(options)
       .then(function (response) {
         const token = response.data.token;
+        setExecutionProcessing(false);
         checkStatus(token, "run");
       })
       .catch((err) => {
         let error = err.response ? err.response.data : err;
-        // setProcessing(false);
+        setExecutionProcessing(false);
         console.log(error);
       });
   };
@@ -315,7 +319,8 @@ const WorkSpace = ({ data, pid, contract }) => {
       </ResizablePanel>
       <SubmitBox
         handleSubmit={handleSubmit}
-        loading={submissionProcessing}
+        executionLoading={executionProcessing}
+        submissionloading={submissionProcessing}
         handleRun={handleRun}
       />
       {success && (
