@@ -28,6 +28,7 @@ const ProblemDesc = () => {
     })
       .then((res) => {
         const data = res?.contract;
+        console.log(data);
       })
       .catch((error) => {
         console.error("There was a problem with the fetch operation:", error);
@@ -78,7 +79,6 @@ const ProblemDesc = () => {
   if (loading) {
     return <SkeletonPage />;
   }
-
   return (
     <main
       className="dark relative h-40 min-h-screen w-full overflow-hidden bg-gradient-to-br

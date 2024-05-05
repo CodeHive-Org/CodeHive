@@ -30,6 +30,7 @@ const ProblemsContainer = () => {
         import.meta.env.VITE_NILE_BANK_ADD,
       );
       const questions = await contract.questionList().call();
+      const filtered = questions.filter((item)=>item[0] !="413d63817f7a9ef727b876f1e1d0424e2887db5699");
       setProblems(questions);
     };
     getQuestions();
