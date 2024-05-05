@@ -5,6 +5,8 @@ import { useParams } from "react-router-dom";
 import { ABI } from "../utils/problems/index.js";
 import { useTheContext } from "@/context/index.jsx";
 import { SkeletonPage } from "@/components/SkeletonPage.jsx";
+import { useRecoilState } from "recoil";
+import { submissionErrorAtom } from "@/atoms/userAtom.js";
 
 const ProblemDesc = () => {
   // const { getContract } = useTheContext();
@@ -12,6 +14,7 @@ const ProblemDesc = () => {
   const [contract, setContract] = useState();
   const [Problem, setProblem] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [alertBox, setAlertBox] = useRecoilState(submissionErrorAtom);
 
   const getAsyncContract = async () => {
     fetch(import.meta.env.VITE_TRONQL_ENDPOINT + "wallet/getcontract", {
@@ -42,7 +45,6 @@ const ProblemDesc = () => {
       getAsyncContract();
     }
 
-    // TODO : add the settimeout so that the skelotn gets called after some time internval
     setTimeout(() => {
       setLoading(false);
     }, 3000);
@@ -51,7 +53,11 @@ const ProblemDesc = () => {
   useEffect(() => {
     if (!contract) {
       console.log("contract not found for the pid:");
-      //todo:create a toast here... with this text
+      // setAlertBox({
+      //   isError: true,
+      //   msg: `No contract associated to this PID ${pid}`,
+      // });
+
       return;
     }
     contract
@@ -79,6 +85,7 @@ const ProblemDesc = () => {
   if (loading) {
     return <SkeletonPage />;
   }
+
   return (
     <main
       className="dark relative h-40 min-h-screen w-full overflow-hidden bg-gradient-to-br

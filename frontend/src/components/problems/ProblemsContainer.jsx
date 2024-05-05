@@ -16,7 +16,7 @@ import { ABI_Bank } from "@/utils/problems";
 
 const ProblemsContainer = () => {
   const [activeIndex, setActiveIndex] = useState(null);
-  const { ABI_Bank:a_b } = useTheContext();
+  const { ABI_Bank: a_b } = useTheContext();
   const [problems, setProblems] = useState([]);
   useEffect(() => {
     //calling the contract to detch the data of the problems.
@@ -30,17 +30,18 @@ const ProblemsContainer = () => {
         import.meta.env.VITE_NILE_BANK_ADD,
       );
       const questions = await contract.questionList().call();
-      const filtered = questions.filter((item)=>item[0] !="413d63817f7a9ef727b876f1e1d0424e2887db5699");
-      setProblems(questions);
+      const filtered = questions.filter(
+        (item) => item[0] != "41cbab21365ee65d78f6b57f0e77bbda5f4fd4bd69",
+      );
+      setProblems(filtered);
     };
     getQuestions();
   }, [ABI_Bank]);
   const isAnyOpen = activeIndex !== null;
 
-  console.log("problem : ", problems);
-
   return (
     <main className="relative flex-1 p-2">
+      <h1 className='text-[1.6rem] text-center pb-2 text-white border-b font-semibold border-gray-700'>Problems</h1>
       <Table className="mr-auto w-full max-w-[1000px] px-4 text-white">
         <TableHeader>
           <TableRow className="border-gray-500 text-left text-white">

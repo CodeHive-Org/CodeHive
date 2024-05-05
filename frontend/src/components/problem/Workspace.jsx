@@ -41,6 +41,8 @@ const WorkSpace = ({ data, pid, contract }) => {
   const [submissionProcessing, setSubmissionProcessing] = useState(false);
   const [executionProcessing, setExecutionProcessing] = useState(false);
 
+  console.log("data : ", data);
+
   const checkStatus = async (token, type) => {
     const options = {
       method: "GET",
@@ -71,7 +73,7 @@ const WorkSpace = ({ data, pid, contract }) => {
         return response.data;
       }
     } catch (err) {
-      console.log("err", err);
+    console.log("err", err);
       setSubmissionProcessing(false);
       setExecutionProcessing(false);
       toast.error("Error in the code !");
@@ -157,7 +159,7 @@ const WorkSpace = ({ data, pid, contract }) => {
           const outputString = String(atob(output?.stdout)).trim();
           const expectedOutput = String(data?.examples[0]?.output).trim();
 
-          if (outputString === expectedOutput) {
+          if (outputString == expectedOutput) {
             setLastUserValidCode(userCode);
             // create a pop up for a upload code option...
             handleUpload(userCode);

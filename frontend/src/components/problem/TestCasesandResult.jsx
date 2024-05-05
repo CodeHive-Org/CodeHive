@@ -64,8 +64,13 @@ const TestCasesandResult = ({ problem }) => {
     }
   };
 
-  console.log(typeof Object.values(problem.testcases[activeTestCaseId]?.input)[0]);
-  console.log(typeof Object.values(problem.testcases[activeTestCaseId]?.input)[0]);
+  console.log(
+    typeof Object.values(problem.testcases[activeTestCaseId]?.input)[0],
+  );
+  console.log(
+    typeof Object.values(problem.testcases[activeTestCaseId]?.input)[0],
+  );
+
 
   return (
     <div className="h-full w-full overflow-auto bg-third px-5 py-2">
@@ -121,13 +126,17 @@ const TestCasesandResult = ({ problem }) => {
             <p className="mt-4 text-sm font-medium text-white">Input:</p>
             <div className="mt-2 w-full cursor-text rounded-lg border border-transparent bg-gray-400/20 px-3 py-[10px] text-white">
               {typeof problem.testcases[activeTestCaseId].input == "object"
-                ? 
-                // login here to manage multiple object with 
-                  (typeof Object.values(problem.testcases[activeTestCaseId]?.input)[0] == "string")?
-                    Object.values(problem.testcases[activeTestCaseId]?.input)[0].toString()
-                    :
-                    "[" +
-                      Object.values(problem.testcases[activeTestCaseId]?.input)[0].toString() +
+                ? // login here to manage multiple object with
+                  typeof Object.values(
+                    problem.testcases[activeTestCaseId]?.input,
+                  )[0] == "string"
+                  ? Object.values(
+                      problem.testcases[activeTestCaseId]?.input,
+                    )[0].toString()
+                  : "[" +
+                    Object.values(
+                      problem.testcases[activeTestCaseId]?.input,
+                    )[0].toString() +
                     "]"
                 : problem.testcases[activeTestCaseId].input.toString()}
             </div>
@@ -138,7 +147,7 @@ const TestCasesandResult = ({ problem }) => {
           </div>
         </section>
       ) : (
-        <div className="h-[90%] rounded-md border border-gray-700 bg-[#1E1E1E] text-white">
+        <div className="h-[90%] rounded-md border border-gray-700 bg-[rgb(30,30,30)] text-white">
           <div className="flex flex-col space-x-1 p-5">
             <h1 className="text-gray-200">Output : </h1>
             <div className="mt-4 w-full overflow-y-auto rounded-md bg-[#06090f] text-sm font-normal text-white">
