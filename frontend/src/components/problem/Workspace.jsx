@@ -210,7 +210,7 @@ const WorkSpace = ({ data, pid, contract }) => {
     const options = {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${import.meta.env.VITE_BTFS_NODE}`,
+        Authorization: `Bearer ${import.meta.env.VITE_PINATA_JWT}`,
         "Content-Type": "application/json",
       },
       body: `{"pinataOptions":{"cidVersion":1},"pinataMetadata":{"name":"${address}.json"},"pinataContent":${JSON.stringify({ code: uploadCode })}}`,

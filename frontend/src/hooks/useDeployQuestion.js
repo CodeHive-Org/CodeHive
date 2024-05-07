@@ -26,7 +26,7 @@ export default function useDeployQuestion() {
     const options = {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${import.meta.env.VITE_BTFS_NODE}`,
+        Authorization: `Bearer ${import.meta.env.VITE_PINATA_JWT}`,
         "Content-Type": "application/json",
       },
       body: `{"pinataOptions":{"cidVersion":1},"pinataMetadata":{"name":"${formData.name.replace(/ /g, "_")}.json"},"pinataContent":${JSON.stringify(formData)}}`,
