@@ -17,26 +17,10 @@ const ProblemDesc = () => {
   const [alertBox, setAlertBox] = useRecoilState(submissionErrorAtom);
 
   const getAsyncContract = async () => {
-    fetch(import.meta.env.VITE_TRONQL_ENDPOINT + "wallet/getcontract", {
-      method: "POST",
-      headers: {
-        accept: "application/json",
-        "content-type": "application/json",
-        Authorization: import.meta.env.VITE_TRONQL_API_KEY, // Replace 'your_authorization_token_here' with your actual authorization token
-      },
-      body: JSON.stringify({
-        value: pid,
-        visible: true,
-      }),
-    })
-      .then((res) => {
-        const data = res?.contract;
-        console.log(data);
-      })
-      .catch((error) => {
-        console.error("There was a problem with the fetch operation:", error);
-      });
-    const instance = await window.tronLink.tronWeb.contract(ABI, pid);
+    console.log(ABI,pid);
+    console.log(window.tronLink.tronWeb.contract);
+    const instance = await window.tronLink.tronWeb.contract(ABI, window.tronLink.tronWeb.address.fromHex(pid));
+    console.log(instance);
     setContract(instance);
   };
 
@@ -44,7 +28,7 @@ const ProblemDesc = () => {
     if (ABI.length > 0) {
       getAsyncContract();
     }
-
+    console.log(ABI);
     setTimeout(() => {
       setLoading(false);
     }, 3000);
@@ -64,23 +48,27 @@ const ProblemDesc = () => {
       .QuestionData()
       .call()
       .then((questionData) => {
-        fetchTHeData(questionData);
+        fetchTHeData(questionData, setProblem);
         //console.log("url",questionData);
       })
       .catch((error) => console.error(error));
   }, [contract]);
-  const fetchTHeData = async (url) => {
-    const URL = import.meta.env.VITE_PINATA_URL + url;
+  const fetchTHeData = async (url, fxn) => {
+  var urlencoded = new URLSearchParams();
 
-    var myHeaders = new Headers();
-    var requestOptions = {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow",
-    };
-    const data = await (await fetch(URL, requestOptions)).text();
-    setProblem(JSON.parse(data));
+  var requestOptions = {
+    method: 'POST',
+    body: urlencoded,
+    redirect: 'follow'
   };
+  
+  fetch(import.meta.env.VITE_BTFS_NODE_URL+"/get?arg="+url, requestOptions)
+    .then(response => response.text())
+    .then(result => JSON.parse(result))
+    .then(data=>fxn(data))
+    .catch(error => console.log('error', error));
+  };
+  
 
   if (loading) {
     return <SkeletonPage />;

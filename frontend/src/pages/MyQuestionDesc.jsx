@@ -12,15 +12,51 @@ import {
 } from "@/components/ui/accordion";
 
 const fetchTHeData = async (url, fxn) => {
-  const URL = import.meta.env.VITE_PINATA_URL + url;
-  var myHeaders = new Headers();
-  var requestOptions = {
-    method: "GET",
-    headers: myHeaders,
-    redirect: "follow",
-  };
-  const data = await (await fetch(URL, requestOptions)).text();
-  fxn(JSON.parse(data));
+  // const URL = import.meta.env.VITE_PINATA_URL + url;
+  // var myHeaders = new Headers();
+  // var requestOptions = {
+  //   method: "GET",
+  //   headers: myHeaders,
+  //   redirect: "follow",
+  // };
+  // const data = await (await fetch(URL, requestOptions)).text();
+  // fxn(JSON.parse(data));
+  //code goes here that fetches from the declared node boi........
+
+// const btfsPath = "QmYdDodAxMbt9PVayHAB43BietATomB8JhRgamcWVvUY9o"
+const queryParams = new URLSearchParams({
+    arg: url,
+});
+
+fetch(`${import.meta.env.VITE_BTFS_NODE_URL}?${queryParams}`, {
+    method: 'POST',
+    headers: {
+      "ngrok-skip-browser-warning": true
+    }
+})
+.then(async response => {
+    const decoder = new TextDecoder();
+    const reader = response.body.getReader();
+
+    return reader.read().then(({ value, done }) => {
+        if (done) {
+            console.log('Stream reading complete');
+            return;
+        }
+        const decodedValue = decoder.decode(value, { stream: true });
+        // console.log(decodedValue.split("~json~")[1]);
+        return JSON.parse(decodedValue.split("~json~")[1].split("\x00")[0]);
+    });
+}).then(data=>{
+  console.log(data);
+  fxn(data);
+})
+.catch(error => {
+    console.error('Error:', error);
+});
+
+
+
 };
 
 const fetchTHeCode = async (url, fxn) => {

@@ -11,12 +11,10 @@ import {
 import MaxWidthWrapper from "../MaxWidthWrapper";
 import axios from "axios";
 import { useGetQuestions } from "@/hooks/getQuestions";
-import { useTheContext } from "@/context";
 import { ABI_Bank } from "@/utils/problems";
 
 const ProblemsContainer = () => {
   const [activeIndex, setActiveIndex] = useState(null);
-  const { ABI_Bank: a_b } = useTheContext();
   const [problems, setProblems] = useState([]);
   useEffect(() => {
     //calling the contract to detch the data of the problems.
@@ -30,10 +28,8 @@ const ProblemsContainer = () => {
         import.meta.env.VITE_NILE_BANK_ADD,
       );
       const questions = await contract.questionList().call();
-      const filtered = questions.filter(
-        (item) => item[0] != "41cbab21365ee65d78f6b57f0e77bbda5f4fd4bd69",
-      );
-      setProblems(filtered);
+      setProblems(questions);
+      console.log(questions);
     };
     getQuestions();
   }, [ABI_Bank]);
