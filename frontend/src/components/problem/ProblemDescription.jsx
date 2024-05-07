@@ -10,13 +10,14 @@ import ReportModal from "../ReportModal";
 import { SubSkeletonPage } from "../SubSkeletonPage";
 
 const ProblemDescription = ({ problem, pid, contract }) => {
-  const [ loading ,setLoading ] = useState(false);
+  const [loading, setLoading] = useState(false);
   //const { tronWeb } = useTheContext();
   const location = useLocation();
   const [claimer, setClaimer] = useState();
   const [bounty, setBounty] = useState();
+  const [isClaimed, setIsClaimed] = useState(false);
 
-  const [ selector , setSelector ] = useState(0);
+  const [selector, setSelector] = useState(0);
   useEffect(() => {
     contract
       .bountyWinner()
@@ -33,39 +34,45 @@ const ProblemDescription = ({ problem, pid, contract }) => {
       .then((value) => {
         setBounty(parseInt(value._hex));
       });
-    //
+
+    contract
+      .claimed()
+      .call()
+      .then((value) => {
+        console.log("valu : ", value);
+        setIsClaimed(value);
+      });
   }, []);
+
+  console.log("claimer : ", isClaimed);
+
   return (
     <main className="relative h-full">
-      <div className="bg-third h-full">
+      <div className="h-full bg-third">
         {/* TAB */}
-        <div className="flex h-11 gap-2 w-full items-center overflow-x-hidden border-b border-gray-500 bg-secondary pt-2 text-white">
+        <div className="flex h-11 w-full items-center gap-2 overflow-x-hidden border-b border-gray-500 bg-secondary pt-2 text-white">
           <div
-            className={`cursor-pointer rounded-t-[5px] ${selector==0?"bg-gray-700":""} px-5 py-[10px] text-xs`}
-            onClick={()=>setSelector(0)}
+            className={`cursor-pointer rounded-t-[5px] ${selector == 0 ? "bg-gray-700" : ""} px-5 py-[10px] text-xs`}
+            onClick={() => setSelector(0)}
           >
             Description
           </div>
           <div
-            className={
-              `cursor-pointer rounded-t-[5px] ${selector==1?"bg-gray-700":""} px-5 py-[10px] text-xs`
-            }
-            onClick={()=>setSelector(1)}
+            className={`cursor-pointer rounded-t-[5px] ${selector == 1 ? "bg-gray-700" : ""} px-5 py-[10px] text-xs`}
+            onClick={() => setSelector(1)}
           >
             All Codes
           </div>
           <div
-            className={
-              `cursor-pointer rounded-t-[5px] ${selector==2?"bg-gray-700":""} px-5 py-[10px] text-xs`
-            }
-            onClick={()=>setSelector(2)}
+            className={`cursor-pointer rounded-t-[5px] ${selector == 2 ? "bg-gray-700" : ""} px-5 py-[10px] text-xs`}
+            onClick={() => setSelector(2)}
           >
             My Submissions
           </div>
         </div>
-        {loading && <SubSkeletonPage/>}
-        {selector == 0 && !loading &&
-          <div className="flex h-[calc(100vh-94px)]  relative overflow-y-hidden px-0 py-4">
+        {loading && <SubSkeletonPage />}
+        {selector == 0 && !loading && (
+          <div className="relative flex  h-[calc(100vh-94px)] overflow-y-hidden px-0 py-4">
             <div className="px-5">
               <div className="flex w-full flex-col gap-4">
                 <div className="flex space-x-4">
@@ -83,7 +90,7 @@ const ProblemDescription = ({ problem, pid, contract }) => {
                 </div>
 
                 {/* Examples */}
-                <div className="mt-4 rounded-md bg-black/20 border border-black p-4">
+                <div className="mt-4 rounded-md border border-black bg-black/20 p-4">
                   {problem.examples.map((example, index) => (
                     <div key={index}>
                       <p className="font-medium text-white ">
@@ -101,7 +108,8 @@ const ProblemDescription = ({ problem, pid, contract }) => {
                           {example.output.toString()} <br />
                           {example.explanation && (
                             <>
-                              <strong>Explanation:</strong> {example.explanation}
+                              <strong>Explanation:</strong>{" "}
+                              {example.explanation}
                             </>
                           )}
                         </pre>
@@ -124,12 +132,14 @@ const ProblemDescription = ({ problem, pid, contract }) => {
 
                 {/* more info regarding problem  */}
                 <div className="flex max-w-max flex-col space-y-4">
-                  <div className="flex rounded-md bg-black/40 border-gray-400 border-dotted border p-2 px-4 font-semibold text-white">
+                  <div className="flex rounded-md border border-dotted border-gray-400 bg-black/40 p-2 px-4 font-semibold text-white">
                     <h1 className="mr-2 font-medium">
-                      Bounty Claimed :
+                      Bounty Status :
                       <span>
                         {" "}
-                        {claimer ? "Allready claimed" : "Is yet to be claimed."}
+                        {isClaimed
+                          ? "Already Claimed"
+                          : "Is yet to be Claimed."}
                       </span>
                     </h1>
                   </div>
@@ -148,14 +158,21 @@ const ProblemDescription = ({ problem, pid, contract }) => {
               </div>
             </div>
           </div>
-        }
-        {selector == 1 && !loading &&
-          <AllSubmittion contract ={contract} claimer={claimer} loader={setLoading}/>
-        }
-        {selector == 2 && !loading &&
-          <MySubmittion contract ={contract} claimer={claimer} loader={setLoading}/>
-        }
-        
+        )}
+        {selector == 1 && !loading && (
+          <AllSubmittion
+            contract={contract}
+            claimer={claimer}
+            loader={setLoading}
+          />
+        )}
+        {selector == 2 && !loading && (
+          <MySubmittion
+            contract={contract}
+            claimer={claimer}
+            loader={setLoading}
+          />
+        )}
       </div>
     </main>
   );
