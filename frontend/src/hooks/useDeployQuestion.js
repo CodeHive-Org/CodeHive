@@ -1,6 +1,7 @@
 import { useTheContext } from "@/context";
 import { useState } from "react";
 import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
+import { ABI } from "../utils/problems/index.js"
 
 export default function useDeployQuestion() {
   const {
@@ -13,16 +14,33 @@ export default function useDeployQuestion() {
     signMessage,
     signTransaction,
   } = useWallet();
-  const { ABI, QuesBYTECODE } = useTheContext();
+  const { QuesBYTECODE, ABI_Bank, tronWeb } = useTheContext();
   const [error, setError] = useState(null);
   const [deployedAddress, setDeployedAddress] = useState(null);
   const [deployed, setdeployed] = useState(false);
 
-  const DEPLOY = (difficulty, formData, bounty) => {
-    //first deploy the ipfs thingy....
+  // const AddToBank = async (address) => {
+  //   try{
+  //     console.log(tronWeb);
+  //     const contract = await tronWeb.trx.contract(
+  //       ABI_Bank,
+  //       import.meta.env.VITE_NILE_BANK_ADD,
+  //     );
+  //     console.log(contract)
+  //     return;
+  //   }
+  //   catch(err){
+  //     console.log(err);
+  //     return;
+  //   }
+  //   const questions = await contract.questionList().call();
+  //   setProblems(questions);
+  //   setLoading(false);
+  //   console.log(questions);
+  // };
 
-    //first deployment to pinat.. man....
-    //this goes away... man...
+  const DEPLOY = async (difficulty, formData, bounty) => {
+
     const options = {
       method: "POST",
       headers: {
@@ -35,73 +53,53 @@ export default function useDeployQuestion() {
       console.error("cant deploy tron undefined.");
       return;
     }
-    fetch("https://api.pinata.cloud/pinning/pinJSONToIPFS", options)
-      .then((response) => response.json())
-      .then((response) => response.IpfsHash)
-      .then((res) => {
-        console.log("pinata deployed at :", res);
-        // (string memory _name, string memory _quesData, address _mod, uint16 _diff, address _webHandler)
-        console.log(ABI, QuesBYTECODE);
+    // const { IpfsHash } = await fetch("https://api.pinata.cloud/pinning/pinJSONToIPFS", options)
+    const IpfsHash = "bafkreiafjezwdv4uxezin6jvsew4o5eivvro7qblogibow74crgxrrecxi";
+    console.log('formData.name:', formData.name);
+console.log('IpfsHash:', IpfsHash);
+console.log('defaultAddress:', window.tron.tronWeb.defaultAddress.base58.toString());
+console.log('difficulty:', difficulty);
+console.log('VITE_WEB_HANDLER:', import.meta.env.VITE_WEB_HANDLER.toString());
+    console.log(IpfsHash, ABI, typeof QuesBYTECODE);
+    try{
+      const options = {
+        feeLimit: 1000000000, //The maximum TRX burns for resource consumption（1TRX = 1,000,000SUN）
+        callValue: 1000000 * bounty, //The TRX transfer to the contract for each call（1TRX = 1,000,000SUN）
+        userFeePercentage: 100, //Consume user's resource percentage. It should be an integer between [0, 100]. if 0, means it does not consume user's resource until the developer's resource has been used up
+        originEnergyLimit: 100, //The maximum resource consumption of the creator in one execution or creation
+        abi: ABI,
+        bytecode: QuesBYTECODE,
+        parameters: [
+          formData.name,
+          IpfsHash,
+          window.tron.tronWeb.defaultAddress.base58.toString(),
+          difficulty,
+          import.meta.env.VITE_WEB_HANDLER.toString(),
+        ],
+        name: "Question",
+      };
+      const contract = await  window.tron.tronWeb.transactionBuilder.createSmartContract(
+        options,
+        window.tron.tronWeb.defaultAddress.base58,
+      );
+      console.log("the contract made =>", contract);
+      //signing the txn...
+      const signedTxn = await window.tron.tronWeb.trx.sign(contract);
+      const result = await window.tron.tronWeb.trx.sendRawTransaction(signedTxn);
+      const address_deployed = window.tron.tronWeb.address.fromHex(result.transaction.contract_address);
+      setDeployedAddress(address_deployed);
+      setdeployed(true);
 
-        const options = {
-          feeLimit: 1000000000, //The maximum TRX burns for resource consumption（1TRX = 1,000,000SUN）
-          callValue: 10, //The TRX transfer to the contract for each call（1TRX = 1,000,000SUN）
-          userFeePercentage: 100, //Consume user's resource percentage. It should be an integer between [0, 100]. if 0, means it does not consume user's resource until the developer's resource has been used up
-          originEnergyLimit: 100, //The maximum resource consumption of the creator in one execution or creation
-          abi: ABI,
-          bytecode: QuesBYTECODE,
-          parameters: [
-            formData.name,
-            res,
-            window.tron.tronWeb.defaultAddress.base58.toString(),
-            difficulty,
-            import.meta.env.VITE_WEB_HANDLER.toString(),
-          ],
-          name: "Question",
-        };
-        return window.tron.tronWeb.transactionBuilder.createSmartContract(
-          options,
-          window.tron.tronWeb.defaultAddress.base58,
-        );
-
-        // const pro = window.tron.tronWeb.contract().new({
-        //     abi: ABI,
-        //     bytecode: QuesBYTECODE,
-        //     feeLimit: 40000000000,
-        //     callValue: parseInt(bounty)* 1000000,
-        //     userFeePercentage: 100,
-        //     originEnergyLimit: 1e7,
-        //     parameters: [formData.name, res, window.tron.tronWeb.defaultAddress.base58.toString(), difficulty, import.meta.env.VITE_WEB_HANDLER.toString()],
-        // });
-        // pro.then((res)=>{console.log("something",res)}).catch(err=>console.log(err));
-        // throw new Error("not implemented yet");
-        // return window.tron.tronWeb.contract().new({
-        //     abi: ABI,
-        //     bytecode: QuesBYTECODE,
-        //     feeLimit: 40000000000,
-        //     callValue: parseInt(bounty)* 1000000,
-        //     userFeePercentage: 100,
-        //     originEnergyLimit: 1e7,
-        //     parameters: [formData.name, res, window.tron.tronWeb.defaultAddress.base58.toString(), difficulty, import.meta.env.VITE_WEB_HANDLER.toString()],
-        // });
-      })
-      .then((contract) => {
-        console.log("the contract made =>", contract);
-        //signing the txn...
-        return window.tron.tronWeb.trx.sign(contract);
-      })
-      .then((signedTransaction) => {
-        console.log("the txn is signed.... =>", signedTransaction);
-        return window.tron.tronWeb.trx.sendRawTransaction(signedTransaction);
-      })
-      .then((resultBaby) => {
-        console.log("result =>", resultBaby);
-      })
-      .catch((err) => {
-        console.error(err);
-        alert("error occured!");
-        setError(err);
-      });
+      //we have to now run the contract addition call....
+      // const address_deployed = "TRiE8LhNeCacWftfiNPEayXzyi1d2irgB7";
+      //now we add this to the main contract...
+      // await AddToBank(address_deployed);
+      return address_deployed;
+    }
+    catch(err){
+      console.error(err);
+      setError(err);
+    }
   };
 
   return { DEPLOY, deployed, deployedAddress, error };

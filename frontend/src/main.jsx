@@ -1,4 +1,5 @@
 import { Buffer } from 'buffer';
+import { Toaster } from "@/components/ui/toaster"
 window.Buffer = Buffer;
 import React from "react";
 import ReactDOM from "react-dom/client";
@@ -12,6 +13,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <RecoilRoot>
       <ContextProvierAllOver>
         <App />
+        <Toaster />
       </ContextProvierAllOver>
     </RecoilRoot>
   </React.StrictMode>,

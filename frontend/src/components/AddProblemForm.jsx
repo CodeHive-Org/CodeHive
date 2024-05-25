@@ -1,6 +1,19 @@
 import { useEffect, useState } from "react";
+import { useToast } from "@/components/ui/use-toast.js"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function ProblemForum({ DEPLOY }) {
+
+
+export default function ProblemForum({ data }) {
+  const { toast } = useToast();
   const [formSelector, setFormSelector] = useState(0);
   const [difficulty, setDifficulty] = useState();
   const [bountyValue, setBountyValue] = useState();
@@ -9,6 +22,7 @@ export default function ProblemForum({ DEPLOY }) {
   const [Out, setOut] = useState("");
   const [Exp, setExp] = useState("");
   const [Cons, setCons] = useState("");
+  const [ isChecked, setChecked ] = useState(false);
   //consts ends...
   const [formData, setFormData] = useState({
     name: "",
@@ -20,9 +34,114 @@ export default function ProblemForum({ DEPLOY }) {
     constraints: [],
     testcases: [],
   });
+  //deployment stuff...
+  const { DEPLOY, deployed, deployAddress, error } = data;
 
+  useEffect(()=>{},[deployed, deployAddress, error])
   const [showAlert, setShowAlert] = useState(false);
-
+  const checkFormInvalid = ()=>{
+    //checking all the input vales sir.... 
+    if(!formData.name){
+      toast({
+        description: "The name is required!!",
+      });
+      setFormSelector(0);
+      return true;
+    }
+    if(!formData.description){
+      toast({
+        description: "The description is required!!",
+      });
+      setFormSelector(0);
+      return true;
+    }
+    if(!formData.examples){
+      toast({
+        description: "The examples are required!!",
+      });
+      setFormSelector(1);
+      return true;
+    }
+    if(formData.examples?.length > 0){
+      formData.examples.forEach((example)=>{
+        if(!example.input || !example.output || !example.explanation){
+          toast({
+            description: "The examples are not valid!!",
+          });
+          setFormSelector(1);
+          return true;
+        }
+      })
+    }
+    if(!formData.testcases){
+      toast({
+        description: "The testcases are required!!",
+      });
+      setFormSelector(2);
+      return true;
+    }
+    if(formData.testcases?.length > 0){
+      formData.testcases.forEach((testcase)=>{
+        if(!testcase.input || !testcase.output){
+          toast({
+            description: "The testcases are not valid!!",
+          });
+          setFormSelector(2);
+          return true;
+        }
+      })
+    }
+    if(!formData.defaultCode){
+      toast({
+        description: "The default code is required!!",
+      });
+      setFormSelector(4);
+      return true;
+    }
+    if(!bountyValue){
+      toast({
+        description: "The bounty value is required!!",
+      });
+      setFormSelector(5);
+      return true;
+    }
+    if(typeof parseInt(bountyValue) == NaN){
+      toast({
+        description: "The bounty value is not valid!!",
+      });
+      setFormSelector(5);
+      return true;
+    }
+    if(!difficulty){
+      toast({
+        description: "The difficulty is required!!",
+      });
+      setFormSelector(5);
+      return true;
+    }
+    if(typeof parseInt(difficulty )== NaN){
+      toast({
+        description: "The difficulty is not valid!!",
+      });
+      setFormSelector(5);
+      return true;
+    }
+    if(!formData.compileFunctionName){
+      toast({
+        description: "The compile function name is required!!",
+      });
+      setFormSelector(4);
+      return true;
+    }
+    if(!formData.defaultCode){
+      toast({
+        description: "The default code is required!!",
+      });
+      setFormSelector(4);
+      return true;
+    }
+    return false;
+  }
   useEffect(() => {
     const timeout = setTimeout(() => {
       setShowAlert(true);
@@ -35,21 +154,14 @@ export default function ProblemForum({ DEPLOY }) {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
       };
-    
-    
     const handleSubmit = async (e) => {
-        // setLoading(true);
-        const re = confirm("you sure doing this...");
-        if(!re) return;
-        //define bounty value and difficulty here..... man bounty in trx... make sure of that...
-        DEPLOY(difficulty, formData, bountyValue);
-        //working man
+        if(checkFormInvalid())return;
 
+        DEPLOY(difficulty, formData, bountyValue);
     };
 
   return (
     <div className="flex flex-col items-center justify-center">
-
       <div className="flex h-[500px] w-[60%] flex-col items-center pt-[30px]">
         {formSelector == 0 && (
           <div className="w-full">
@@ -74,7 +186,7 @@ export default function ProblemForum({ DEPLOY }) {
             >
               Description
             </label>
-            <input
+            <textarea
               type="text"
               id="description"
               name="description"
@@ -172,7 +284,7 @@ export default function ProblemForum({ DEPLOY }) {
                   <textarea
                     type="text"
                     placeholder="Input"
-                    className="mt-1 h-[200px] w-full rounded-md border bg-black/40 p-2"
+                    className="mt-1 h-[100px] w-full rounded-md border bg-black/40 p-2"
                     onChange={(e) => setIn(e.target.value)}
                   />
                 </div>
@@ -181,13 +293,17 @@ export default function ProblemForum({ DEPLOY }) {
                   <textarea
                     type="text"
                     placeholder="Output"
-                    className="mt-1 h-[200px] w-full rounded-md border bg-black/40 p-2"
+                    className="mt-1 h-[100px] w-full rounded-md border bg-black/40 p-2"
                     onChange={(e) => setOut(e.target.value)}
                   />
                 </div>
               </div>
               <div>
-                <div className="flex items-center justify-end gap-2">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <input type="checkbox" id="radio" name="radio" value="sample" checked={isChecked} onChange={(e)=>setChecked(e.target.checked)}/>
+                    <label className="block text-gray-200">Hide this testcase</label>
+                  </div>
                   <button
                     className="mt-1 rounded-[7px] border border-white p-2 px-4"
                     onClick={() => {
@@ -196,6 +312,7 @@ export default function ProblemForum({ DEPLOY }) {
                         id: formData.testcases.length,
                         input: In,
                         output: Out,
+                        hidden: isChecked,
                       };
                       setFormData({
                         ...formData,
@@ -208,7 +325,7 @@ export default function ProblemForum({ DEPLOY }) {
                 </div>
               </div>
             </div>
-            <div className="mt-1 h-[110px] overflow-y-scroll">
+            <div className="mt-1 h-[200px] overflow-y-scroll">
               {formData.testcases.map((testcase, index) => (
                 <div
                   key={index}
@@ -217,6 +334,7 @@ export default function ProblemForum({ DEPLOY }) {
                   <div className="flex gap-[10px]">
                     <h1>In: {testcase.input}</h1>
                     <h1>Out: {testcase.output}</h1>
+                    <h1 className="text-[#b24343]">{(testcase.hidden)?"Hidden!!":""}</h1>
                   </div>
                   ID : {testcase.id}
                 </div>
@@ -284,6 +402,7 @@ export default function ProblemForum({ DEPLOY }) {
                       compileFunctionName: e.target.value,
                     });
                   }}
+                  value={(formData?.compileFunctionName)?formData.compileFunctionName:""}
                 />
               </div>
               <div className="w-full">
@@ -299,11 +418,14 @@ export default function ProblemForum({ DEPLOY }) {
                     const arr = e.target.value.split(",");
                     setFormData({ ...formData, tags: arr });
                   }}
+                  value={formData.tags.map((val)=>{
+                    return val;
+                  })}
                 />
               </div>
               <div className="w-full">
                 <label className="block text-gray-200">
-                  Default Code {"(comma separated)"}
+                  Default Code
                 </label>
                 <textarea
                   type="text"
@@ -312,6 +434,7 @@ export default function ProblemForum({ DEPLOY }) {
                   onChange={(e) => {
                     setFormData({ ...formData, defaultCode: e.target.value });
                   }}
+                  value={(formData.compileFunctionName)?`const ${formData?.compileFunctionName} = (data){\n\t/*\n\t\thello your code goes here\n\t*/\n}`:""}
                 />
               </div>
             </div>
@@ -352,20 +475,61 @@ export default function ProblemForum({ DEPLOY }) {
       </div>
       <div className="flex w-[60%] justify-between">
         <button
-          onClick={() => setFormSelector(parseInt(formSelector) - 1)}
+          onClick={() => {if(parseInt(formSelector) == 0)return; setFormSelector(parseInt(formSelector) - 1)}}
           className={`${formSelector == 0 ? "pointer-events-none cursor-none opacity-50" : ""} rounded-[7px] border-[3px] border-white p-2 px-4`}
         >
           Prev
         </button>
         {formSelector == 5 ? (
-          <button
-            onClick={() => {
-              handleSubmit();
-            }}
-            className="rounded-[7px] border-[3px] bg-white p-2 px-4 font-bold text-black hover:bg-black hover:text-white"
-          >
-            Submit
-          </button>
+          <Sheet>
+          <SheetTrigger className="rounded-[7px] border-[3px] bg-white p-2 px-4 font-bold text-black hover:bg-black hover:text-white">
+              Submit
+          </SheetTrigger>
+          <SheetContent className="bg-black">
+            <SheetHeader>
+              <SheetTitle className="text-[#b74646] font-bold">Deploying "{formData.name}"</SheetTitle>
+              <SheetDescription>
+                This is the final step to deploy the question. Please review the details before deploying.
+              </SheetDescription>
+            </SheetHeader>
+              <div className="flex flex-col justify-between h-full my-[10px]">
+                <div className="flex flex-col gap-2">
+                  <div>
+                    <div className="space-y-2 mt-[40px]">
+                      <div className="flex items-center gap-2 w-full">
+                        <h1 className="text-white">Deployed</h1>
+                          {deployed?(
+                            error?
+                            <>{error}</>:
+                            <>SucessFully Deployed!!</>
+                          ):(
+                            <Skeleton className="h-4 w-full" />
+                          )}
+                      </div>
+                      <div className="flex items-center gap-2 w-full">
+                        <h1 className="text-white">At: </h1>
+                          {deployed?(
+                            error?
+                              <>{error}</>:
+                              <>{deployAddress}</>
+                            ):(
+                              <Skeleton className="h-4 w-full" />
+                            )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex justify-end items-center">
+                    <button 
+                      className={`w-[100px] rounded-[7px] border-[3px] bg-white p-2 px-4 font-bold text-black hover:bg-black hover:text-white mb-[60px]`}
+                      onClick={handleSubmit}
+                      >
+                      Deploy
+                    </button>
+                  </div>
+                </div>
+              </div>
+          </SheetContent>
+        </Sheet>
         ) : (
           <button
             onClick={() => setFormSelector((val) => parseInt(val) + 1)}
