@@ -434,7 +434,7 @@ export default function ProblemForum({ data }) {
                   onChange={(e) => {
                     setFormData({ ...formData, defaultCode: e.target.value });
                   }}
-                  value={(formData.compileFunctionName)?`const ${formData?.compileFunctionName} = (data){\n\t/*\n\t\thello your code goes here\n\t*/\n}`:""}
+                  value={(formData.compileFunctionName)?`const ${formData?.compileFunctionName} = (data)=>{\n\t/*\n\t\thello your code goes here\n\t*/\n}`:""}
                 />
               </div>
             </div>
