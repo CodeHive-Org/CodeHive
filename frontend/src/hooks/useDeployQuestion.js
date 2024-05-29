@@ -2,6 +2,9 @@ import { useTheContext } from "@/context";
 import { useState } from "react";
 import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 import { ABI } from "../utils/problems/index.js"
+import { addDoc, collection } from "firebase/firestore";
+import { toast } from "sonner";
+import { db } from "@/firebaseConfig.js";
 
 export default function useDeployQuestion() {
   const {
@@ -17,7 +20,7 @@ export default function useDeployQuestion() {
   const { QuesBYTECODE, ABI_Bank, tronWeb } = useTheContext();
   const [error, setError] = useState(null);
   const [deployedAddress, setDeployedAddress] = useState(null);
-  const [deployed, setdeployed] = useState(false);
+  const [deployed, setdeployed] = useState(true);
 
   // const AddToBank = async (address) => {
   //   try{
@@ -40,7 +43,7 @@ export default function useDeployQuestion() {
   // };
 
   const DEPLOY = async (difficulty, formData, bounty) => {
-
+    setdeployed(false);
     const options = {
       method: "POST",
       headers: {
@@ -53,8 +56,10 @@ export default function useDeployQuestion() {
       console.error("cant deploy tron undefined.");
       return;
     }
-    // const { IpfsHash } = await fetch("https://api.pinata.cloud/pinning/pinJSONToIPFS", options)
-    const IpfsHash = "bafkreiafjezwdv4uxezin6jvsew4o5eivvro7qblogibow74crgxrrecxi";
+    const data = await fetch("https://api.pinata.cloud/pinning/pinJSONToIPFS", options)
+    const jsonData = await data.json();
+    const IpfsHash = jsonData.IpfsHash;
+    // const IpfsHash = "bafkreiafjezwdv4uxezin6jvsew4o5eivvro7qblogibow74crgxrrecxi";
     console.log('formData.name:', formData.name);
 console.log('IpfsHash:', IpfsHash);
 console.log('defaultAddress:', window.tron.tronWeb.defaultAddress.base58.toString());
@@ -86,9 +91,24 @@ console.log('VITE_WEB_HANDLER:', import.meta.env.VITE_WEB_HANDLER.toString());
       //signing the txn...
       const signedTxn = await window.tron.tronWeb.trx.sign(contract);
       const result = await window.tron.tronWeb.trx.sendRawTransaction(signedTxn);
+      console.log("result babo",result);
       const address_deployed = window.tron.tronWeb.address.fromHex(result.transaction.contract_address);
       setDeployedAddress(address_deployed);
       setdeployed(true);
+
+      //code to post to the firebase...
+
+      const docRef = await addDoc(collection(db, "Questions"), {
+        ques: result.transaction.contract_address,
+        user: window.tron.tronWeb.defaultAddress.base58.toString(),
+        name: formData.name,
+        diff: difficulty,
+      });
+      if(docRef){
+      }
+      toast.success("Contract deployed, will be added soon to dashboard after a review!");
+
+
 
       //we have to now run the contract addition call....
       // const address_deployed = "TRiE8LhNeCacWftfiNPEayXzyi1d2irgB7";
@@ -99,6 +119,7 @@ console.log('VITE_WEB_HANDLER:', import.meta.env.VITE_WEB_HANDLER.toString());
     catch(err){
       console.error(err);
       setError(err);
+      toast.success("Error occured, failed to deploy the question");
     }
   };
 

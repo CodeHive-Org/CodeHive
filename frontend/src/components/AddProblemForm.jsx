@@ -9,6 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Loader, Loader2 } from "lucide-react";
 
 
 
@@ -18,6 +19,7 @@ export default function ProblemForum({ data }) {
   const [difficulty, setDifficulty] = useState();
   const [bountyValue, setBountyValue] = useState();
   //not so imp consts...
+  const [ loading, setLoading ] = useState(false);
   const [In, setIn] = useState("");
   const [Out, setOut] = useState("");
   const [Exp, setExp] = useState("");
@@ -37,7 +39,11 @@ export default function ProblemForum({ data }) {
   //deployment stuff...
   const { DEPLOY, deployed, deployAddress, error } = data;
 
-  useEffect(()=>{},[deployed, deployAddress, error])
+  useEffect(()=>{
+    if(deployAddress!= "" && deployed){
+      toast.success("Contract deployed, will be added soon to dashboard after a review!");
+    }
+  },[deployed, deployAddress, error])
   const [showAlert, setShowAlert] = useState(false);
   const checkFormInvalid = ()=>{
     //checking all the input vales sir.... 
@@ -496,7 +502,7 @@ export default function ProblemForum({ data }) {
                 <div className="flex flex-col gap-2">
                   <div>
                     <div className="space-y-2 mt-[40px]">
-                      <div className="flex items-center gap-2 w-full">
+                      <div className="flex items-center gap-2 w-full text-white">
                         <h1 className="text-white">Deployed</h1>
                           {deployed?(
                             error?
@@ -506,11 +512,9 @@ export default function ProblemForum({ data }) {
                             <Skeleton className="h-4 w-full" />
                           )}
                       </div>
-                      <div className="flex items-center gap-2 w-full">
+                      <div className="flex items-center gap-2 w-full text-white">
                         <h1 className="text-white">At: </h1>
                           {deployed?(
-                            error?
-                              <>{error}</>:
                               <>{deployAddress}</>
                             ):(
                               <Skeleton className="h-4 w-full" />
@@ -520,10 +524,15 @@ export default function ProblemForum({ data }) {
                   </div>
                   <div className="flex justify-end items-center">
                     <button 
-                      className={`w-[100px] rounded-[7px] border-[3px] bg-white p-2 px-4 font-bold text-black hover:bg-black hover:text-white mb-[60px]`}
-                      onClick={handleSubmit}
+                      className={`w-[130px] rounded-[7px] border-[3px] bg-white p-2 px-4 font-bold text-black hover:bg-black hover:text-white mb-[60px]`}
+                      onClick={()=>{
+                        setLoading(true);
+                        setTimeout(()=>{setLoading(false)},3000);
+                        handleSubmit();}
+                      }
                       >
                       Deploy
+                      {!deployed && <Loader className="animate-spin"/>}
                     </button>
                   </div>
                 </div>
