@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useToast } from "@/components/ui/use-toast.js"
 import {
   Sheet,
   SheetContent,
@@ -10,11 +9,11 @@ import {
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 
 
 export default function ProblemForum({ data }) {
-  const { toast } = useToast();
   const [formSelector, setFormSelector] = useState(0);
   const [difficulty, setDifficulty] = useState();
   const [bountyValue, setBountyValue] = useState();
