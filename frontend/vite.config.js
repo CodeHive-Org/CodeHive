@@ -14,6 +14,7 @@ const __dirname = dirname(__filename);
 export default defineConfig({
   // base: "CodeHive",
   build: {
+    outDir: 'dist',
     sourcemap: true,
     rollupOptions: {
       onwarn(warning, defaultHandler) {
