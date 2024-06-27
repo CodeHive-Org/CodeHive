@@ -13,7 +13,7 @@ const AddQuestion = () => {
     console.log("working !");
   };
 
-  return (
+  return ( 
     <main className="h-screen bg-black">
       <Nav />
       {/* <MaxWidthWrapper className=" mt-[200px] flex items-center justify-center"> */}

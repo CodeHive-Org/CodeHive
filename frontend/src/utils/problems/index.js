@@ -1,8 +1,3 @@
-
-
-export const problems = {
-    Longest_Common_Prefix: "TTYWGCYqyfmySVytAWzJGjqkqqFyG2VCR9",
-} 
 export const ABI = [
 	{
 		"inputs": [
@@ -290,53 +285,6 @@ export const ABI_Bank = [
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "_web",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_mod",
-				"type": "address"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "contractAddress",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "questionName",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "difficulty",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "creater",
-				"type": "address"
-			}
-		],
-		"name": "questionPost",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
 				"name": "contractAdd",
 				"type": "address"
 			},
@@ -349,11 +297,6 @@ export const ABI_Bank = [
 				"internalType": "uint256",
 				"name": "diffi",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_creater",
-				"type": "address"
 			}
 		],
 		"name": "addAddress",
@@ -381,11 +324,6 @@ export const ABI_Bank = [
 						"internalType": "uint256",
 						"name": "difficulty",
 						"type": "uint256"
-					},
-					{
-						"internalType": "address",
-						"name": "creater",
-						"type": "address"
 					}
 				],
 				"internalType": "struct Question.Ques[]",

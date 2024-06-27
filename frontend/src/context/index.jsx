@@ -44,7 +44,7 @@ export default function ContextProvierAllOver({ children }) {
                 'content-type': 'application/json'
             },
             body: JSON.stringify({
-                value: 'TRwde9WB4R14aqeLs4pa8iiwEhv84QryhW',
+                value: 'TVqg8LtwSj93WX3VREbqGuHNjTMUVPR7GC',
                 visible: true
             })
         })
@@ -75,9 +75,10 @@ export default function ContextProvierAllOver({ children }) {
                 console.log("cant fetch the abi....");
                 throw new Error('Network response was not ok');
             }
+            console.log(response);
             return response.json();
         })
-        .then(data => {setABI_Bank(data.smart_contract.abi.entrys);console.log(data.smart_contract);})
+        .then(data => {console.log(data);setABI_Bank(data.smart_contract.abi.entrys);console.log(data.smart_contract);})
         .catch(error => {console.error('There was a problem with the fetch operation:', error)});
 
 

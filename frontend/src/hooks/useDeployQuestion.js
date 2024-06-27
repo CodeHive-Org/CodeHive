@@ -20,7 +20,7 @@ export default function useDeployQuestion() {
   const { QuesBYTECODE, ABI_Bank, tronWeb } = useTheContext();
   const [error, setError] = useState(null);
   const [deployedAddress, setDeployedAddress] = useState(null);
-  const [deployed, setdeployed] = useState(true);
+  const [deployed, setdeployed] = useState(false);
 
   // const AddToBank = async (address) => {
   //   try{
