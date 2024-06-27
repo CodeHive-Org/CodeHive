@@ -54,3 +54,40 @@
     --ring: 142.4 71.8% 29.2%;
   }
 }
+
+/* addquestion progress bar */
+
+.step-number {
+  width: 50px;
+  height:50px;
+  border-radius: 50%;
+  background-color: #585858;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
+  z-index: 2;
+}
+
+.active .step-number {
+  background-color: #ff004c;
+  color: #fff;
+}
+
+.complete .step-number {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.progress-bar {
+  position: absolute;
+  left: 25%;
+  width: 4px;
+  background-color: #ffffff;
+}
+
+.progress {
+  height: 100%;
+  background-color: #28a745;
+  transition: 0.2s ease;
+}
