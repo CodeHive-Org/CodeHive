@@ -50,6 +50,7 @@ export default function ProblemForum({ data }) {
       toast({
         description: "The name is required!!",
       });
+      // alert("the name is required");
       setFormSelector(0);
       return true;
     }

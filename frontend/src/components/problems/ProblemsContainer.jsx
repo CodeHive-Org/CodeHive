@@ -31,10 +31,10 @@ const ProblemsContainer = () => {
         ABI_Bank,
         import.meta.env.VITE_NILE_BANK_ADD,
       );
+      console.log(contract);
       const questions = await contract.questionList().call();
       setProblems(questions);
       setLoading(false);
-      console.log(questions);
     };
     getQuestions();
   }, [ABI_Bank]);
