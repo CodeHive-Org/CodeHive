@@ -13,18 +13,6 @@ import {
 
 const fetchTHeData = async (url, fxn) => {
   console.log("fetching at the",import.meta.env.VITE_PINATA_URL+url);
-  // const URL = import.meta.env.VITE_PINATA_URL + url;
-  // var myHeaders = new Headers();
-  // var requestOptions = {
-  //   method: "GET",
-  //   headers: myHeaders,
-  //   redirect: "follow",
-  // };
-  // const data = await (await fetch(URL, requestOptions)).text();
-  // fxn(JSON.parse(data));
-  //code goes here that fetches from the declared node boi........
-
-// const btfsPath = "QmYdDodAxMbt9PVayHAB43BietATomB8JhRgamcWVvUY9o"
   fetch(import.meta.env.VITE_PINATA_URL+url, {
       method: 'GET',
       headers: {
@@ -134,7 +122,8 @@ export default function MyQuestionDesc() {
     }
   }, [contract]);
   useEffect(() => {
-    if (problem && claimer && bounty && codes && name && difficulty) {
+    if (problem!=undefined && claimer!=undefined && bounty!=undefined && codes!=undefined && name!=undefined && difficulty!=undefined) {
+      console.log("touch");
       setLoading(false);
     }
   }, [problem, claimer, bounty, codes, name, difficulty]);
@@ -148,7 +137,6 @@ export default function MyQuestionDesc() {
         .then((data) => fetchTHeCode(data, setWinnerCode));
     }
   }, [claimed]);
-  console.log(claimed, winnerCode);
 
   if (loading) {
     return (
