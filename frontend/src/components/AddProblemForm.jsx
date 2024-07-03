@@ -126,11 +126,6 @@ export default function ProblemForum({ data }) {
     return () => clearTimeout(timeout);
   }, []);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({...prevFormData, [name]: value });
-      };
-
       const handleCompileFunctionNameChange = (e) => {
         const { value } = e.target;
         setFormData({
@@ -164,9 +159,9 @@ export default function ProblemForum({ data }) {
               type="text"
               id="name"
               name="name"
+              onChange={(e)=>setFormData({...formData, name: e.target.value })}
               value={formData.name}
-              onChange={handleChange}
-              className="mt-1 w-full rounded-md border bg-black/40 p-2"
+              className="mt-1 w-full rounded-md text-white border bg-black/40 p-2"
               required
             />
             <label
@@ -180,7 +175,7 @@ export default function ProblemForum({ data }) {
               id="description"
               name="description"
               value={formData.description}
-              onChange={handleChange}
+              onChange={(e)=>setFormData({...formData, description: e.target.value })}
               className="mt-1 w-full rounded-md border bg-black/40 p-2"
               required
             />
