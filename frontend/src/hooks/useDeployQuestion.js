@@ -157,70 +157,67 @@ export default function useDeployQuestion() {
   const [stateOfTransaction, setStateOfTransaction] = useState(0); 
 
   const DEPLOY = async (difficulty, formData, bounty) => {
-    // setDeployed(false);
-    // setStateOfTransaction(1); // Deploying the question
-    // const options = {
-    //   method: "POST",
-    //   headers: {
-    //     Authorization: `Bearer ${import.meta.env.VITE_PINATA_JWT}`,
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: `{"pinataOptions":{"cidVersion":1},"pinataMetadata":{"name":"${formData.name.replace(/ /g, "_")}.json"},"pinataContent":${JSON.stringify(formData)}}`,
-    // };
+    setDeployed(false);
+    setStateOfTransaction(1); // Deploying the question
+    const options = {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${import.meta.env.VITE_PINATA_JWT}`,
+        "Content-Type": "application/json",
+      },
+      body: `{"pinataOptions":{"cidVersion":1},"pinataMetadata":{"name":"${formData.name.replace(/ /g, "_")}.json"},"pinataContent":${JSON.stringify(formData)}}`,
+    };
     
-    // if (!window.tron.tronWeb.ready) {
-    //   console.error("Cannot deploy, TronWeb not ready.");
-    //   return;
-    // }
+    if (!window.tron.tronWeb.ready) {
+      console.error("Cannot deploy, TronWeb not ready.");
+      return;
+    }
     
-    // try {
-    //   const response = await fetch("https://api.pinata.cloud/pinning/pinJSONToIPFS", options);
-    //   const jsonData = await response.json();
-    //   const IpfsHash = jsonData.IpfsHash;
+    try {
+      const response = await fetch("https://api.pinata.cloud/pinning/pinJSONToIPFS", options);
+      const jsonData = await response.json();
+      const IpfsHash = jsonData.IpfsHash;
 
-    //   const contractOptions = {
-    //     feeLimit: 1000000000,
-    //     callValue: 1000000 * bounty,
-    //     userFeePercentage: 100,
-    //     originEnergyLimit: 100,
-    //     abi: ABI,
-    //     bytecode: QuesBYTECODE,
-    //     parameters: [
-    //       formData.name,
-    //       IpfsHash,
-    //       window.tron.tronWeb.defaultAddress.base58.toString(),
-    //       difficulty,
-    //       import.meta.env.VITE_WEB_HANDLER.toString(),
-    //     ],
-    //     name: "Question",
-    //   };
+      const contractOptions = {
+        feeLimit: 1000000000,
+        callValue: 1000000 * bounty,
+        userFeePercentage: 100,
+        originEnergyLimit: 100,
+        abi: ABI,
+        bytecode: QuesBYTECODE,
+        parameters: [
+          formData.name,
+          IpfsHash,
+          window.tron.tronWeb.defaultAddress.base58.toString(),
+          difficulty,
+          import.meta.env.VITE_WEB_HANDLER.toString(),
+        ],
+        name: "Question",
+      };
 
-    //   const contract = await window.tron.tronWeb.transactionBuilder.createSmartContract(
-    //     contractOptions,
-    //     window.tron.tronWeb.defaultAddress.base58
-    //   );
+      const contract = await window.tron.tronWeb.transactionBuilder.createSmartContract(
+        contractOptions,
+        window.tron.tronWeb.defaultAddress.base58
+      );
 
-    //   const signedTxn = await window.tron.tronWeb.trx.sign(contract);
-    //   const result = await window.tron.tronWeb.trx.sendRawTransaction(signedTxn);
-    //   const addressDeployed = window.tron.tronWeb.address.fromHex(result.transaction.contract_address);
+      const signedTxn = await window.tron.tronWeb.trx.sign(contract);
+      const result = await window.tron.tronWeb.trx.sendRawTransaction(signedTxn);
+      const addressDeployed = window.tron.tronWeb.address.fromHex(result.transaction.contract_address);
 
-    //   setDeployedAddress(addressDeployed);
-    //   setDeployed(true);
-    //   setStateOfTransaction(2); // Question deployed
+      setDeployedAddress(addressDeployed);
+      setDeployed(true);
+      setStateOfTransaction(2); // Question deployed
 
-    //   await addDoc(collection(db, "Questions"), {
-    //     ques: result.transaction.contract_address,
-    //     user: window.tron.tronWeb.defaultAddress.base58.toString(),
-    //     name: formData.name,
-    //     diff: difficulty,
-    //   });
+      await addDoc(collection(db, "Questions"), {
+        ques: result.transaction.contract_address,
+        user: window.tron.tronWeb.defaultAddress.base58.toString(),
+        name: formData.name,
+        diff: difficulty,
+      });
 
-    //   setStateOfTransaction(3); // Ready for bank transaction
+      setStateOfTransaction(3); // Ready for bank transaction
 
-    //   toast.success("Question successfully deployed!");
-
-    //   // Placeholder for the bank transaction code
-    //   // TODO: Implement transaction to add data to the bank
+      toast.success("Question successfully deployed!");
 
       const bank_contract = await window.tronLink.tronWeb.contract(
         ABI_Bank,
@@ -228,16 +225,17 @@ export default function useDeployQuestion() {
       );
     //   //in the name we are going to save the name of the question +signer..
     //   // name:0xfdfrjfdsf
-
-      const tsnData = bank_contract.addAddress("TRwVxjzcEF5U91WbBAMgyDz4d8KjJFxTNq",formData.name+"|TBJfBkWVR9rLdCVuUYWjTcAWEjQpGgrB9v",difficulty).send();
+      setStateOfTransaction(4);
+      const tsnData = await bank_contract.addAddress(addressDeployed,formData.name+"|TBJfBkWVR9rLdCVuUYWjTcAWEjQpGgrB9v",difficulty).send();
       console.log(tsnData);
+      setStateOfTransaction(5);
       // return addressDeployed;
 
-    // } catch (err) {
-    //   console.error(err);
-    //   setError(err);
-    //   toast.error("Error occurred, failed to deploy the question");
-    // }
+    } catch (err) {
+      console.error(err);
+      setError(err);
+      toast.error("Error occurred, failed to deploy the question");
+    }
   };
 
   return { DEPLOY, deployed, deployedAddress, error, stateOfTransaction };
