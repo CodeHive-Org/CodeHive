@@ -51,9 +51,7 @@ function App() {
 
   return (
     <>
-      <WalletProvider onError={onError} adapters={adapters}
-      onChainChanged={(e)=> alert("mainnet it is "+ e)}
-      >
+      <WalletProvider onError={onError} adapters={adapters}>
         <WalletModalProvider>
           {/* Place your app's components here */}
           <main className="dm-sans dark bg-black to-background text-foreground">
