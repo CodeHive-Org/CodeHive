@@ -15,11 +15,12 @@ import {
   WalletDisconnectedError,
   WalletNotFoundError,
 } from "@tronweb3/tronwallet-abstract-adapter";
-import { WalletProvider } from "@tronweb3/tronwallet-adapter-react-hooks";
+import { WalletProvider, useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 import { WalletModalProvider } from "@tronweb3/tronwallet-adapter-react-ui";
 import "@tronweb3/tronwallet-adapter-react-ui/style.css";
 import { TronLinkAdapter } from "@tronweb3/tronwallet-adapter-tronlink";
 import AlertModal from "./components/ui/AlertModal";
+import { useEffect } from "react";
 
 globalThis.Buffer = Buffer;
 
@@ -42,9 +43,17 @@ function App() {
     return [tronLink];
   }, []);
 
+  useEffect(() => {
+    adapters[0].on('chainChanged', (data) => {
+     console.log('chainChanged', JSON.stringify(data));
+   })
+ })
+
   return (
     <>
-      <WalletProvider onError={onError} adapters={adapters}>
+      <WalletProvider onError={onError} adapters={adapters}
+      onChainChanged={(e)=> alert("mainnet it is "+ e)}
+      >
         <WalletModalProvider>
           {/* Place your app's components here */}
           <main className="dm-sans dark bg-black to-background text-foreground">

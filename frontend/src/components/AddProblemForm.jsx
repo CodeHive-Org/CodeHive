@@ -48,102 +48,71 @@ export default function ProblemForum({ data }) {
   const checkFormInvalid = ()=>{
     //checking all the input vales sir.... 
     if(!formData.name){
-      toast({
-        description: "The name is required!!",
-      });
+      toast.error("The name is required!!");
       // alert("the name is required");
       setFormSelector(0);
       return true;
     }
     if(!formData.description){
-      toast({
-        description: "The description is required!!",
-      });
+      toast.error("The description is required!!")
       setFormSelector(0);
       return true;
     }
     if(!formData.examples){
-      toast({
-        description: "The examples are required!!",
-      });
+      toast.error("The examples are required!!");
       setFormSelector(1);
       return true;
     }
     if(formData.examples?.length > 0){
       formData.examples.forEach((example)=>{
         if(!example.input || !example.output || !example.explanation){
-          toast({
-            description: "The examples are not valid!!",
-          });
+          toast.error("The examples are not valid!!");
           setFormSelector(1);
           return true;
         }
       })
     }
     if(!formData.testcases){
-      toast({
-        description: "The testcases are required!!",
-      });
+      toast.error("The testcases are required!!");
       setFormSelector(2);
       return true;
     }
     if(formData.testcases?.length > 0){
       formData.testcases.forEach((testcase)=>{
         if(!testcase.input || !testcase.output){
-          toast({
-            description: "The testcases are not valid!!",
-          });
+          toast.error("The testcases are not valid!!");
           setFormSelector(2);
           return true;
         }
       })
     }
     if(!formData.defaultCode){
-      toast({
-        description: "The default code is required!!",
-      });
+      toast.error("The default code is required!!");
       setFormSelector(4);
       return true;
     }
     if(!bountyValue){
-      toast({
-        description: "The bounty value is required!!",
-      });
+      toast.error("The bounty value is required!!");
       setFormSelector(5);
       return true;
     }
     if(typeof parseInt(difficulty) != "number"){
-      toast({
-        description: "The bounty value is not valid!!",
-      });
+      toast.error("The bounty value is not valid!!");
       setFormSelector(5);
       return true;
     }
     if(!difficulty){
-      toast({
-        description: "The difficulty is required!!",
-      });
+      toast.error("The difficulty is required!!");
       setFormSelector(5);
       return true;
     }
     if(typeof parseInt(difficulty) != "number"){
-      toast({
-        description: "The difficulty is not valid!!",
-      });
+      toast.error("The difficulty is not valid!!");
       setFormSelector(5);
       return true;
     }
     if(!formData.compileFunctionName){
-      toast({
-        description: "The compile function name is required!!",
-      });
-      setFormSelector(4);
-      return true;
-    }
-    if(!formData.defaultCode){
-      toast({
-        description: "The default code is required!!",
-      });
+      toast.error("The compile function name is required!!");
       setFormSelector(4);
       return true;
     }
@@ -159,8 +128,20 @@ export default function ProblemForum({ data }) {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setFormData({...prevFormData, [name]: value });
       };
+
+      const handleCompileFunctionNameChange = (e) => {
+        const { value } = e.target;
+        setFormData({
+          ...formData,
+          compileFunctionName: value,
+          defaultCode: value
+            ? `const ${value} = (data) => {\n\t/*\n\t\your code goes here\n\t*/\n}`
+            : ''
+        });
+      };
+
     const handleSubmit = async (e) => {
         if(checkFormInvalid())return;
 
@@ -404,12 +385,7 @@ export default function ProblemForum({ data }) {
                   type="text"
                   placeholder="This function will be called...."
                   className="mt-1 w-full rounded-md border bg-black/40 p-2"
-                  onChange={(e) => {
-                    setFormData({
-                      ...formData,
-                      compileFunctionName: e.target.value,
-                    });
-                  }}
+                  onChange={handleCompileFunctionNameChange}
                   value={(formData?.compileFunctionName)?formData.compileFunctionName:""}
                 />
               </div>
@@ -442,7 +418,7 @@ export default function ProblemForum({ data }) {
                   onChange={(e) => {
                     setFormData({ ...formData, defaultCode: e.target.value });
                   }}
-                  value={(formData.compileFunctionName)?`const ${formData?.compileFunctionName} = (data)=>{\n\t/*\n\t\thello your code goes here\n\t*/\n}`:""}
+                  value={formData.defaultCode}
                 />
               </div>
             </div>
