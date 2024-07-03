@@ -77,7 +77,7 @@ const ProblemDescription = ({ problem, pid, contract }) => {
               <div className="flex w-full flex-col gap-4">
                 <div className="flex space-x-4">
                   <div className="mr-2 flex-1 text-xl font-medium text-white">
-                    {problem?.name}
+                    {problem?.name.split("|")[0]}
                     <span className="text-[0.5rem]"> {pid}</span>{" "}
                   </div>
                 </div>
