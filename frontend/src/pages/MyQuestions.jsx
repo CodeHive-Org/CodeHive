@@ -16,7 +16,7 @@ export default function MyQuestions() {
       const questions = await contract.questionList().call();
       setQuestions(
         questions.filter(
-          (data) => data.creater == window.tronLink.tronWeb.defaultAddress.hex,
+          (data) => data.name.split("|")[1] == window.tronLink.tronWeb.defaultAddress.hex,
         ),
       );
     };

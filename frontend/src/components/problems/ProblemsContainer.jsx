@@ -84,7 +84,7 @@ const ProblemsContainer = () => {
                 <Problem
                   key={i}
                   id={i}
-                  title={p.name}
+                  title={p.name.split('|')[0]}
                   address={p.question}
                   difficulty={p.difficulty}
                   isOpen={isOpen}
