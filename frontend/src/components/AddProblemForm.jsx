@@ -10,6 +10,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import QuestionProgress from "./ui/QuestionProgress";
 
 
 
@@ -111,7 +112,7 @@ export default function ProblemForum({ data }) {
       setFormSelector(5);
       return true;
     }
-    if(typeof parseInt(bountyValue) == NaN){
+    if(typeof parseInt(difficulty) != "number"){
       toast({
         description: "The bounty value is not valid!!",
       });
@@ -125,7 +126,7 @@ export default function ProblemForum({ data }) {
       setFormSelector(5);
       return true;
     }
-    if(typeof parseInt(difficulty )== NaN){
+    if(typeof parseInt(difficulty) != "number"){
       toast({
         description: "The difficulty is not valid!!",
       });
@@ -167,7 +168,8 @@ export default function ProblemForum({ data }) {
     };
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex relative h-full flex-col items-center justify-start">
+      {/* <QuestionProgress  /> */}
       <div className="flex h-[500px] w-[60%] flex-col items-center pt-[30px]">
         {formSelector == 0 && (
           <div className="w-full">
@@ -493,7 +495,7 @@ export default function ProblemForum({ data }) {
           </SheetTrigger>
           <SheetContent className="bg-black">
             <SheetHeader>
-              <SheetTitle className="text-[#b74646] font-bold">Deploying "{formData.name}"</SheetTitle>
+              <SheetTitle className="text-[#b74646] font-bold">Deploying &quot;{formData.name}&quot;</SheetTitle>
               <SheetDescription>
                 This is the final step to deploy the question. Please review the details before deploying.
               </SheetDescription>
