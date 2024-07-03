@@ -12,35 +12,33 @@ import {
 } from "@/components/ui/accordion";
 
 const fetchTHeData = async (url, fxn) => {
-  console.log("fetching at the",import.meta.env.VITE_PINATA_URL+url);
-  fetch(import.meta.env.VITE_PINATA_URL+url, {
-      method: 'GET',
-      headers: {
-        "ngrok-skip-browser-warning": true
-      }
+  console.log("fetching at the", import.meta.env.VITE_PINATA_URL + url);
+  fetch(import.meta.env.VITE_PINATA_URL + url, {
+    method: "GET",
+    headers: {
+      "ngrok-skip-browser-warning": true,
+    },
   })
-  .then(async response => {
+    .then(async (response) => {
       const decoder = new TextDecoder();
       const reader = response.body.getReader();
 
       return reader.read().then(({ value, done }) => {
-          if (done) {
-              console.log('Stream reading complete');
-              return;
-          }
-          const decodedValue = decoder.decode(value, { stream: true });
-          return JSON.parse(decodedValue);
+        if (done) {
+          console.log("Stream reading complete");
+          return;
+        }
+        const decodedValue = decoder.decode(value, { stream: true });
+        return JSON.parse(decodedValue);
       });
-  }).then(data=>{
-    console.log(data);
-    fxn(data);
-  })
-  .catch(error => {
-      console.error('Error:', error);
-  });
-
-
-
+    })
+    .then((data) => {
+      console.log(data);
+      fxn(data);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
 };
 
 const fetchTHeCode = async (url, fxn) => {
@@ -122,7 +120,14 @@ export default function MyQuestionDesc() {
     }
   }, [contract]);
   useEffect(() => {
-    if (problem!=undefined && claimer!=undefined && bounty!=undefined && codes!=undefined && name!=undefined && difficulty!=undefined) {
+    if (
+      problem != undefined &&
+      claimer != undefined &&
+      bounty != undefined &&
+      codes != undefined &&
+      name != undefined &&
+      difficulty != undefined
+    ) {
       console.log("touch");
       setLoading(false);
     }
@@ -206,14 +211,6 @@ export default function MyQuestionDesc() {
                 <AccordionContent>
                   <div className="relative whitespace-pre-wrap rounded-[5px] border p-2">
                     {winnerCode}
-                    {!claimed && (
-                      <button
-                        className="absolute right-[10px] top-[10px] rounded-[5px] border border-primary px-[3px] py-[2px] pt-[4px] text-[12px] font-bold text-primary hover:bg-primary hover:text-black"
-                        onClick={() => fundAcc()}
-                      >
-                        Fund This
-                      </button>
-                    )}
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -269,6 +266,7 @@ function CodeSegment({ contract, codeData, index, claimed }) {
       //todo: alert allready claimed
     }
   };
+
   return (
     <>
       <AccordionItem value={index.toString()}>

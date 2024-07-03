@@ -1,125 +1,115 @@
+import { questionAddStatus } from "@/atoms/problemAtom";
+import useDeployQuestion from "@/hooks/useDeployQuestion";
 import React, { useEffect, useRef, useState } from "react";
 import { TiTick } from "react-icons/ti";
-const QuestionProgress = ({ status }) => {
-  const [currentStep, setCurrentStep] = useState(2);
-  const [isComplete, setIsComplete] = useState(false);
-  const [margins, setMargins] = useState({
-    marginLeft: 0,
-    marginRight: 0,
-  });
+import { useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 
+const QuestionProgress = () => {
+  const { deployAddress } = useDeployQuestion();
+  const stateOfTransaction = useRecoilValue(questionAddStatus);
+  const [isComplete, setIsComplete] = useState(false);
+  const [margins, setMargins] = useState({ marginLeft: 0, marginRight: 0 });
+  const navigate = useNavigate();
+
+  
   const steps = [
     {
       name: "Question Deployment",
-      Component: () => <div>please sign in the question deploy contract</div>,
+      Component: () => <div>Please sign the question deploy contract</div>,
     },
     {
       name: "Signin to the bank address",
-    //   Component: () => <div></div>,
+      Component: () => <div>Please sign in to the bank address</div>,
     },
     {
-      name: "Question Deployed Succesfully",
-      Component: () => <div>0xksdfsd8dsksdksfs</div>,
+      name: "Question Deployed Successfully",
+      Component: () => <div>Deployed Succesfully ✅</div>,
     },
   ];
 
   const stepRef = useRef([]);
 
-  //   console.log(
-  //     "stepRef.current[0].offsetWidth / 2 : " +
-  //       stepRef.current[0].offsetWidth / 2,
-  //   );
-  console.log(
-    "stepRef.current[0].offsetWidth / 2 : " +
-      stepRef.current[0] +
-      " " +
-      stepRef.current[steps.length - 1],
-  );
+  useEffect(() => {
+    if (stateOfTransaction >= 3) {
+      setIsComplete(true);
+      setTimeout(() => {
+        navigate('/problems');
+      }, 2000);
+    }
+  }, [stateOfTransaction, navigate]);
 
   useEffect(() => {
     setMargins({
-      marginLeft: stepRef.current[0].offsetWidth / 2,
-      marginRight: stepRef.current[steps.length - 1].offsetWidth / 2,
+      marginLeft: stepRef.current[0]?.offsetWidth / 2 || 0,
+      marginRight: stepRef.current[steps.length - 1]?.offsetWidth / 2 || 0,
     });
-  }, [status, stepRef, steps.length]);
+  }, [stateOfTransaction, steps.length]);
 
   if (!steps.length) {
-    return <></>;
+    return null;
   }
 
-  const handleNext = () => {
-    setCurrentStep((prevStep) => {
-      if (prevStep === steps.length) {
-        setIsComplete(true);
-        return prevStep;
-      } else {
-        return prevStep + 1;
-      }
-    });
-  };
-
   const calculateProgressBarHeight = () => {
-    return ((currentStep - 1) / (steps.length - 1)) * 100;
+    if (stateOfTransaction >= 3) {
+      return 100;
+    }
+
+    return (stateOfTransaction / (steps.length - 1)) * 100;
   };
 
-  const ActiveComponent = steps[currentStep - 1]?.Component;
+  const ActiveComponent = steps[stateOfTransaction-1]?.Component;
+
+  if (stateOfTransaction < 0) {
+    return;
+  }
 
   return (
-    <>
-      <main className="absolute inset-0 z-10 flex justify-center bg-white/10 py-8 backdrop-blur-lg">
-        <section className="relative z-30 m-10 mt-24 flex h-max">
-          <div className="relative flex flex-col justify-start space-y-20">
-            {steps.map((step, index) => {
-              return (
-                <div
-                  key={step.name}
-                  ref={(el) => (stepRef.current[index] = el)}
-                  className={`z-30 flex items-center justify-start space-x-8 ${
-                    currentStep > index + 1 || isComplete ? "complete" : ""
-                  } ${currentStep === index + 1 ? "active" : ""} `}
-                >
-                  <div className="step-number  text-2xl ">
-                    {currentStep > index + 1 || isComplete ? (
-                      <span>&#10003;</span>
-                    ) : (
-                      index + 1
-                    )}
-                  </div>
-                  <div className="font-sans text-[1.8rem] font-semibold">
-                    {step.name}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div
-            className="absolute left-6 z-20 mt-2 w-[4px] bg-gray-500"
-            style={{
-              // width: `${calculateProgressBarHeight()}%`,
-              width: "2px",
-              height: `calc(100% - 20px)`,
-              //   height: `calc(100% - ${margins.marginTop + margins.marginBottom}px)100%`,
-              //   marginTop: margins.marginTop,
-              //   marginBottom: margins.marginBottom,
-            }}
-          >
+    <main className="absolute inset-x-0 h-full z-10 flex justify-center bg-white/10 py-8 backdrop-blur-lg">
+      <section className="relative z-30 m-10 mt-24 flex h-max">
+        <div className="relative flex flex-col justify-start space-y-20">
+          {steps.map((step, index) => (
             <div
-              className="progress"
-              style={{ height: `${calculateProgressBarHeight()}%` }}
-            ></div>
-          </div>
-        </section>
+              key={step.name}
+              ref={(el) => (stepRef.current[index] = el)}
+              className={`z-30 flex items-center justify-start space-x-8 ${
+                stateOfTransaction > index || isComplete ? "complete" : ""
+              } ${stateOfTransaction === index + 1 ? "active" : ""}`}
+            >
+              <div className="step-number text-2xl">
+                {stateOfTransaction > index + 1 || isComplete ? (
+                  <span>&#10003;</span>
+                ) : (
+                  index + 1
+                )}
+              </div>
+              <div className="font-sans text-[1.8rem] font-semibold">
+                {step.name}
+              </div>
+            </div>
+          ))}
+        </div>
 
-        {/* <ActiveComponent /> */}
+        <div
+          className="absolute left-6 z-20 mt-2 w-[4px] bg-gray-500"
+          style={{
+            width: "2px",
+            height: `calc(100% - 20px)`,
+          }}
+        >
+          <div
+            className="progress"
+            style={{ height: `${calculateProgressBarHeight()}%` }}
+          ></div>
+        </div>
+      </section>
 
-        {/* {!isComplete && (
-          <button className="btn" onClick={handleNext}>
-            {currentStep === steps.length ? "Finish" : "Next"}
-          </button>
-        )} */}
-      </main>
-    </>
+      {ActiveComponent && (
+        <div className="absolute animate-pulse z-20 text-gray-100 py-5 bottom-20 flex w-full justify-center">
+          <ActiveComponent />
+        </div>
+      )}
+    </main>
   );
 };
 

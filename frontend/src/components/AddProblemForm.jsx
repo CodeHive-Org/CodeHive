@@ -11,20 +11,21 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Loader, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import QuestionProgress from "./ui/QuestionProgress";
-
-
+import useDeployQuestion from "@/hooks/useDeployQuestion";
+import { useRecoilValue } from "recoil";
+import { questionAddStatus } from "@/atoms/problemAtom";
 
 export default function ProblemForum({ data }) {
   const [formSelector, setFormSelector] = useState(0);
   const [difficulty, setDifficulty] = useState();
   const [bountyValue, setBountyValue] = useState();
   //not so imp consts...
-  const [ loading, setLoading ] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [In, setIn] = useState("");
   const [Out, setOut] = useState("");
   const [Exp, setExp] = useState("");
   const [Cons, setCons] = useState("");
-  const [ isChecked, setChecked ] = useState(false);
+  const [isChecked, setChecked] = useState(false);
   //consts ends...
   const [formData, setFormData] = useState({
     name: "",
@@ -37,87 +38,94 @@ export default function ProblemForum({ data }) {
     testcases: [],
   });
   //deployment stuff...
-  const { DEPLOY, deployed, deployAddress, error } = data;
+  const { DEPLOY, deployed, deployAddress, error } =
+    useDeployQuestion();
+  
+  console.log("deploying status : ", useDeployQuestion());
+  const stateOfTransaction = useRecoilValue(questionAddStatus);
 
-  useEffect(()=>{
-    if(deployAddress!= "" && deployed){
-      toast.success("Contract deployed, will be added soon to dashboard after a review!");
+  
+  useEffect(() => {
+    if (deployAddress != "" && deployed) {
+      toast.success(
+        "Contract deployed, will be added soon to dashboard after a review!",
+      );
     }
-  },[deployed, deployAddress, error])
+  }, [deployed, deployAddress, error]);
   const [showAlert, setShowAlert] = useState(false);
-  const checkFormInvalid = ()=>{
-    //checking all the input vales sir.... 
-    if(!formData.name){
+  const checkFormInvalid = () => {
+    //checking all the input vales sir....
+    if (!formData.name) {
       toast.error("The name is required!!");
       // alert("the name is required");
       setFormSelector(0);
       return true;
     }
-    if(!formData.description){
-      toast.error("The description is required!!")
+    if (!formData.description) {
+      toast.error("The description is required!!");
       setFormSelector(0);
       return true;
     }
-    if(!formData.examples){
+    if (!formData.examples) {
       toast.error("The examples are required!!");
       setFormSelector(1);
       return true;
     }
-    if(formData.examples?.length > 0){
-      formData.examples.forEach((example)=>{
-        if(!example.input || !example.output || !example.explanation){
+    if (formData.examples?.length > 0) {
+      formData.examples.forEach((example) => {
+        if (!example.input || !example.output || !example.explanation) {
           toast.error("The examples are not valid!!");
           setFormSelector(1);
           return true;
         }
-      })
+      });
     }
-    if(!formData.testcases){
+    if (!formData.testcases) {
       toast.error("The testcases are required!!");
       setFormSelector(2);
       return true;
     }
-    if(formData.testcases?.length > 0){
-      formData.testcases.forEach((testcase)=>{
-        if(!testcase.input || !testcase.output){
+    if (formData.testcases?.length > 0) {
+      formData.testcases.forEach((testcase) => {
+        if (!testcase.input || !testcase.output) {
           toast.error("The testcases are not valid!!");
           setFormSelector(2);
           return true;
         }
-      })
+      });
     }
-    if(!formData.defaultCode){
+    if (!formData.defaultCode) {
       toast.error("The default code is required!!");
       setFormSelector(4);
       return true;
     }
-    if(!bountyValue){
+    if (!bountyValue) {
       toast.error("The bounty value is required!!");
       setFormSelector(5);
       return true;
     }
-    if(typeof parseInt(difficulty) != "number"){
+    if (typeof parseInt(difficulty) != "number") {
       toast.error("The bounty value is not valid!!");
       setFormSelector(5);
       return true;
     }
-    if(!difficulty){
+    if (!difficulty) {
       toast.error("The difficulty is required!!");
       setFormSelector(5);
       return true;
     }
-    if(typeof parseInt(difficulty) != "number"){
+    if (typeof parseInt(difficulty) != "number") {
       toast.error("The difficulty is not valid!!");
       setFormSelector(5);
       return true;
     }
-    if(!formData.compileFunctionName){
+    if (!formData.compileFunctionName) {
       toast.error("The compile function name is required!!");
       setFormSelector(4);
       return true;
     }
     return false;
-  }
+  };
   useEffect(() => {
     const timeout = setTimeout(() => {
       setShowAlert(true);
@@ -126,26 +134,26 @@ export default function ProblemForum({ data }) {
     return () => clearTimeout(timeout);
   }, []);
 
-      const handleCompileFunctionNameChange = (e) => {
-        const { value } = e.target;
-        setFormData({
-          ...formData,
-          compileFunctionName: value,
-          defaultCode: value
-            ? `const ${value} = (data) => {\n\t/*\n\t\your code goes here\n\t*/\n}`
-            : ''
-        });
-      };
+  const handleCompileFunctionNameChange = (e) => {
+    const { value } = e.target;
+    setFormData({
+      ...formData,
+      compileFunctionName: value,
+      defaultCode: value
+        ? `const ${value} = (data) => {\n\t/*\n\t your code goes here\n\t*/\n}`
+        : "",
+    });
+  };
 
-    const handleSubmit = async (e) => {
-        if(checkFormInvalid())return;
+  const handleSubmit = async (e) => {
+    if (checkFormInvalid()) return;
 
-        DEPLOY(difficulty, formData, bountyValue);
-    };
+    await DEPLOY(difficulty, formData, bountyValue);
+  };
 
   return (
-    <div className="flex relative h-full flex-col items-center justify-start">
-      {/* <QuestionProgress  /> */}
+    <div className="relative flex h-full flex-col items-center justify-start">
+      <QuestionProgress />
       <div className="flex h-[500px] w-[60%] flex-col items-center pt-[30px]">
         {formSelector == 0 && (
           <div className="w-full">
@@ -159,9 +167,11 @@ export default function ProblemForum({ data }) {
               type="text"
               id="name"
               name="name"
-              onChange={(e)=>setFormData({...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               value={formData.name}
-              className="mt-1 w-full rounded-md text-white border bg-black/40 p-2"
+              className="mt-1 w-full rounded-md border bg-black/40 p-2 text-white"
               required
             />
             <label
@@ -175,7 +185,9 @@ export default function ProblemForum({ data }) {
               id="description"
               name="description"
               value={formData.description}
-              onChange={(e)=>setFormData({...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               className="mt-1 w-full rounded-md border bg-black/40 p-2"
               required
             />
@@ -285,8 +297,17 @@ export default function ProblemForum({ data }) {
               <div>
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    <input type="checkbox" id="radio" name="radio" value="sample" checked={isChecked} onChange={(e)=>setChecked(e.target.checked)}/>
-                    <label className="block text-gray-200">Hide this testcase</label>
+                    <input
+                      type="checkbox"
+                      id="radio"
+                      name="radio"
+                      value="sample"
+                      checked={isChecked}
+                      onChange={(e) => setChecked(e.target.checked)}
+                    />
+                    <label className="block text-gray-200">
+                      Hide this testcase
+                    </label>
                   </div>
                   <button
                     className="mt-1 rounded-[7px] border border-white p-2 px-4"
@@ -318,7 +339,9 @@ export default function ProblemForum({ data }) {
                   <div className="flex gap-[10px]">
                     <h1>In: {testcase.input}</h1>
                     <h1>Out: {testcase.output}</h1>
-                    <h1 className="text-[#b24343]">{(testcase.hidden)?"Hidden!!":""}</h1>
+                    <h1 className="text-[#b24343]">
+                      {testcase.hidden ? "Hidden!!" : ""}
+                    </h1>
                   </div>
                   ID : {testcase.id}
                 </div>
@@ -381,7 +404,11 @@ export default function ProblemForum({ data }) {
                   placeholder="This function will be called...."
                   className="mt-1 w-full rounded-md border bg-black/40 p-2"
                   onChange={handleCompileFunctionNameChange}
-                  value={(formData?.compileFunctionName)?formData.compileFunctionName:""}
+                  value={
+                    formData?.compileFunctionName
+                      ? formData.compileFunctionName
+                      : ""
+                  }
                 />
               </div>
               <div className="w-full">
@@ -397,15 +424,13 @@ export default function ProblemForum({ data }) {
                     const arr = e.target.value.split(",");
                     setFormData({ ...formData, tags: arr });
                   }}
-                  value={formData.tags.map((val)=>{
+                  value={formData.tags.map((val) => {
                     return val;
                   })}
                 />
               </div>
               <div className="w-full">
-                <label className="block text-gray-200">
-                  Default Code
-                </label>
+                <label className="block text-gray-200">Default Code</label>
                 <textarea
                   type="text"
                   placeholder={`/*\nhello default code here\n basic info\n*/`}
@@ -454,64 +479,28 @@ export default function ProblemForum({ data }) {
       </div>
       <div className="flex w-[60%] justify-between">
         <button
-          onClick={() => {if(parseInt(formSelector) == 0)return; setFormSelector(parseInt(formSelector) - 1)}}
+          onClick={() => {
+            if (parseInt(formSelector) == 0) return;
+            setFormSelector(parseInt(formSelector) - 1);
+          }}
           className={`${formSelector == 0 ? "pointer-events-none cursor-none opacity-50" : ""} rounded-[7px] border-[3px] border-white p-2 px-4`}
         >
           Prev
         </button>
         {formSelector == 5 ? (
-          <Sheet>
-          <SheetTrigger className="rounded-[7px] border-[3px] bg-white p-2 px-4 font-bold text-black hover:bg-black hover:text-white">
-              Submit
-          </SheetTrigger>
-          <SheetContent className="bg-black">
-            <SheetHeader>
-              <SheetTitle className="text-[#b74646] font-bold">Deploying &quot;{formData.name}&quot;</SheetTitle>
-              <SheetDescription>
-                This is the final step to deploy the question. Please review the details before deploying.
-              </SheetDescription>
-            </SheetHeader>
-              <div className="flex flex-col justify-between h-full my-[10px]">
-                <div className="flex flex-col gap-2">
-                  <div>
-                    <div className="space-y-2 mt-[40px]">
-                      <div className="flex items-center gap-2 w-full text-white">
-                        <h1 className="text-white">Deployed</h1>
-                          {deployed?(
-                            error?
-                            <>{error}</>:
-                            <>SucessFully Deployed!!</>
-                          ):(
-                            <Skeleton className="h-4 w-full" />
-                          )}
-                      </div>
-                      <div className="flex items-center gap-2 w-full text-white">
-                        <h1 className="text-white">At: </h1>
-                          {deployed?(
-                              <>{deployAddress}</>
-                            ):(
-                              <Skeleton className="h-4 w-full" />
-                            )}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex justify-end items-center">
-                    <button 
-                      className={`w-[130px] rounded-[7px] border-[3px] bg-white p-2 px-4 font-bold text-black hover:bg-black hover:text-white mb-[60px]`}
-                      onClick={()=>{
-                        setLoading(true);
-                        setTimeout(()=>{setLoading(false)},3000);
-                        handleSubmit();}
-                      }
-                      >
-                      Deploy
-                      {!deployed && <Loader className="animate-spin"/>}
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </SheetContent>
-        </Sheet>
+          <button
+            className={`rounded-[7px] border-[1px] border-black bg-primary px-4 font-bold text-black hover:text-white`}
+            onClick={() => {
+              setLoading(true);
+              setTimeout(() => {
+                setLoading(false);
+              }, 3000);
+              handleSubmit();
+            }}
+          >
+            Deploy
+            {/* {!deployed && <Loader className=" ml-4 animate-spin" />} */}
+          </button>
         ) : (
           <button
             onClick={() => setFormSelector((val) => parseInt(val) + 1)}
