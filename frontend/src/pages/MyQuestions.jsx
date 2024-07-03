@@ -16,7 +16,7 @@ export default function MyQuestions() {
       const questions = await contract.questionList().call();
       setQuestions(
         questions.filter(
-          (data) => data.name.split("|")[1] == window.tronLink.tronWeb.defaultAddress.hex,
+          (data) => data.name.split("|")[1] == window.tronLink.tronWeb.defaultAddress.base58
         ),
       );
     };
@@ -56,7 +56,7 @@ function ContratElem({ el, i }) {
     >
       <div className="w-full border-b border-gray-600 hover:text-whtie flex py-2 px-2 rounded-md justify-between mt-4 cursor-pointer hover:bg-gray-600">
         <p>{i + 1}</p>
-        <p>{el[1]}</p>
+        <p>{el[1].split("|")[0]}</p>
         <p>{el[0].slice(0, 4) + "....." + el[0].slice(-8)}</p>
       </div>
     </div>

@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/accordion";
 
 const fetchTHeData = async (url, fxn) => {
+  console.log("fetching at the",import.meta.env.VITE_PINATA_URL+url);
   // const URL = import.meta.env.VITE_PINATA_URL + url;
   // var myHeaders = new Headers();
   // var requestOptions = {
@@ -24,31 +25,31 @@ const fetchTHeData = async (url, fxn) => {
   //code goes here that fetches from the declared node boi........
 
 // const btfsPath = "QmYdDodAxMbt9PVayHAB43BietATomB8JhRgamcWVvUY9o"
-fetch(import.meta.env.VITE_PINATA_URL+url, {
-    method: 'GET',
-    headers: {
-      "ngrok-skip-browser-warning": true
-    }
-})
-.then(async response => {
-    const decoder = new TextDecoder();
-    const reader = response.body.getReader();
+  fetch(import.meta.env.VITE_PINATA_URL+url, {
+      method: 'GET',
+      headers: {
+        "ngrok-skip-browser-warning": true
+      }
+  })
+  .then(async response => {
+      const decoder = new TextDecoder();
+      const reader = response.body.getReader();
 
-    return reader.read().then(({ value, done }) => {
-        if (done) {
-            console.log('Stream reading complete');
-            return;
-        }
-        const decodedValue = decoder.decode(value, { stream: true });
-        return JSON.parse(decodedValue);
-    });
-}).then(data=>{
-  console.log(data);
-  fxn(data);
-})
-.catch(error => {
-    console.error('Error:', error);
-});
+      return reader.read().then(({ value, done }) => {
+          if (done) {
+              console.log('Stream reading complete');
+              return;
+          }
+          const decodedValue = decoder.decode(value, { stream: true });
+          return JSON.parse(decodedValue);
+      });
+  }).then(data=>{
+    console.log(data);
+    fxn(data);
+  })
+  .catch(error => {
+      console.error('Error:', error);
+  });
 
 
 
@@ -128,6 +129,7 @@ export default function MyQuestionDesc() {
     };
 
     if (contract) {
+      console.log(contract);
       getDATA();
     }
   }, [contract]);
