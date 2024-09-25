@@ -64,15 +64,19 @@ export default function useDeployQuestion() {
             contractOptions,
             window.tron.tronWeb.defaultAddress.base58,
           );
-        
+
         const signedTxn = await window.tron.tronWeb.trx.sign(contract);
-        
+
         const result =
           await window.tron.tronWeb.trx.sendRawTransaction(signedTxn);
         const addressDeployed = window.tron.tronWeb.address.fromHex(
           result.transaction.contract_address,
         );
 
+        // calling the nestjs core api here
+        if (result) {
+          // write the nestjs api calling logic here
+        }
         setDeployedAddress(addressDeployed);
         setDeployed(true);
         setStateOfTransaction(1); // Question deployed
