@@ -3,16 +3,18 @@ import useDeployQuestion from "@/hooks/useDeployQuestion";
 import React, { useEffect, useRef, useState } from "react";
 import { TiTick } from "react-icons/ti";
 import { useNavigate } from "react-router-dom";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 const QuestionProgress = () => {
   const { deployAddress } = useDeployQuestion();
-  const stateOfTransaction = useRecoilValue(questionAddStatus);
+  const [stateOfTransaction, setStateOfTransaction] = useRecoilState(
+    questionAddStatus
+  );
+
   const [isComplete, setIsComplete] = useState(false);
   const [margins, setMargins] = useState({ marginLeft: 0, marginRight: 0 });
   const navigate = useNavigate();
 
-  
   const steps = [
     {
       name: "Question Deployment",
@@ -34,8 +36,9 @@ const QuestionProgress = () => {
     if (stateOfTransaction >= 3) {
       setIsComplete(true);
       setTimeout(() => {
-        navigate('/problems');
+        navigate("/problems");
       }, 2000);
+      setStateOfTransaction(-1);
     }
   }, [stateOfTransaction, navigate]);
 
@@ -58,14 +61,16 @@ const QuestionProgress = () => {
     return (stateOfTransaction / (steps.length - 1)) * 100;
   };
 
-  const ActiveComponent = steps[stateOfTransaction-1]?.Component;
+  const ActiveComponent = steps[stateOfTransaction - 1]?.Component;
+
+  console.log("stateOfTransaction : ", stateOfTransaction);
 
   if (stateOfTransaction < 0) {
     return;
   }
 
   return (
-    <main className="absolute inset-x-0 h-full z-10 flex justify-center bg-white/10 py-8 backdrop-blur-lg">
+    <main className="absolute inset-x-0 z-10 flex h-full justify-center bg-white/10 py-8 backdrop-blur-lg">
       <section className="relative z-30 m-10 mt-24 flex h-max">
         <div className="relative flex flex-col justify-start space-y-20">
           {steps.map((step, index) => (
@@ -105,7 +110,7 @@ const QuestionProgress = () => {
       </section>
 
       {ActiveComponent && (
-        <div className="absolute animate-pulse z-20 text-gray-100 py-5 bottom-20 flex w-full justify-center">
+        <div className="absolute bottom-20 z-20 flex w-full animate-pulse justify-center py-5 text-gray-100">
           <ActiveComponent />
         </div>
       )}

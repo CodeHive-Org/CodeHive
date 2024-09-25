@@ -1,23 +1,18 @@
+import useDeployQuestion from "@/hooks/useDeployQuestion";
 import { useEffect, useState } from "react";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Loader, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import QuestionProgress from "./ui/QuestionProgress";
-import useDeployQuestion from "@/hooks/useDeployQuestion";
-import { useRecoilValue } from "recoil";
-import { questionAddStatus } from "@/atoms/problemAtom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { ArrowBigDownIcon } from "lucide-react";
 
 export default function ProblemForum({ data }) {
   const [formSelector, setFormSelector] = useState(0);
-  const [difficulty, setDifficulty] = useState();
   const [bountyValue, setBountyValue] = useState();
   //not so imp consts...
   const [loading, setLoading] = useState(false);
@@ -32,19 +27,19 @@ export default function ProblemForum({ data }) {
     description: "",
     defaultCode: "",
     compileFunctionName: "",
-    tags: [],
+    difficulty: "",
     examples: [],
     constraints: [],
     testcases: [],
   });
-  //deployment stuff...
-  const { DEPLOY, deployed, deployAddress, error } =
-    useDeployQuestion();
-  
-  console.log("deploying status : ", useDeployQuestion());
-  const stateOfTransaction = useRecoilValue(questionAddStatus);
 
-  
+  const difficultyType = ["HARD", "MEDIUM", "EASY"];
+  //deployment stuff...
+  const { DEPLOY, deployed, deployAddress, error } = useDeployQuestion();
+
+  // console.log("deploying status : ", useDeployQuestion());
+  // const stateOfTransaction = useRecoilValue(questionAddStatus);
+
   useEffect(() => {
     if (deployAddress != "" && deployed) {
       toast.success(
@@ -104,21 +99,21 @@ export default function ProblemForum({ data }) {
       setFormSelector(5);
       return true;
     }
-    if (typeof parseInt(difficulty) != "number") {
-      toast.error("The bounty value is not valid!!");
-      setFormSelector(5);
-      return true;
-    }
-    if (!difficulty) {
-      toast.error("The difficulty is required!!");
-      setFormSelector(5);
-      return true;
-    }
-    if (typeof parseInt(difficulty) != "number") {
-      toast.error("The difficulty is not valid!!");
-      setFormSelector(5);
-      return true;
-    }
+    // if (typeof parseInt(difficulty) != "number") {
+    //   toast.error("The bounty value is not valid!!");
+    //   setFormSelector(5);
+    //   return true;
+    // }
+    // if (!difficulty) {
+    //   toast.error("The difficulty is required!!");
+    //   setFormSelector(5);
+    //   return true;
+    // }
+    // if (typeof parseInt(difficulty) != "number") {
+    //   toast.error("The difficulty is not valid!!");
+    //   setFormSelector(5);
+    //   return true;
+    // }
     if (!formData.compileFunctionName) {
       toast.error("The compile function name is required!!");
       setFormSelector(4);
@@ -148,7 +143,7 @@ export default function ProblemForum({ data }) {
   const handleSubmit = async (e) => {
     if (checkFormInvalid()) return;
 
-    await DEPLOY(difficulty, formData, bountyValue);
+    await DEPLOY(formData, bountyValue);
   };
 
   return (
@@ -314,10 +309,10 @@ export default function ProblemForum({ data }) {
                     onClick={() => {
                       //function to add a example
                       const dataEntry = {
-                        id: formData.testcases.length,
+                        // id: formData.testcases.length,
                         input: In,
                         output: Out,
-                        hidden: isChecked,
+                        // hidden: isChecked,
                       };
                       setFormData({
                         ...formData,
@@ -412,22 +407,54 @@ export default function ProblemForum({ data }) {
                 />
               </div>
               <div className="w-full">
-                <label className="block text-gray-200">
-                  Tags {"(comma separated)"}
-                </label>
-                <input
-                  type="text"
-                  placeholder="Hard,Array, ...."
-                  className="mt-1 w-full rounded-md border bg-black/40 p-2"
-                  onChange={(e) => {
-                    //compling the fields....
-                    const arr = e.target.value.split(",");
-                    setFormData({ ...formData, tags: arr });
-                  }}
-                  value={formData.tags.map((val) => {
-                    return val;
-                  })}
-                />
+                <label className="block text-gray-200">Difficulty</label>
+                <select
+                  className='bg-gray-900 px-6 rounded-md py-1'
+                  value={formData?.difficulty}
+                  onChange={(e) =>
+                    setFormData({ ...formData, difficulty: e.target.value })
+                  }
+                >
+                  {difficultyType.map((option, i) => (
+                    <option key={i} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+                {/* <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="mt-1 w-full rounded-md border bg-black/40 p-2">
+                      {difficultyType.length ? (
+                        difficultyType.map((val) => (
+                          <span key={val}>{val}, </span>
+                        ))
+                      ) : (
+                        <span className="flex space-x-10">
+                          Select Difficulty <ArrowBigDownIcon />{" "}
+                        </span>
+                      )}
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-full">
+                    <DropdownMenuRadioGroup
+                      className="w-full"
+                      value={formData.difficuly}
+                      onValueChange={(val) => {
+                        setFormData({ ...formData, difficulty: val });
+                      }}
+                    >
+                      <DropdownMenuRadioItem value="HARD">
+                        HARD
+                      </DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="MEDIUM">
+                        MEDIUM
+                      </DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="EASY">
+                        EASY
+                      </DropdownMenuRadioItem>
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu> */}
               </div>
               <div className="w-full">
                 <label className="block text-gray-200">Default Code</label>
@@ -451,7 +478,7 @@ export default function ProblemForum({ data }) {
             </label>
             <br />
             <div className="flex flex-col gap-2">
-              <div className="w-full">
+              {/* <div className="w-full">
                 <label className="block text-gray-200">Difficulty</label>
                 <input
                   type="number"
@@ -461,7 +488,7 @@ export default function ProblemForum({ data }) {
                     setDifficulty(e.target.value);
                   }}
                 />
-              </div>
+              </div> */}
               <div className="w-full">
                 <label className="block text-gray-200">Bounty Value</label>
                 <input
