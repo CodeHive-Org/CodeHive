@@ -2,10 +2,10 @@ import { useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import "./index.css";
-import MyQuestionDesc from "./pages/MyQuestionDesc";
-import MyQuestions from "./pages/MyQuestions";
 import AddQuestion from "./pages/AddQuestion";
 import Landing from "./pages/Landing";
+import MyQuestionDesc from "./pages/MyQuestionDesc";
+import MyQuestions from "./pages/MyQuestions";
 import ProblemDesc from "./pages/ProblemDesc";
 import Problems from "./pages/Problems.";
 //importing buffer tronweb access
@@ -15,12 +15,16 @@ import {
   WalletDisconnectedError,
   WalletNotFoundError,
 } from "@tronweb3/tronwallet-abstract-adapter";
-import { WalletProvider, useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
+import {
+  WalletProvider
+} from "@tronweb3/tronwallet-adapter-react-hooks";
 import { WalletModalProvider } from "@tronweb3/tronwallet-adapter-react-ui";
 import "@tronweb3/tronwallet-adapter-react-ui/style.css";
 import { TronLinkAdapter } from "@tronweb3/tronwallet-adapter-tronlink";
-import AlertModal from "./components/ui/AlertModal";
 import { useEffect } from "react";
+import { useSetRecoilState } from "recoil";
+import { authTokenState, userState } from "./atoms/userAtom";
+import AlertModal from "./components/ui/AlertModal";
 
 globalThis.Buffer = Buffer;
 
@@ -44,10 +48,21 @@ function App() {
   }, []);
 
   useEffect(() => {
-    adapters[0].on('chainChanged', (data) => {
-     console.log('chainChanged', JSON.stringify(data));
-   })
- })
+    adapters[0].on("chainChanged", (data) => {
+      console.log("chainChanged", JSON.stringify(data));
+    });
+  });
+
+  const setAuthToken = useSetRecoilState(authTokenState);
+  const setUser = useSetRecoilState(userState);
+
+  useEffect(() => {
+    const token = localStorage.getItem("auth-token");
+    if (token) {
+      setAuthToken(token);
+      console.log("sfsf : ", token);
+    }
+  }, [setAuthToken]);
 
   return (
     <>

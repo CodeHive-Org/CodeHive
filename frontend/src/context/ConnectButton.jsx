@@ -1,3 +1,4 @@
+import LoginButton from "@/components/LoginButton";
 import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 import { WalletActionButton } from "@tronweb3/tronwallet-adapter-react-ui";
 import { Toaster } from "sonner";
@@ -18,7 +19,8 @@ const ConnectButton = () => {
 
   return (
     <>
-      <WalletActionButton />
+      <LoginButton />
+      {/* <WalletActionButton /> */}
       <Toaster richColors />
     </>
   );

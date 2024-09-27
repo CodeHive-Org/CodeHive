@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 
 const Landing = () => {
   return (
-    <div>
+    <div className=''>
       <Navbar /> {/* Container */}
       {/* hero section */}
       <MaxWidthWrapper
