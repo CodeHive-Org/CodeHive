@@ -7,9 +7,8 @@ import { useRecoilState, useRecoilValue } from "recoil";
 
 const QuestionProgress = () => {
   const { deployAddress } = useDeployQuestion();
-  const [stateOfTransaction, setStateOfTransaction] = useRecoilState(
-    questionAddStatus
-  );
+  const [stateOfTransaction, setStateOfTransaction] =
+    useRecoilState(questionAddStatus);
 
   const [isComplete, setIsComplete] = useState(false);
   const [margins, setMargins] = useState({ marginLeft: 0, marginRight: 0 });
@@ -37,8 +36,8 @@ const QuestionProgress = () => {
       setIsComplete(true);
       setTimeout(() => {
         navigate("/problems");
+        setStateOfTransaction(-1);
       }, 2000);
-      setStateOfTransaction(-1);
     }
   }, [stateOfTransaction, navigate]);
 
@@ -62,8 +61,6 @@ const QuestionProgress = () => {
   };
 
   const ActiveComponent = steps[stateOfTransaction - 1]?.Component;
-
-  console.log("stateOfTransaction : ", stateOfTransaction);
 
   if (stateOfTransaction < 0) {
     return;

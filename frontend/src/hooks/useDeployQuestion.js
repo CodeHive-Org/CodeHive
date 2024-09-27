@@ -20,31 +20,37 @@ export default function useDeployQuestion() {
     setStateOfTransaction(0); // Deploying the question
     setStatus(0);
 
-    // const txnData = await signMessageWithTimeConstraint();
+    const txnData = await signMessageWithTimeConstraint();
 
-    // pushing the question's data to server
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        // tron_message: txnData.message,
-        // tron_signature: txnData.signature,
-      },
-      body: JSON.stringify({
-        ...formData,
-        bounty : Number(bounty),
-        bounterId: "cm1i48vnc0000ohkr622814lt",
-        // TODO : made this dynamic but before implement the auth logic
-      }),
-    };
-
-    if (!window.tron.tronWeb.ready) {
-      console.error("Cannot deploy, TronWeb not ready.");
-      setError("TronWeb not ready");
-      return;
-    }
-
+    console.log("txnData: ", txnData);
     try {
+      if (!txnData?.message) {
+        throw new Error("Transaction failed !");
+      }
+
+      setStatus(1);
+
+      // pushing the question's data to server
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          tron_message: txnData.message,
+          tron_signature: txnData.signature,
+        },
+        body: JSON.stringify({
+          ...formData,
+          bounty: Number(bounty),
+          bounterId: "cm1i48vnc0000ohkr622814lt",
+          // TODO : made this dynamic but before implement the auth logic
+        }),
+      };
+
+      if (!window.tron.tronWeb.ready) {
+        setError("TronWeb not ready");
+        throw new Error("TronWeb not ready");
+      }
+
       const response = await fetch(
         import.meta.env.VITE_BACKEND_URL + "/problems",
         options,
@@ -52,17 +58,17 @@ export default function useDeployQuestion() {
       const jsonData = await response.json();
 
       console.log("jsonData ; ", jsonData);
-      setStatus(1);
+      setStatus(2);
 
       await new Promise((res) =>
         setTimeout(() => {
-          setStatus(3);
+          setStatus(3); // update this only when the bounter pays the bounty amount to the codehive wallet
           return res;
         }, 3000),
       );
     } catch (err) {
-      console.error(err);
-      setError(err);
+      console.error("Error during deployment:", err);
+      setError(err.message || "An unknown error occurred.");
       setStateOfTransaction(-1);
       setStatus(-1);
       toast.error("Error occurred, failed to deploy the question");

@@ -1,3 +1,4 @@
+import { questionAddStatus } from "@/atoms/problemAtom";
 import { toast } from "sonner";
 
 //   const [error, setError] = useState(null);
@@ -21,6 +22,7 @@ export const signMessageWithTimeConstraint = async () => {
   } catch (err) {
     toast.error(err.message);
     console.error(err);
+    throw new Error(err);
     //   setError(err.message);
   }
 };

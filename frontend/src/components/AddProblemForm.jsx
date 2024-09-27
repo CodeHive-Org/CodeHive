@@ -27,13 +27,13 @@ export default function ProblemForum({ data }) {
     description: "",
     defaultCode: "",
     compileFunctionName: "",
-    difficulty: "",
+    difficulty: "EASY",
     examples: [],
     constraints: [],
     testcases: [],
   });
 
-  const difficultyType = ["HARD", "MEDIUM", "EASY"];
+  const difficultyType = ["EASY", "HARD", "MEDIUM"];
   //deployment stuff...
   const { DEPLOY, deployed, deployAddress, error } = useDeployQuestion();
 
@@ -409,7 +409,7 @@ export default function ProblemForum({ data }) {
               <div className="w-full">
                 <label className="block text-gray-200">Difficulty</label>
                 <select
-                  className='bg-gray-900 px-6 rounded-md py-1'
+                  className="rounded-md bg-gray-900 px-6 py-1"
                   value={formData?.difficulty}
                   onChange={(e) =>
                     setFormData({ ...formData, difficulty: e.target.value })
