@@ -73,7 +73,7 @@ const WorkSpace = ({ data, pid, contract }) => {
         return response.data;
       }
     } catch (err) {
-    console.log("err", err);
+      console.log("err", err);
       setSubmissionProcessing(false);
       setExecutionProcessing(false);
       toast.error("Error in the code !");

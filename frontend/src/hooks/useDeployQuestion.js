@@ -1,10 +1,11 @@
 import { questionAddStatus } from "@/atoms/problemAtom.js";
 import { useTheContext } from "@/context";
 import { useCallback, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { toast } from "sonner";
 import { ABI } from "../utils/problems/index.js";
 import { signMessageWithTimeConstraint } from "./SigMessage.js";
+import { userState } from "@/atoms/userAtom.js";
 
 export default function useDeployQuestion() {
   const { QuesBYTECODE, ABI_Bank } = useTheContext();
@@ -13,6 +14,7 @@ export default function useDeployQuestion() {
   const [deployedAddress, setDeployedAddress] = useState(null);
   const [deployed, setDeployed] = useState(false);
   const [stateOfTransaction, setStateOfTransaction] = useState(-1);
+  const user = useRecoilValue(userState);
 
   const [, setStatus] = useRecoilState(questionAddStatus);
 
@@ -41,8 +43,7 @@ export default function useDeployQuestion() {
         body: JSON.stringify({
           ...formData,
           bounty: Number(bounty),
-          bounterId: "cm1i48vnc0000ohkr622814lt",
-          // TODO : made this dynamic but before implement the auth logic
+          bounterId: user?.id,
         }),
       };
 

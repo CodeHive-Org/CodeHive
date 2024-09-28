@@ -1,11 +1,27 @@
 import { buttonVariants } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, CircleDollarSign, Code } from "lucide-react";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
-const Problem = ({ id, title, address, difficulty, isOpen, handleOpen }) => {
+
+const Problem = ({
+  index,
+  id,
+  title,
+  address,
+  difficulty,
+  isOpen,
+  handleOpen,
+  status,
+}) => {
   const navigate = useNavigate();
 
   const clickHandler = (e, id) => {
@@ -22,17 +38,42 @@ const Problem = ({ id, title, address, difficulty, isOpen, handleOpen }) => {
           "bg-black/50": isEven,
         })}
       >
-        <TableCell className="">{id + 1}</TableCell>
-        <TableCell className="hover:text-second">{title}</TableCell>
-        <TableCell className="hover:text-second">
-          {parseInt(difficulty?._hex)}🐑
+        <TableCell>
+          {status === "Funded" ? (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <CircleDollarSign size={22} className="text-green-600" />
+                </TooltipTrigger>
+                <TooltipContent className="border-none">
+                  <p className="text-gray-300">Funded</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : status === "Unfunded" ? (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Code size={22} className="text-green-600" />
+                </TooltipTrigger>
+                <TooltipContent className="border-none">
+                  <p className="text-gray-300">Problem is not yet funded</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <></>
+          )}
         </TableCell>
+        <TableCell className="">{index + 1}</TableCell>
+        <TableCell className="hover:text-second">{title}</TableCell>
+        <TableCell className="hover:text-second">{difficulty}</TableCell>
         <TableCell className="">
           <Link
             className={buttonVariants({
               variant: "link",
             })}
-            to={`${address}`}
+            to={`${id}`}
           >
             Participate
           </Link>

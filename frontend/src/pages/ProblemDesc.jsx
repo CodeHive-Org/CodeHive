@@ -7,6 +7,7 @@ import { useTheContext } from "@/context/index.jsx";
 import { SkeletonPage } from "@/components/SkeletonPage.jsx";
 import { useRecoilState } from "recoil";
 import { submissionErrorAtom } from "@/atoms/userAtom.js";
+import axios from "axios";
 
 const ProblemDesc = () => {
   // const { getContract } = useTheContext();
@@ -16,54 +17,22 @@ const ProblemDesc = () => {
   const [loading, setLoading] = useState(true);
   const [alertBox, setAlertBox] = useRecoilState(submissionErrorAtom);
 
-  const getAsyncContract = async () => {
-    console.log(ABI,pid);
-    console.log(window.tronLink.tronWeb.contract);
-    const instance = await window.tronLink.tronWeb.contract(ABI, window.tronLink.tronWeb.address.fromHex(pid));
-    console.log(instance);
-    setContract(instance);
-  };
-
   useEffect(() => {
-    if (ABI.length > 0) {
-      getAsyncContract();
-    }
-  }, [ABI]);
-
-  useEffect(() => {
-    if (!contract) {
-      console.log("contract not found for the pid:");
-      // setAlertBox({
-      //   isError: true,
-      //   msg: `No contract associated to this PID ${pid}`,
-      // });
-      return;
-    }
-    contract
-      .QuestionData()
-      .call()
-      .then((questionData) => {
-        fetchTHeData(questionData, setProblem);
-        //console.log("url",questionData);
-      })
-      .catch((error) => console.error(error));
-  }, [contract]);
-  const fetchTHeData = async (url, fxn) => {
-  var requestOptions = {
-    method: 'GET',
-    redirect: 'follow'
-  };
-  
-  fetch(import.meta.env.VITE_PINATA_URL+url, requestOptions)
-    .then(response => response.text())
-    .then(result => {console.log(result);return JSON.parse(result)})
-    .then(data=>{
-      fxn(data);
-      setLoading(false);
-    })
-    .catch(error => console.log('error', error));
-  };
-  
+    const getProblem = async () => {
+      try {
+        const response = await axios.get(
+          import.meta.env.VITE_BACKEND_URL + `/problems/${pid}`,
+        );
+        console.log("respnse : ", response.data);
+        setProblem(response.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getProblem();
+  }, []);
 
   if (loading) {
     return <SkeletonPage />;
@@ -76,7 +45,7 @@ const ProblemDesc = () => {
     >
       <Nav />
       {Problem ? (
-        <WorkSpace data={Problem} pid={pid} contract={contract} />
+        <WorkSpace data={Problem} pid={pid} />
       ) : (
         <div className="h-full w-full text-center text-2xl font-medium text-white">
           <h2 className="mt-20">Problem Not Found ☹️!</h2>

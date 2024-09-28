@@ -8,6 +8,7 @@ import MySubmittion from "./MySubmittion";
 import { Button } from "../ui/button";
 import ReportModal from "../ReportModal";
 import { SubSkeletonPage } from "../SubSkeletonPage";
+import { CircleDollarSign } from "lucide-react";
 
 const ProblemDescription = ({ problem, pid, contract }) => {
   const [loading, setLoading] = useState(false);
@@ -18,31 +19,6 @@ const ProblemDescription = ({ problem, pid, contract }) => {
   const [isClaimed, setIsClaimed] = useState(false);
 
   const [selector, setSelector] = useState(0);
-  useEffect(() => {
-    contract
-      .bountyWinner()
-      .call()
-      .then((winner) => {
-        if (winner != "410000000000000000000000000000000000000000") {
-          setClaimer(winner);
-        }
-      })
-      .catch((error) => console.error(error));
-    contract
-      .bountyValue()
-      .call()
-      .then((value) => {
-        setBounty(parseInt(value._hex));
-      });
-
-    contract
-      .claimed()
-      .call()
-      .then((value) => {
-        console.log("valu : ", value);
-        setIsClaimed(value);
-      });
-  }, []);
 
   console.log("claimer : ", isClaimed);
 
@@ -75,10 +51,30 @@ const ProblemDescription = ({ problem, pid, contract }) => {
           <div className="relative flex  h-[calc(100vh-94px)] overflow-y-hidden px-0 py-4">
             <div className="px-5">
               <div className="flex w-full flex-col gap-4">
-                <div className="flex space-x-4">
+                <div className="flex flex-col space-y-2">
                   <div className="mr-2 flex-1 text-xl font-medium text-white">
                     {problem?.name.split("|")[0]}
-                    <span className="text-[0.5rem]"> {pid}</span>{" "}
+                    {/* <span className="text-gray-400 text-[0.5rem]"> {pid}</span>{" "} */}
+                  </div>
+                  {/* tags */}
+                  <div className="flex items-center space-x-4">
+                    <p className=" rounded-md bg-gray-700 px-4 py-1 text-[0.8rem] font-medium text-orange-400 drop-shadow-lg">
+                      {problem.difficulty}
+                    </p>
+                    {problem.status === "Funded" ? (
+                      <p className="flex rounded-md bg-gray-700 text-white px-4 py-1 text-[0.8rem] font-medium drop-shadow-lg">
+                        <CircleDollarSign
+                          size={18}
+                          className="text-green-600 mr-2"
+                        />
+
+                        {problem.status}
+                      </p>
+                    ) : (
+                      <p className=" rounded-md bg-gray-700 px-4 py-1 text-[0.8rem] font-medium text-white drop-shadow-lg">
+                        {problem.status}
+                      </p>
+                    )}
                   </div>
                 </div>
 

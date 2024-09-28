@@ -10,6 +10,8 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { ArrowBigDownIcon } from "lucide-react";
+import { useRecoilValue } from "recoil";
+import { userState } from "@/atoms/userAtom";
 
 export default function ProblemForum({ data }) {
   const [formSelector, setFormSelector] = useState(0);
@@ -21,6 +23,7 @@ export default function ProblemForum({ data }) {
   const [Exp, setExp] = useState("");
   const [Cons, setCons] = useState("");
   const [isChecked, setChecked] = useState(false);
+  const user = useRecoilValue(userState);
   //consts ends...
   const [formData, setFormData] = useState({
     name: "",

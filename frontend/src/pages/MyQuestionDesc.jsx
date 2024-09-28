@@ -11,6 +11,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import Navbar from "@/components/Navbar";
+import axios from "axios";
 
 const fetchTHeData = async (url, fxn) => {
   console.log("fetching at the", import.meta.env.VITE_PINATA_URL + url);
@@ -75,74 +76,22 @@ export default function MyQuestionDesc() {
   const [contract, setContract] = useState();
 
   useEffect(() => {
-    const getContract = async () => {
-      const instance = await window.tronLink.tronWeb.contract(ABI, pid);
-      setContract(instance);
-    };
-    getContract();
-  }, [ABI]);
+    const getProblem = async () => {
+      try {
+        const response = await axios.get(
+          import.meta.env.VITE_BACKEND_URL + `/problems/${pid}`,
+        );
+        console.log("respnse : ", response.data);
+        setProblem(response.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
 
-  useEffect(() => {
-    const getDATA = async () => {
-      contract
-        .QuestionData()
-        .call()
-        .then((data) => fetchTHeData(data, setProblem));
-      contract
-        .bountyValue()
-        .call()
-        .then((data) => setBounty(parseInt(data._hex, 16)));
-      contract
-        .claimed()
-        .call()
-        .then((data) => setClaimed(data));
-      contract
-        .bountyWinner()
-        .call()
-        .then((val) => setClaimer(val));
-      contract
-        .allCodes()
-        .call()
-        .then((codes) => setCodes(codes));
-      contract
-        .topicName()
-        .call()
-        .then((data) => setName(data));
-      contract
-        .difficulty()
-        .call()
-        .then((data) => setDiff(data));
-      // "giveAway(address)"
     };
-
-    if (contract) {
-      console.log(contract);
-      getDATA();
-    }
-  }, [contract]);
-  useEffect(() => {
-    if (
-      problem != undefined &&
-      claimer != undefined &&
-      bounty != undefined &&
-      codes != undefined &&
-      name != undefined &&
-      difficulty != undefined
-    ) {
-      console.log("touch");
-      setLoading(false);
-    }
-  }, [problem, claimer, bounty, codes, name, difficulty]);
-  //fetching the winner code...
-  useEffect(() => {
-    //fetchignt the winner
-    if (contract) {
-      contract
-        .winnerCode()
-        .call()
-        .then((data) => fetchTHeCode(data, setWinnerCode));
-    }
-  }, [claimed]);
+    getProblem();
+  }, []);
 
   if (loading) {
     return (
