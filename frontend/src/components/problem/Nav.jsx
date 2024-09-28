@@ -1,7 +1,6 @@
-import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
-import ConnectButton from "../../context/ConnectButton";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import LoginButton from "../LoginButton";
 
 const Nav = () => {
   const navigate = useNavigate();
@@ -30,7 +29,7 @@ const Nav = () => {
         </div>
         {/* right side */}
         <div className="flex items-center space-x-4">
-          <ConnectButton />
+          <LoginButton />
         </div>
       </main>
     </nav>

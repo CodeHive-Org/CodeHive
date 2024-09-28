@@ -1,19 +1,17 @@
-import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import Nav from "@/components/problems/Nav";
-import useDeployQuestion from "@/hooks/useDeployQuestion";
 
-import ComingSoon from "@/components/ComingSoon";
 import ProblemForum from "@/components/AddProblemForm";
+import Navbar from "@/components/Navbar";
 
 const AddQuestion = () => {
   //hook to deploy...
 
-  return ( 
+  return (
     <main className="h-screen bg-black">
-      <Nav />
+      <Navbar className={"wrapper"} dropdown={true} />
+
       {/* <MaxWidthWrapper className=" mt-[200px] flex items-center justify-center"> */}
-        <ProblemForum />
-        {/* <ComingSoon /> */}
+      <ProblemForum />
+      {/* <ComingSoon /> */}
       {/* </MaxWidthWrapper> */}
     </main>
   );

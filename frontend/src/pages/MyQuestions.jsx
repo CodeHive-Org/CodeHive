@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import ComingSoon from "@/components/ComingSoon";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import Nav from "@/components/problems/Nav";
 import { ABI_Bank } from "@/utils/problems";
 import { useNavigate } from "react-router-dom";
+import Navbar from "@/components/Navbar";
 
 export default function MyQuestions() {
   const [Questions, setQuestions] = useState();
@@ -16,7 +16,9 @@ export default function MyQuestions() {
       const questions = await contract.questionList().call();
       setQuestions(
         questions.filter(
-          (data) => data.name.split("|")[1] == window.tronLink.tronWeb.defaultAddress.base58
+          (data) =>
+            data.name.split("|")[1] ==
+            window.tronLink.tronWeb.defaultAddress.base58,
         ),
       );
     };
@@ -26,7 +28,8 @@ export default function MyQuestions() {
   return (
     <main className=" min-h-screen w-full bg-background">
       {/* right side */}
-      <Nav />
+      <Navbar className={"wrapper"} dropdown={true} />
+
       <MaxWidthWrapper className="mt-10 flex flex-col justify-center">
         <div className="flex flex-col gap-3 py-[10px]">
           <p className="flex gap-2 border-b border-gray-600 text-[2.0rem] font-bold text-rose-500">
@@ -54,7 +57,7 @@ function ContratElem({ el, i }) {
         Navigate("/myquestion/" + el[0]);
       }}
     >
-      <div className="w-full border-b border-gray-600 hover:text-whtie flex py-2 px-2 rounded-md justify-between mt-4 cursor-pointer hover:bg-gray-600">
+      <div className="hover:text-whtie mt-4 flex w-full cursor-pointer justify-between rounded-md border-b border-gray-600 px-2 py-2 hover:bg-gray-600">
         <p>{i + 1}</p>
         <p>{el[1].split("|")[0]}</p>
         <p>{el[0].slice(0, 4) + "....." + el[0].slice(-8)}</p>

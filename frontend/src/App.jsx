@@ -25,6 +25,7 @@ import { useEffect } from "react";
 import { useSetRecoilState } from "recoil";
 import { authTokenState, userState } from "./atoms/userAtom";
 import AlertModal from "./components/ui/AlertModal";
+import { jwtDecode } from "jwt-decode";
 
 globalThis.Buffer = Buffer;
 
@@ -60,7 +61,8 @@ function App() {
     const token = localStorage.getItem("auth-token");
     if (token) {
       setAuthToken(token);
-      console.log("sfsf : ", token);
+      const decoded = jwtDecode(token);
+      setUser(decoded?.user);
     }
   }, [setAuthToken]);
 

@@ -7,8 +7,7 @@ import { Input } from "./ui/input";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { jwtDecode } from "jwt-decode";
-import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks';
-
+import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 
 const LoginButton = () => {
   const [authToken, setAuthToken] = useRecoilState(authTokenState);
@@ -16,19 +15,16 @@ const LoginButton = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [user, setUser] = useRecoilState(userState);
 
-  const { disconnect} = useWallet();
-
+  const { disconnect } = useWallet();
 
   const handleLogin = async () => {
     if (window.tronLink) {
       await window.tronLink.request({ method: "tron_requestAccounts" });
 
-      const sigValidTill = BigInt(Date.now() + 30000).toString(); // 30 seconds validity
+      const sigValidTill = BigInt(Date.now() + 30000).toString();
       const message = `${window.tronLink.tronWeb.defaultAddress?.base58}:${sigValidTill}`;
       const signature =
         await window.tronLink.tronWeb.trx.signMessageV2(message);
-
-      console.log("sign : ", signature);
 
       try {
         const { data } = await axios.post(
@@ -47,7 +43,7 @@ const LoginButton = () => {
           setAuthToken(data.token);
           localStorage.setItem("auth-token", data.token);
           const decoded = jwtDecode(data.token);
-          console.log('user : ', decoded?.user);
+          console.log("user : ", decoded?.user);
           setUser(decoded?.user);
         }
       } catch (error) {
@@ -74,7 +70,6 @@ const LoginButton = () => {
 
       const decoded = jwtDecode(response.data.token);
       setUser(decoded?.user);
-
     } catch (err) {
       console.error("Registration failed", err);
     } finally {
@@ -89,17 +84,16 @@ const LoginButton = () => {
     localStorage.removeItem("auth-token");
   };
 
-  useEffect(() => {
-  }, [modalOpen, authToken]);
+  useEffect(() => {}, [modalOpen, authToken]);
 
   return (
     <div>
       {modalOpen && (
         <UsernameModal handleRegister={handleRegister} open={modalOpen} />
       )}
-      {user && authToken ? (
-        <div className="flex justify-center items-center space-x-4">
-          <h2 className='text-gray-300'>{user.username}</h2>
+      {user && authToken && window.tronLink.tronWeb.defaultAddress?.base58 ? (
+        <div className="flex items-center justify-center space-x-4">
+          <h2 className="text-gray-300">{user.username}</h2>
           <button onClick={handleLogout}>LogOut</button>
         </div>
       ) : (

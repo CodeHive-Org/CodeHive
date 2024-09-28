@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import Nav from "@/components/problems/Nav";
+// import Nav from "@/components/problems/Nav";
 import { ABI } from "@/utils/problems";
 import { useParams } from "react-router-dom";
 import { SkeletonPage } from "@/components/SkeletonPage";
@@ -10,6 +10,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import Navbar from "@/components/Navbar";
 
 const fetchTHeData = async (url, fxn) => {
   console.log("fetching at the", import.meta.env.VITE_PINATA_URL + url);
@@ -146,7 +147,9 @@ export default function MyQuestionDesc() {
   if (loading) {
     return (
       <main className=" min-h-screen w-full bg-background">
-        <Nav />
+        {/* <Nav /> */}
+        <Navbar className={"wrapper"} dropdown={true} />
+
         <main className="mt-20 flex h-full w-full flex-col items-center justify-center space-y-4">
           <h3 className="text-gray-300">Questions Loading ...</h3>
 
@@ -177,7 +180,8 @@ export default function MyQuestionDesc() {
   return (
     <main className=" min-h-screen w-full bg-background">
       {/* right side */}
-      <Nav />
+      <Navbar className={"wrapper"} dropdown={true} />
+
       <MaxWidthWrapper className="relative flex h-full flex-col items-center justify-center py-[40px]">
         <div className="flex w-[80%] flex-col items-center gap-3 py-[10px]">
           <div className="flex w-full items-center justify-between border-b border-gray-500">

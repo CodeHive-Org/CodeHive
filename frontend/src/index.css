@@ -5,7 +5,7 @@
 .connectwallet-class {
   width: 100% !important;
   padding: 10px !important;
-  margin: 15px 10px !important; 
+  margin: 15px 10px !important;
 }
 
 @layer base {
@@ -55,11 +55,17 @@
   }
 }
 
+.wrapper {
+  min-height: 0vw;
+  margin-inline: auto;
+  width: min(90%, 100rem) !important;
+}
+
 /* addquestion progress bar */
 
 .step-number {
   width: 50px;
-  height:50px;
+  height: 50px;
   border-radius: 50%;
   background-color: #585858;
   display: flex;
