@@ -46,7 +46,7 @@ const WorkSpace = ({ data, pid, contract }) => {
   const checkStatus = async (tokens, type) => {
     const token = tokens.map((item) => item.token).join(",");
 
-    console.log('token : ', token);
+    console.log("token : ", token);
 
     const options = {
       method: "GET",
@@ -86,8 +86,7 @@ const WorkSpace = ({ data, pid, contract }) => {
     }
   };
 
-  console.log('outputstate : ', outputState);
-
+  console.log("outputstate : ", outputState);
 
   const testcaseInput = JSON.stringify(data?.examples[0]?.input);
 
@@ -249,9 +248,12 @@ const WorkSpace = ({ data, pid, contract }) => {
     // setProcessing(true);
     setExecutionProcessing(true);
 
-    const getInputString = (args, funcName) => {
+    const getInputString = (args) => {
       return `\n
-    console.log(${funcName}(${args.join(",")}))
+
+
+
+    console.log(${data?.compileFunctionName}(${args.join(",")}))
     `;
     };
 
@@ -268,10 +270,11 @@ const WorkSpace = ({ data, pid, contract }) => {
     };
 
     const submissions = data.testcases.map((testCase) => {
+      console.log("testCase.output : ", testCase.output);
       return {
-        source_code: btoa(sourceCode(testCase.input)),
+        source_code: btoa(userCode + getInputString([testCase.input])),
         language_id: 63,
-        expected_output: testCase.output,
+        expected_output: btoa(testCase.output),
       };
     });
 

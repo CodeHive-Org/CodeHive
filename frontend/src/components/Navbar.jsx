@@ -12,17 +12,20 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import LoginButton from "./LoginButton";
 import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
+import { useRecoilValue, useRecoilValueLoadable } from "recoil";
+import { authTokenState } from "@/atoms/userAtom";
 
 const Navbar = ({ className, dropdown = false }) => {
   const navigate = useNavigate();
 
   const [position, setPosition] = useState("bottom");
-  const { address } = useWallet();
-
+  const authToken = useRecoilValue(authTokenState);
   // REMOVE
   // useEffect(() => {
   //     setUser(userState);
   // }, []);
+
+  console.log("ssf", authToken);
 
   return (
     <div className={cn("xl:px-18 w-full px-14 py-4", className)}>
@@ -40,7 +43,7 @@ const Navbar = ({ className, dropdown = false }) => {
         <div className="flex items-center space-x-4">
           <LoginButton />
 
-          {dropdown && (
+          {dropdown && window.tronLink.tronWeb.defaultAddress?.base58 && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <User size={28} className="text-gray-100 hover:text-primary" />

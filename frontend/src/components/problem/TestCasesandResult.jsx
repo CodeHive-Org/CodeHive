@@ -11,6 +11,8 @@ const TestCasesandResult = ({ problem }) => {
   const [activeBar, setActiveBar] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
 
+  var testcasePassed = 0;
+
   const output = useRecoilValue(outputAtom);
   const outputState = output?.data;
 
@@ -35,11 +37,15 @@ const TestCasesandResult = ({ problem }) => {
     }
   }, [output]);
 
-  console.log("output : ", output);
-
   const getOutputs = () => {
     return outputState.map((output, index) => {
       let statusId = output?.status?.id;
+
+      if (output.status.description === "Accepted") {
+        testcasePassed++;
+      }
+
+      console.log("status : ", statusId);
       if (statusId === 6) {
         // compilation error
         return (
@@ -50,33 +56,60 @@ const TestCasesandResult = ({ problem }) => {
             {atob(output?.compile_output)}
           </pre>
         );
-      } else if (statusId === 3) {
+      } else if (statusId === 3 || statusId === 4) {
         return (
-          <div
-            key={index}
-            className="my-20 px-2 py-1 text-[1.1rem] font-normal text-green-500"
-          >
-            {atob(output?.stdout) !== null
-              ? `${Number(atob(output?.stdout))}`
-              : null}
-          </div>
-        );
-      } else if (statusId === 5) {
-        return (
-          <pre
-            key={index}
-            className="px-2 py-1 text-[1.1rem] font-normal text-red-500"
-          >
-            {`Time Limit Exceeded`}
-          </pre>
+          <main key={index} className="max-w-[500px] px-2">
+            <section className="border-t border-gray-700">
+              <div className="flex flex-col gap-6 px-2 py-4">
+                <div className="flex flex-col gap-3">
+                  <span className="font-medium text-gray-300">Input</span>
+                  {/* {problem.testcases.map((data, index) => {
+                            return ( */}
+                  <div
+                    className="flex flex-col gap-1 rounded-lg bg-[#3D3F41] px-3 py-2 text-white"
+                    key={index}
+                  >
+                    {/* <span className="text-gray-300 text-xs">{argumentNames[index]} = </span> */}
+                    <span className="text-sm font-medium">
+                      {problem.testcases[index].input}
+                    </span>
+                  </div>
+                  {/* })} */}
+                </div>
+                <div className="flex flex-col gap-3">
+                  <span className="text-gray-300">Output</span>
+                  <div className="flex flex-col gap-1 rounded-lg bg-[#3D3F41] px-3 py-2 text-white">
+                    <span className="text-sm font-medium">
+                      {atob(output.stdout)}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-3">
+                  <span className="text-gray-300">Expected</span>
+                  <div className="flex flex-col gap-1 rounded-lg bg-[#3D3F41] px-3 py-2 text-white">
+                    <span className="text-sm font-medium">
+                      {problem.testcases[index]?.output}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </main>
         );
       } else {
         return (
           <pre
             key={index}
-            className="px-2 py-1 text-[1.1rem] font-normal text-red-500"
+            className="flex w-full flex-col space-y-2 px-2 py-1 font-normal"
           >
-            {atob(output?.stderr)}
+            {output?.stderr.length > 0 ? (
+              <div className="flex space-x-2">
+                <h2 className="text-red-400">ERROR : </h2>
+                <p>{atob(output?.stderr)}</p>
+              </div>
+            ) : (
+              <div>{atob(output?.message)}</div>
+            )}
           </pre>
         );
       }
@@ -166,12 +199,19 @@ const TestCasesandResult = ({ problem }) => {
         </section>
       ) : (
         <div className="h-[90%] rounded-md border border-gray-700 bg-[rgb(30,30,30)] text-white">
-          <div className="flex flex-col space-x-1 p-5">
+          <div className="flex h-[90%] flex-col space-x-1 p-5">
             <h1 className="text-gray-200">Output : </h1>
-            <div className="mt-4 w-full overflow-y-auto rounded-md bg-[#06090f] text-sm font-normal text-white">
+            {outputState[0]?.status?.id === 3 ||
+            outputState[0]?.status?.id === 4 ? (
+              <p className="text-green-400">
+                {problem.testcases.length}/{testcasePassed} TestCases Passed
+              </p>
+            ) : null}
+            <div className="mt-4 max-h-full w-full overflow-y-auto rounded-md bg-[#06090f] text-sm font-normal text-white">
               {outputState ? (
                 <div className="flex flex-col space-y-2">
                   <section className="">{getOutputs()}</section>
+                  {/* temp */}
                 </div>
               ) : null}
             </div>
