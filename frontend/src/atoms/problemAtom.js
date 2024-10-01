@@ -2,7 +2,11 @@ import { atom } from "recoil";
 
 export const outputAtom = atom({
   key: "outputAtom",
-  default: null,
+  default: {
+    type: "run",
+    data: [],
+    expectedOutput: "",
+  },
 });
 
 export const resultAtom = atom({
@@ -13,4 +17,9 @@ export const resultAtom = atom({
 export const questionAddStatus = atom({
   key: "questionAddStatus",
   default: -1,
-})
+});
+
+export const codeRunLoadingState = atom({
+  key: "codeRunLoadingState",
+  default: false,
+});

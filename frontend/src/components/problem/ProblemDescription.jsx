@@ -62,10 +62,10 @@ const ProblemDescription = ({ problem, pid, contract }) => {
                       {problem.difficulty}
                     </p>
                     {problem.status === "Funded" ? (
-                      <p className="flex rounded-md bg-gray-700 text-white px-4 py-1 text-[0.8rem] font-medium drop-shadow-lg">
+                      <p className="flex rounded-md bg-gray-700 px-4 py-1 text-[0.8rem] font-medium text-white drop-shadow-lg">
                         <CircleDollarSign
                           size={18}
-                          className="text-green-600 mr-2"
+                          className="mr-2 text-green-600"
                         />
 
                         {problem.status}
@@ -133,17 +133,21 @@ const ProblemDescription = ({ problem, pid, contract }) => {
                       Bounty Status :
                       <span>
                         {" "}
-                        {isClaimed
-                          ? "Already Claimed"
-                          : "Is yet to be Claimed."}
+                        {!bounty
+                          ? "Not yet Set"
+                          : isClaimed
+                            ? "Already Claimed"
+                            : "Is yet to be Claimed."}
                       </span>
                     </h1>
                   </div>
-                  <div className="flex rounded-md bg-orange-400 p-2 px-4 font-semibold text-red-700">
-                    <h1 className="mr-2 font-medium text-black">
-                      Reward if you solve this : {bounty / 1000000} TRX
-                    </h1>
-                  </div>
+                  {bounty && (
+                    <div className="flex rounded-md bg-orange-400 p-2 px-4 font-semibold text-red-700">
+                      <h1 className="mr-2 font-medium text-black">
+                        Reward if you solve this : {bounty / 1000000} TRX
+                      </h1>
+                    </div>
+                  )}
                 </div>
 
                 {/* report button section */}

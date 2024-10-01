@@ -78,14 +78,6 @@ const CodeEditor = ({ starterCode, setUserCode, userCode }) => {
         onChange={onChange}
         value={userCode}
       />
-      {/* <CodeMirror
-        value={userCode}
-        onChange={onChange}
-        theme={vscodeDark}
-        extensions={[javascript()]}
-        style={{ fontSize: 16 }}
-      /> */}
-      {/* <EditorFooter handleSubmit={handleSubmit} /> */}
     </main>
   );
 };

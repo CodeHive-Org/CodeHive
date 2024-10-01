@@ -26,42 +26,61 @@ const TestCasesandResult = ({ problem }) => {
   }, []);
 
   useEffect(() => {
-    if (innerNavs.length < 2 && outputState && !innerNavs.includes("Console")) {
+    if (
+      innerNavs.length < 2 &&
+      outputState.length > 0 &&
+      !innerNavs.includes("Console")
+    ) {
       setInnerNavs((prev) => [...prev, "Console"]);
     }
-  }, [outputState]);
+  }, [output]);
 
-  const getOutput = () => {
-    let statusId = outputState?.status?.id;
+  console.log("output : ", output);
 
-    if (statusId === 6) {
-      // compilation error
-      return (
-        <pre className="px-2 py-1 text-[1.1rem] font-normal text-red-500">
-          {atob(outputState?.compile_output)}
-        </pre>
-      );
-    } else if (statusId === 3) {
-      return (
-        <pre className="px-2 py-1 text-[1.1rem] font-normal text-green-500">
-          {atob(outputState.stdout) !== null
-            ? `${atob(outputState.stdout)}`
-            : null}
-        </pre>
-      );
-    } else if (statusId === 5) {
-      return (
-        <pre className="px-2 py-1 text-[1.1rem] font-normal text-red-500">
-          {`Time Limit Exceeded`}
-        </pre>
-      );
-    } else {
-      return (
-        <pre className="px-2 py-1 text-[1.1rem] font-normal text-red-500">
-          {atob(outputState?.stderr)}
-        </pre>
-      );
-    }
+  const getOutputs = () => {
+    return outputState.map((output, index) => {
+      let statusId = output?.status?.id;
+      if (statusId === 6) {
+        // compilation error
+        return (
+          <pre
+            key={index}
+            className="px-2 py-1 text-[1.1rem] font-normal text-red-500"
+          >
+            {atob(output?.compile_output)}
+          </pre>
+        );
+      } else if (statusId === 3) {
+        return (
+          <div
+            key={index}
+            className="my-20 px-2 py-1 text-[1.1rem] font-normal text-green-500"
+          >
+            {atob(output?.stdout) !== null
+              ? `${Number(atob(output?.stdout))}`
+              : null}
+          </div>
+        );
+      } else if (statusId === 5) {
+        return (
+          <pre
+            key={index}
+            className="px-2 py-1 text-[1.1rem] font-normal text-red-500"
+          >
+            {`Time Limit Exceeded`}
+          </pre>
+        );
+      } else {
+        return (
+          <pre
+            key={index}
+            className="px-2 py-1 text-[1.1rem] font-normal text-red-500"
+          >
+            {atob(output?.stderr)}
+          </pre>
+        );
+      }
+    });
   };
 
   console.log(
@@ -70,7 +89,6 @@ const TestCasesandResult = ({ problem }) => {
   console.log(
     typeof Object.values(problem.testcases[activeTestCaseId]?.input)[0],
   );
-
 
   return (
     <div className="h-full w-full overflow-auto bg-third px-5 py-2">
@@ -125,7 +143,7 @@ const TestCasesandResult = ({ problem }) => {
           <div className="my-4 font-semibold">
             <p className="mt-4 text-sm font-medium text-white">Input:</p>
             <div className="mt-2 w-full cursor-text rounded-lg border border-transparent bg-gray-400/20 px-3 py-[10px] text-white">
-              {typeof problem.testcases[activeTestCaseId].input == "object"
+              {typeof problem.testcases[activeTestCaseId].input === "object"
                 ? // login here to manage multiple object with
                   typeof Object.values(
                     problem.testcases[activeTestCaseId]?.input,
@@ -151,7 +169,11 @@ const TestCasesandResult = ({ problem }) => {
           <div className="flex flex-col space-x-1 p-5">
             <h1 className="text-gray-200">Output : </h1>
             <div className="mt-4 w-full overflow-y-auto rounded-md bg-[#06090f] text-sm font-normal text-white">
-              {outputState ? <div className="flex">{getOutput()}</div> : null}
+              {outputState ? (
+                <div className="flex flex-col space-y-2">
+                  <section className="">{getOutputs()}</section>
+                </div>
+              ) : null}
             </div>
           </div>
 
@@ -166,7 +188,7 @@ const TestCasesandResult = ({ problem }) => {
 
           {showDetails ? (
             <div className="metrics-container ml-10 mt-4 flex flex-col space-y-3">
-              {output?.type == "submit" && (
+              {output?.type == "run" && (
                 <>
                   <p className="text-sm">
                     ExpectedOutput:{" "}

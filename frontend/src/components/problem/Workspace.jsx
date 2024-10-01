@@ -36,17 +36,21 @@ const WorkSpace = ({ data, pid, contract }) => {
   const [success, setSuccess] = useState(false);
   const { address } = useWallet();
 
-  const [, setOutputState] = useRecoilState(outputAtom);
+  const [outputState, setOutputState] = useRecoilState(outputAtom);
 
   const [submissionProcessing, setSubmissionProcessing] = useState(false);
   const [executionProcessing, setExecutionProcessing] = useState(false);
 
   console.log("data : ", data);
 
-  const checkStatus = async (token, type) => {
+  const checkStatus = async (tokens, type) => {
+    const token = tokens.map((item) => item.token).join(",");
+
+    console.log('token : ', token);
+
     const options = {
       method: "GET",
-      url: import.meta.env.VITE_RAPID_API_URL + "/" + token,
+      url: "https://ce.judge0.com/submissions/" + "/batch?tokens=" + token,
       params: { base64_encoded: "true", fields: "*" },
       headers: {
         "X-RapidAPI-Host": import.meta.env.VITE_RAPID_API_HOST,
@@ -57,6 +61,8 @@ const WorkSpace = ({ data, pid, contract }) => {
       let response = await axios.request(options);
       let statusId = response.data.status?.id;
 
+      console.log("res : ", response);
+
       // Processed - we have a result
       if (statusId === 1 || statusId === 2) {
         setTimeout(() => {
@@ -66,7 +72,7 @@ const WorkSpace = ({ data, pid, contract }) => {
       } else {
         setOutputState({
           type: type,
-          data: response.data,
+          data: response.data.submissions,
           expectedOutput: String(data?.examples[0]?.output).trim(),
         });
         toast.success(`Compiled Successfully!`, { position: "top-center" });
@@ -79,6 +85,9 @@ const WorkSpace = ({ data, pid, contract }) => {
       toast.error("Error in the code !");
     }
   };
+
+  console.log('outputstate : ', outputState);
+
 
   const testcaseInput = JSON.stringify(data?.examples[0]?.input);
 
@@ -240,15 +249,31 @@ const WorkSpace = ({ data, pid, contract }) => {
     // setProcessing(true);
     setExecutionProcessing(true);
 
-    const sourceCode = `
-    function defaultFunc(inputs) {
-      ${userCode}
+    const getInputString = (args, funcName) => {
+      return `\n
+    console.log(${funcName}(${args.join(",")}))
+    `;
+    };
 
-      return ${data?.compileFunctionName}(inputs)
-    }
+    const sourceCode = (input) => {
+      return `
+      function defaultFunc(inputs) {
+        ${userCode}
+  
+        return ${data?.compileFunctionName}(inputs)
+      }
+  
+      console.log(defaultFunc(${testcaseInput}));
+    `;
+    };
 
-    console.log(defaultFunc(${testcaseInput}));
-  `;
+    const submissions = data.testcases.map((testCase) => {
+      return {
+        source_code: btoa(sourceCode(testCase.input)),
+        language_id: 63,
+        expected_output: testCase.output,
+      };
+    });
 
     const formData = {
       language_id: 63,
@@ -256,9 +281,16 @@ const WorkSpace = ({ data, pid, contract }) => {
       source_code: btoa(sourceCode),
       stdin: btoa(testInput),
     };
+
+    console.log(
+      JSON.stringify({
+        submissions,
+      }),
+    );
+
     const options = {
       method: "POST",
-      url: import.meta.env.VITE_RAPID_API_URL,
+      url: import.meta.env.VITE_RAPID_API_URL + "/batch",
       params: { base64_encoded: "true", fields: "*" },
       headers: {
         "content-type": "application/json",
@@ -266,15 +298,18 @@ const WorkSpace = ({ data, pid, contract }) => {
         "X-RapidAPI-Host": import.meta.env.VITE_RAPID_API_HOST,
         "X-RapidAPI-Key": import.meta.env.VITE_RAPID_API_KEY,
       },
-      data: formData,
+      data: JSON.stringify({
+        submissions,
+      }),
     };
 
     axios
       .request(options)
       .then(function (response) {
-        const token = response.data.token;
+        const tokens = response.data;
         setExecutionProcessing(false);
-        checkStatus(token, "run");
+        console.log("token : ", tokens);
+        checkStatus(tokens, "run");
       })
       .catch((err) => {
         let error = err.response ? err.response.data : err;

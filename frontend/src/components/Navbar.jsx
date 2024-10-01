@@ -11,12 +11,13 @@ import { User } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import LoginButton from "./LoginButton";
+import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 
 const Navbar = ({ className, dropdown = false }) => {
   const navigate = useNavigate();
 
-  const disconnect = () => "disconnect";
   const [position, setPosition] = useState("bottom");
+  const { address } = useWallet();
 
   // REMOVE
   // useEffect(() => {
@@ -39,26 +40,29 @@ const Navbar = ({ className, dropdown = false }) => {
         <div className="flex items-center space-x-4">
           <LoginButton />
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <User size={28} className="text-gray-100 hover:text-primary" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-max border-gray-300 bg-third text-accent ">
-              {/* <DropdownMenuLabel>Panel Position</DropdownMenuLabel> */}
-              <DropdownMenuSeparator />
-              <DropdownMenuRadioGroup
-                value={position}
-                onValueChange={setPosition}
-              >
-                <DropdownMenuItem>
-                  <Link to="/myquestion">My Questions</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link to="/addquestion">Add Question</Link>
-                </DropdownMenuItem>
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {dropdown && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <User size={28} className="text-gray-100 hover:text-primary" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-max border-gray-300 bg-third text-accent ">
+                {/* <DropdownMenuLabel>Panel Position</DropdownMe
+                nuLabel> */}
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup
+                  value={position}
+                  onValueChange={setPosition}
+                >
+                  <DropdownMenuItem>
+                    <Link to="/myquestion">My Questions</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link to="/addquestion">Add Question</Link>
+                  </DropdownMenuItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </main>
     </div>

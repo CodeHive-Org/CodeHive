@@ -18,13 +18,21 @@ const LoginButton = () => {
   const { disconnect } = useWallet();
 
   const handleLogin = async () => {
-    if (window.tronLink) {
+    try {
+      if (window.tronWeb && !window.tronWeb.defaultAddress.base58) {
+        alert("Please install TronLink to connect your wallet.");
+      }
+    } catch (error) {
+      console.error("Error connecting TronLink:", error);
+    }
+
+    if (window.tronWeb && window.tronLink) {
       await window.tronLink.request({ method: "tron_requestAccounts" });
 
       const sigValidTill = BigInt(Date.now() + 30000).toString();
       const message = `${window.tronLink.tronWeb.defaultAddress?.base58}:${sigValidTill}`;
       const signature =
-        await window.tronLink.tronWeb.trx.signMessageV2(message);
+        await window.tronLink.tronWeb?.trx?.signMessageV2(message);
 
       try {
         const { data } = await axios.post(
@@ -97,7 +105,12 @@ const LoginButton = () => {
           <button onClick={handleLogout}>LogOut</button>
         </div>
       ) : (
-        <button onClick={handleLogin}>Login with Tron</button>
+        <button
+          className=" border-gray-400 px-4 py-1 hover:border-b"
+          onClick={handleLogin}
+        >
+          Login
+        </button>
       )}
     </div>
   );

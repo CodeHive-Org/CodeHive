@@ -11,7 +11,6 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 
-
 const Problem = ({
   index,
   id,
@@ -88,7 +87,7 @@ const Problem = ({
           />
         </TableCell>
       </TableRow>
-      <TableRow
+      {/* <TableRow
         className={cn(
           "w-full border-b-0 border-t border-gray-600 bg-secondary text-gray-300",
           { hidden: !isOpen },
@@ -98,7 +97,7 @@ const Problem = ({
           <span className="text-md text-second">Problem address : </span>
           {address}
         </TableCell>
-      </TableRow>
+      </TableRow> */}
     </>
   );
 };
