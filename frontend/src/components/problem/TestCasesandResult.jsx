@@ -1,17 +1,15 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { outputAtom } from "../../atoms/problemAtom";
 
-const TestCasesandResult = ({ problem }) => {
+const TestCasesandResult = ({ problem, testcasePassed }) => {
   const [, setLoading] = useState(true);
 
   const [activeTestCaseId, setActiveTestCaseId] = useState(0); // indexing for testcases from the problem;
   const [innerNavs, setInnerNavs] = useState(["TestCases"]);
   const [activeBar, setActiveBar] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
-
-  var testcasePassed = 0;
 
   const output = useRecoilValue(outputAtom);
   const outputState = output?.data;
@@ -37,15 +35,12 @@ const TestCasesandResult = ({ problem }) => {
     }
   }, [output]);
 
+  console.log("tettt : ", testcasePassed);
+
   const getOutputs = () => {
     return outputState.map((output, index) => {
       let statusId = output?.status?.id;
 
-      if (output.status.description === "Accepted") {
-        testcasePassed++;
-      }
-
-      console.log("status : ", statusId);
       if (statusId === 6) {
         // compilation error
         return (

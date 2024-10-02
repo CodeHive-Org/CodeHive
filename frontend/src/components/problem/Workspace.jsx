@@ -40,11 +40,13 @@ const WorkSpace = ({ data, pid, contract }) => {
 
   const [submissionProcessing, setSubmissionProcessing] = useState(false);
   const [executionProcessing, setExecutionProcessing] = useState(false);
+  const [testcasePassed, setTestcasePassed] = useState(0);
 
   console.log("data : ", data);
 
   const checkStatus = async (tokens, type) => {
     const token = tokens.map((item) => item.token).join(",");
+    setTestcasePassed(0);
 
     console.log("token : ", token);
 
@@ -75,6 +77,12 @@ const WorkSpace = ({ data, pid, contract }) => {
           data: response.data.submissions,
           expectedOutput: String(data?.examples[0]?.output).trim(),
         });
+        response.data.submissions.map((output) => {
+          if (output.status.description == "Accepted") {
+            setTestcasePassed((t) => t + 1);
+          }
+        });
+
         toast.success(`Compiled Successfully!`, { position: "top-center" });
         return response.data;
       }
@@ -82,7 +90,7 @@ const WorkSpace = ({ data, pid, contract }) => {
       console.log("err", err);
       setSubmissionProcessing(false);
       setExecutionProcessing(false);
-      toast.error("Error in the code !");
+      toast.error(err.message);
     }
   };
 
@@ -353,7 +361,7 @@ const WorkSpace = ({ data, pid, contract }) => {
           <ResizableHandle withHandle className="w-[5px] bg-gray-600" />
           <ResizablePanel defaultSize={50}>
             {/* Test Cases */}
-            <TestCasesandResult problem={data} />
+            <TestCasesandResult testcasePassed={testcasePassed} problem={data} />
           </ResizablePanel>
         </ResizablePanelGroup>
       </ResizablePanel>
