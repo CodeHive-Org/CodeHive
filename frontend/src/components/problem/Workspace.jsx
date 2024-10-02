@@ -9,14 +9,15 @@ import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 import axios from "axios";
 import { useState } from "react";
 import ReactConfetti from "react-confetti";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { Toaster, toast } from "sonner";
 import CodeEditor from "./CodeEditor";
 import ProblemDescription from "./ProblemDescription";
 import SubmitBox from "./SubmitBox";
 import TestCasesandResult from "./TestCasesandResult";
-import { alertAtom, submissionErrorAtom } from "@/atoms/userAtom";
+import { alertAtom, submissionErrorAtom, userState } from "@/atoms/userAtom";
 import { ErrorAlert } from "../ErrorAlert";
+import { signMessageWithTimeConstraint } from "@/hooks/SigMessage";
 
 // import TestCasesandResult from "./TestCasesandResult";
 
@@ -24,8 +25,6 @@ const WorkSpace = ({ data, pid, contract }) => {
   const [alert, setAlert] = useRecoilState(alertAtom);
   const [, setSubmissionError] = useRecoilState(submissionErrorAtom);
   let [userCode, setUserCode] = useState();
-
-  const [lastUserValidCode, setLastUserValidCode] = useState("");
 
   let testInput =
     typeof data?.testcases[0].input == "object"
@@ -37,6 +36,7 @@ const WorkSpace = ({ data, pid, contract }) => {
   const { address } = useWallet();
 
   const [outputState, setOutputState] = useRecoilState(outputAtom);
+  const user = useRecoilValue(userState);
 
   const [submissionProcessing, setSubmissionProcessing] = useState(false);
   const [executionProcessing, setExecutionProcessing] = useState(false);
@@ -93,7 +93,7 @@ const WorkSpace = ({ data, pid, contract }) => {
       toast.error(err.message);
     }
   };
-// test-1
+  // test-1
   console.log("outputstate : ", outputState);
 
   const testcaseInput = JSON.stringify(data?.examples[0]?.input);
@@ -101,15 +101,6 @@ const WorkSpace = ({ data, pid, contract }) => {
   const [temp, setTemp] = useState(true); // make sures that the alert pop ups only once.
 
   const handleSubmit = async () => {
-    if (!address) {
-      toast.error("Please login to submit your code", {
-        position: "top-center",
-        autoClose: 3000,
-        theme: "dark",
-      });
-      return;
-    }
-
     if (temp) {
       setAlert({
         isOpen: true,
@@ -122,33 +113,26 @@ const WorkSpace = ({ data, pid, contract }) => {
       return;
     }
 
+    const txnData = await signMessageWithTimeConstraint();
+
+    if (!txnData?.message) {
+      throw new Error("Transaction failed !");
+    }
+
     setSubmissionProcessing(true);
-    // default template + starter code
-    const sourceCode = `
-      function defaultFunc(inputs) {
-        ${userCode}
-
-        return ${data?.compileFunctionName}(inputs)
-      }
-
-      console.log(defaultFunc(${testcaseInput}));
-    `;
 
     const formData = {
-      language_id: 63,
-      // encode source code in base64
-      source_code: btoa(sourceCode),
-      stdin: btoa(testInput),
+      userId: user.id,
+      userCode: userCode,
+      problemId: pid,
     };
     const options = {
       method: "POST",
-      url: import.meta.env.VITE_RAPID_API_URL,
-      params: { base64_encoded: "true", fields: "*" },
+      url: import.meta.env.VITE_BACKEND_URL + "/code/submit",
       headers: {
-        "content-type": "application/json",
         "Content-Type": "application/json",
-        "X-RapidAPI-Host": import.meta.env.VITE_RAPID_API_HOST,
-        "X-RapidAPI-Key": import.meta.env.VITE_RAPID_API_KEY,
+        tron_message: txnData.message,
+        tron_signature: txnData.signature,
       },
       data: formData,
     };
@@ -156,39 +140,39 @@ const WorkSpace = ({ data, pid, contract }) => {
     axios
       .request(options)
       .then(async function (response) {
-        const token = response.data.token;
-        let output = await checkStatus(token, "submit");
-        let statusId = output?.status?.id;
+        const submission = response.data;
+        console.log("submission : ", submission);
 
-        console.log("output ; ", atob(output?.stdout));
+        // if (statusId !== 3) {
+        //   // ! Dont run the contract if their is run time
+        //   setSubmissionProcessing(false);
+        //   toast.error(
+        //     "RunTime Error | Please Check your Code before submission !",
+        //   );
+        //   return;
+        // }
 
-        if (statusId !== 3) {
-          // ! Dont run the contract if their is run time
-          setSubmissionProcessing(false);
-          toast.error(
-            "RunTime Error | Please Check your Code before submission !",
-          );
-          return;
-        }
+        // if (atob(output.stdout) && atob(output.stdout) != null) {
+        //   const outputString = String(atob(output?.stdout)).trim();
+        //   const expectedOutput = String(data?.examples[0]?.output).trim();
 
-        if (atob(output.stdout) && atob(output.stdout) != null) {
-          const outputString = String(atob(output?.stdout)).trim();
-          const expectedOutput = String(data?.examples[0]?.output).trim();
-
-          if (outputString == expectedOutput) {
-            setLastUserValidCode(userCode);
-            // create a pop up for a upload code option...
-            handleUpload(userCode);
-          } else {
-            setSubmissionProcessing(false);
-            toast.error("Submission Failed ! 🚫");
-          }
-        }
+        //   if (outputString == expectedOutput) {
+        //     // create a pop up for a upload code option...
+        //     handleUpload(userCode);
+        //   } else {
+        //     setSubmissionProcessing(false);
+        //     toast.error("Submission Failed !");
+        //   }
+        // }
       })
       .catch((err) => {
         let error = err.response ? err.response.data : err;
         setSubmissionProcessing(false);
+        toast.error(err.message);
         console.log(error);
+      })
+      .finally(() => {
+        setSubmissionProcessing(false);
       });
   };
   const handleUpload = async (uploadCode) => {
@@ -304,7 +288,6 @@ const WorkSpace = ({ data, pid, contract }) => {
       url: import.meta.env.VITE_RAPID_API_URL + "/batch",
       params: { base64_encoded: "true", fields: "*" },
       headers: {
-        "content-type": "application/json",
         "Content-Type": "application/json",
         "X-RapidAPI-Host": import.meta.env.VITE_RAPID_API_HOST,
         "X-RapidAPI-Key": import.meta.env.VITE_RAPID_API_KEY,
@@ -361,7 +344,10 @@ const WorkSpace = ({ data, pid, contract }) => {
           <ResizableHandle withHandle className="w-[5px] bg-gray-600" />
           <ResizablePanel defaultSize={50}>
             {/* Test Cases */}
-            <TestCasesandResult testcasePassed={testcasePassed} problem={data} />
+            <TestCasesandResult
+              testcasePassed={testcasePassed}
+              problem={data}
+            />
           </ResizablePanel>
         </ResizablePanelGroup>
       </ResizablePanel>
