@@ -11,7 +11,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import ReportModal from "../ReportModal";
 import SubmissionDetail from "../submission/SubmissionDetail";
 import { SubSkeletonPage } from "../SubSkeletonPage";
-import AllSubmittion from "./AllSubmittion";
+import AllSubmissions from "./AllSubmissions";
 import MySubmissions from "./MySubmissions";
 import { tabsSelectorAtom, userState } from "@/atoms/userAtom";
 import axios from "axios";
@@ -79,12 +79,12 @@ const ProblemDescription = ({ problem, pid, contract }) => {
           >
             Description
           </div>
-          <div
+          {/* <div
             className={`cursor-pointer rounded-t-[5px] ${selector == 1 ? "bg-gray-700" : ""} px-5 py-[10px] text-xs`}
             onClick={() => setSelector(1)}
           >
             All Codes
-          </div>
+          </div> */}
           <div
             className={`cursor-pointer rounded-t-[5px] ${selector == 2 ? "bg-gray-700" : ""} px-5 py-[10px] text-xs`}
             onClick={() => setSelector(2)}
@@ -205,13 +205,13 @@ const ProblemDescription = ({ problem, pid, contract }) => {
             </div>
           </div>
         )}
-        {selector == 1 && !loading && (
-          <AllSubmittion
+        {/* {selector == 1 && !loading && (
+          <AllSubmissions
             contract={contract}
             claimer={claimer}
             loader={setLoading}
           />
-        )}
+        )} */}
         {selector == 2 &&
           !loading &&
           (activeSubmissionId ? <SubmissionDetail /> : <MySubmissions />)}

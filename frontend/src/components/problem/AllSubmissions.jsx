@@ -6,7 +6,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-export default function AllSubmittion({ contract, claimer, loader }) {
+export default function AllSubmissions({ contract, claimer, loader }) {
   const [codes, setCodes] = useState([]);
   useEffect(() => {
     loader(true);
