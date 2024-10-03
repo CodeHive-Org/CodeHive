@@ -1,21 +1,14 @@
-import React, { useEffect, useState } from "react";
-import Problem from "./Problem";
-import { cn } from "@/lib/utils";
 import {
   Table,
   TableBody,
-  TableFooter,
   TableHead,
   TableHeader,
-  TableRow,
-  TableCell,
+  TableRow
 } from "@/components/ui/table";
-import MaxWidthWrapper from "../MaxWidthWrapper";
-import axios from "axios";
-import { useGetQuestions } from "@/hooks/getQuestions";
 import { ABI_Bank } from "@/utils/problems";
-import { Skeleton } from "../ui/skeleton";
-import { toast } from "sonner";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import Problem from "./Problem";
 
 const ProblemsContainer = () => {
   const [activeIndex, setActiveIndex] = useState(null);

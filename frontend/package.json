@@ -53,6 +53,7 @@
     "recoil": "^0.7.7",
     "sonner": "^1.4.0",
     "tailwind-merge": "^2.2.1",
+    "tailwind-scrollbar": "^3.1.0",
     "tailwindcss-animate": "^1.0.7",
     "tronweb": "^6.0.0-beta.2"
   },

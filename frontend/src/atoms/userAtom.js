@@ -24,6 +24,11 @@ export const alertAtom = atom({
   },
 });
 
+export const tabsSelectorAtom = atom({
+  key: "tabsSelectorAtom",
+  default: 0,
+})
+
 export const submissionErrorAtom = atom({
   key: "submissionErrorAtom",
   default: {

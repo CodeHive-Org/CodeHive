@@ -1,4 +1,4 @@
-import { outputAtom } from "@/atoms/problemAtom";
+import { activeSubmissionIdState, fetchSubmissionsLoadingState, outputAtom, submissionResultState } from "@/atoms/problemAtom";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -9,13 +9,13 @@ import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 import axios from "axios";
 import { useState } from "react";
 import ReactConfetti from "react-confetti";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { Toaster, toast } from "sonner";
 import CodeEditor from "./CodeEditor";
 import ProblemDescription from "./ProblemDescription";
 import SubmitBox from "./SubmitBox";
 import TestCasesandResult from "./TestCasesandResult";
-import { alertAtom, submissionErrorAtom, userState } from "@/atoms/userAtom";
+import { alertAtom, submissionErrorAtom, tabsSelectorAtom, userState } from "@/atoms/userAtom";
 import { ErrorAlert } from "../ErrorAlert";
 import { signMessageWithTimeConstraint } from "@/hooks/SigMessage";
 
@@ -41,6 +41,11 @@ const WorkSpace = ({ data, pid, contract }) => {
   const [submissionProcessing, setSubmissionProcessing] = useState(false);
   const [executionProcessing, setExecutionProcessing] = useState(false);
   const [testcasePassed, setTestcasePassed] = useState(0);
+  const setActiveSubmissionId = useSetRecoilState(activeSubmissionIdState);
+  const [fetchSubmissionsLoading, setFetchSubmissionsLoading] = useRecoilState(fetchSubmissionsLoadingState);
+  const setSubmissionResult = useSetRecoilState(submissionResultState);
+
+  const setSelector = useSetRecoilState(tabsSelectorAtom);
 
   console.log("data : ", data);
 
@@ -140,30 +145,31 @@ const WorkSpace = ({ data, pid, contract }) => {
     axios
       .request(options)
       .then(async function (response) {
-        const submission = response.data;
-        console.log("submission : ", submission);
+        if (response.status === 200) {
+          setActiveSubmissionId(response.data.submissionId);
 
-        // if (statusId !== 3) {
-        //   // ! Dont run the contract if their is run time
-        //   setSubmissionProcessing(false);
-        //   toast.error(
-        //     "RunTime Error | Please Check your Code before submission !",
-        //   );
-        //   return;
-        // }
+          try {
+            const res = await axios.get(
+              import.meta.env.VITE_BACKEND_URL +
+                `/code/submission/${response.data.submissionId}`,
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              },
+            );
+            const data = res.data;
 
-        // if (atob(output.stdout) && atob(output.stdout) != null) {
-        //   const outputString = String(atob(output?.stdout)).trim();
-        //   const expectedOutput = String(data?.examples[0]?.output).trim();
+            setSubmissionResult((prev) => ({
+              ...prev,
+              [response.data.submissionId]: data,
+            }));
 
-        //   if (outputString == expectedOutput) {
-        //     // create a pop up for a upload code option...
-        //     handleUpload(userCode);
-        //   } else {
-        //     setSubmissionProcessing(false);
-        //     toast.error("Submission Failed !");
-        //   }
-        // }
+            console.log("updatin g? ?????");
+          } catch (err) {
+            console.log("Error", err.message);
+          }
+        }
       })
       .catch((err) => {
         let error = err.response ? err.response.data : err;
@@ -173,6 +179,8 @@ const WorkSpace = ({ data, pid, contract }) => {
       })
       .finally(() => {
         setSubmissionProcessing(false);
+        setFetchSubmissionsLoading(false);
+        setSelector(2);
       });
   };
   const handleUpload = async (uploadCode) => {
@@ -269,13 +277,6 @@ const WorkSpace = ({ data, pid, contract }) => {
         expected_output: btoa(testCase.output),
       };
     });
-
-    const formData = {
-      language_id: 63,
-      // encode source code in base64
-      source_code: btoa(sourceCode),
-      stdin: btoa(testInput),
-    };
 
     console.log(
       JSON.stringify({

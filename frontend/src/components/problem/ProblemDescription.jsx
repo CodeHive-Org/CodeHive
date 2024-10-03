@@ -1,14 +1,20 @@
-"use client";
-
-import { useTheContext } from "../../context/index";
+import {
+  activeSubmissionIdState,
+  activeSubmissionResultSelector,
+  fetchSubmissionsLoadingState,
+  submissionResultState,
+} from "@/atoms/problemAtom";
+import { CircleDollarSign } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import AllSubmittion from "./AllSubmittion";
-import MySubmittion from "./MySubmittion";
-import { Button } from "../ui/button";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import ReportModal from "../ReportModal";
+import SubmissionDetail from "../submission/SubmissionDetail";
 import { SubSkeletonPage } from "../SubSkeletonPage";
-import { CircleDollarSign } from "lucide-react";
+import AllSubmittion from "./AllSubmittion";
+import MySubmissions from "./MySubmissions";
+import { tabsSelectorAtom, userState } from "@/atoms/userAtom";
+import axios from "axios";
 
 const ProblemDescription = ({ problem, pid, contract }) => {
   const [loading, setLoading] = useState(false);
@@ -18,13 +24,53 @@ const ProblemDescription = ({ problem, pid, contract }) => {
   const [bounty, setBounty] = useState();
   const [isClaimed, setIsClaimed] = useState(false);
 
-  const [selector, setSelector] = useState(0);
+  const [selector, setSelector] = useRecoilState(tabsSelectorAtom);
+  const activeSubmissionId = useRecoilValue(activeSubmissionIdState);
+  const setActiveSubmissionId = useSetRecoilState(activeSubmissionIdState);
+  const [submisionResult, setSubmissionResult] = useRecoilState(
+    submissionResultState,
+  );
+  const activeSubmissionResult = useRecoilValue(activeSubmissionResultSelector);
+  const [fetchSubmissionsLoading, setFetchSubmissionsLoading] = useRecoilState(
+    fetchSubmissionsLoadingState,
+  );
+  useEffect(() => {
+    (async () => {
+      if (fetchSubmissionsLoading && activeSubmissionId) {
+        if (!activeSubmissionResult) {
+          try {
+            const res = await axios.get(
+              import.meta.env.VITE_BACKEND_URL +
+                `/code/submission/${activeSubmissionId}`,
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              },
+            );
+            const data = res.data;
 
-  console.log("claimer : ", isClaimed);
+            setSubmissionResult((prev) => ({
+              ...prev,
+              [activeSubmissionId]: data,
+            }));
+
+            console.log("updatin g? ?????");
+          } catch (err) {
+            console.log("Error", err.message);
+          } finally {
+            setFetchSubmissionsLoading(false);
+          }
+        } else {
+          setFetchSubmissionsLoading(false);
+        }
+      }
+    })();
+  }, [fetchSubmissionsLoading, activeSubmissionId, activeSubmissionResult]);
 
   return (
-    <main className="relative h-full">
-      <div className="h-full bg-third">
+    <main className="relative h-full bg-third ">
+      <div className="scrollbar-none h-full overflow-y-scroll bg-third">
         {/* TAB */}
         <div className="flex h-11 w-full items-center gap-2 overflow-x-hidden border-b border-gray-500 bg-secondary pt-2 text-white">
           <div
@@ -166,13 +212,9 @@ const ProblemDescription = ({ problem, pid, contract }) => {
             loader={setLoading}
           />
         )}
-        {selector == 2 && !loading && (
-          <MySubmittion
-            contract={contract}
-            claimer={claimer}
-            loader={setLoading}
-          />
-        )}
+        {selector == 2 &&
+          !loading &&
+          (activeSubmissionId ? <SubmissionDetail /> : <MySubmissions />)}
       </div>
     </main>
   );
