@@ -46,14 +46,14 @@ const TestCasesandResult = ({ problem, testcasePassed }) => {
         return (
           <pre
             key={index}
-            className="px-2 py-1 text-[1.1rem] font-normal text-red-500"
+            className="px-2 py-1 bg-[#06090f] text-[1.1rem] font-normal text-red-500"
           >
             {atob(output?.compile_output)}
           </pre>
         );
       } else if (statusId === 3 || statusId === 4) {
         return (
-          <main key={index} className="max-w-[500px] px-2">
+          <main key={index} className="max-w-[500px] bg-[#06090f] w-full px-2">
             <section className="border-t border-gray-700">
               <div className="flex flex-col gap-6 px-2 py-4">
                 <div className="flex flex-col gap-3">
@@ -95,7 +95,7 @@ const TestCasesandResult = ({ problem, testcasePassed }) => {
         return (
           <pre
             key={index}
-            className="flex w-full flex-col space-y-2 px-2 py-1 font-normal"
+            className="flex w-full bg-[#06090f] flex-col space-y-2 px-2 py-1 font-normal"
           >
             {output?.stderr.length > 0 ? (
               <div className="flex space-x-2">
@@ -119,7 +119,7 @@ const TestCasesandResult = ({ problem, testcasePassed }) => {
   );
 
   return (
-    <div className="h-full w-full overflow-auto bg-third px-5 py-2">
+    <div className="h-full overflow-auto bg-third px-5 py-2">
       {/* testcase heading */}
 
       <div className="flex h-10 items-center space-x-6">
@@ -202,9 +202,9 @@ const TestCasesandResult = ({ problem, testcasePassed }) => {
                 {problem.testcases.length}/{testcasePassed} TestCases Passed
               </p>
             ) : null}
-            <div className="mt-4 max-h-full w-full overflow-y-auto rounded-md bg-[#06090f] text-sm font-normal text-white">
+            <div className="mt-4 max-h-full w-full overflow-y-auto rounded-md text-sm font-normal text-white">
               {outputState ? (
-                <div className="flex flex-col space-y-2">
+                <div className="flex w-full flex-col space-y-2">
                   <section className="">{getOutputs()}</section>
                   {/* temp */}
                 </div>

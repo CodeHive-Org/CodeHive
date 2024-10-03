@@ -1,4 +1,9 @@
-import { activeSubmissionIdState, fetchSubmissionsLoadingState, outputAtom, submissionResultState } from "@/atoms/problemAtom";
+import {
+  activeSubmissionIdState,
+  fetchSubmissionsLoadingState,
+  outputAtom,
+  submissionResultState,
+} from "@/atoms/problemAtom";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -15,7 +20,12 @@ import CodeEditor from "./CodeEditor";
 import ProblemDescription from "./ProblemDescription";
 import SubmitBox from "./SubmitBox";
 import TestCasesandResult from "./TestCasesandResult";
-import { alertAtom, submissionErrorAtom, tabsSelectorAtom, userState } from "@/atoms/userAtom";
+import {
+  alertAtom,
+  submissionErrorAtom,
+  tabsSelectorAtom,
+  userState,
+} from "@/atoms/userAtom";
 import { ErrorAlert } from "../ErrorAlert";
 import { signMessageWithTimeConstraint } from "@/hooks/SigMessage";
 
@@ -42,7 +52,9 @@ const WorkSpace = ({ data, pid, contract }) => {
   const [executionProcessing, setExecutionProcessing] = useState(false);
   const [testcasePassed, setTestcasePassed] = useState(0);
   const setActiveSubmissionId = useSetRecoilState(activeSubmissionIdState);
-  const [fetchSubmissionsLoading, setFetchSubmissionsLoading] = useRecoilState(fetchSubmissionsLoadingState);
+  const [fetchSubmissionsLoading, setFetchSubmissionsLoading] = useRecoilState(
+    fetchSubmissionsLoadingState,
+  );
   const setSubmissionResult = useSetRecoilState(submissionResultState);
 
   const setSelector = useSetRecoilState(tabsSelectorAtom);
@@ -52,8 +64,6 @@ const WorkSpace = ({ data, pid, contract }) => {
   const checkStatus = async (tokens, type) => {
     const token = tokens.map((item) => item.token).join(",");
     setTestcasePassed(0);
-
-    console.log("token : ", token);
 
     const options = {
       method: "GET",
@@ -93,9 +103,10 @@ const WorkSpace = ({ data, pid, contract }) => {
       }
     } catch (err) {
       console.log("err", err);
+      toast.error(err.message);
+    } finally {
       setSubmissionProcessing(false);
       setExecutionProcessing(false);
-      toast.error(err.message);
     }
   };
   // test-1
@@ -125,6 +136,23 @@ const WorkSpace = ({ data, pid, contract }) => {
     }
 
     setSubmissionProcessing(true);
+    const amountInSun = data.bounty * 1_000_000;
+
+    // send trx to codehive wallet
+    try {
+      const transaction =
+        await window.tronLink.tronWeb.transactionBuilder.sendTrx(
+          "TTJbVzrWBGfk82ChT61hR8cPdhAhS2FBvK",
+          amountInSun,
+          window.tronWeb.defaultAddress.base58,
+        );
+
+      console.log("transactoin : ", transaction);
+    } catch (err) {
+      console.log("err : ", err);
+      toast.error("unknown error occured !");
+      return;
+    }
 
     const formData = {
       userId: user.id,
@@ -165,7 +193,9 @@ const WorkSpace = ({ data, pid, contract }) => {
               [response.data.submissionId]: data,
             }));
 
-            console.log("updatin g? ?????");
+            if (data.statusDesc == "Accepted") {
+              setSuccess(true);
+            }
           } catch (err) {
             console.log("Error", err.message);
           }
@@ -183,66 +213,6 @@ const WorkSpace = ({ data, pid, contract }) => {
         setSelector(2);
       });
   };
-  const handleUpload = async (uploadCode) => {
-    //check that if the useer has allready submitted  code?
-    //code fetch using the contract...
-    try {
-      const data = await contract.haveSubmitted().call();
-
-      if (data) {
-        setSubmissionError({
-          isError: true,
-          message: `You have already Submitted this Problem's Solution`,
-        });
-        setSubmissionProcessing(false);
-        return;
-        // alert("allready submitted the code..");
-      }
-    } catch (err) {
-      setSubmissionError({
-        isError: true,
-        message: "Error Occured when fetching the submission contract info !",
-      });
-      setSubmissionProcessing(false);
-      console.log("error : ", err);
-      return;
-    }
-
-    if (uploadCode == null || uploadCode == "") {
-      setSubmissionError({
-        isError: true,
-        message: "submit the code before uploding to chain..",
-      });
-      return;
-    }
-    const options = {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${import.meta.env.VITE_PINATA_JWT}`,
-        "Content-Type": "application/json",
-      },
-      body: `{"pinataOptions":{"cidVersion":1},"pinataMetadata":{"name":"${address}.json"},"pinataContent":${JSON.stringify({ code: uploadCode })}}`,
-    };
-    const { IpfsHash } = await fetch(
-      "https://api.pinata.cloud/pinning/pinJSONToIPFS",
-      options,
-    )
-      .then((res) => res.text())
-      .then((res) => JSON.parse(res));
-    try {
-      let result = await contract.submitCode(IpfsHash, address, 200).send({
-        feeLimit: 100_000_000_0,
-        shouldPollResponse: true,
-      });
-      setSuccess(true);
-      toast.success("Congratulations your submission was accepted ! 🥳");
-      setSubmissionProcessing(false);
-      console.log("Result for that:", result);
-    } catch (error) {
-      setSubmissionProcessing(false);
-      console.log("Error contacting the contract:", error);
-    }
-  };
 
   const handleRun = async () => {
     // setProcessing(true);
@@ -257,18 +227,6 @@ const WorkSpace = ({ data, pid, contract }) => {
     `;
     };
 
-    const sourceCode = (input) => {
-      return `
-      function defaultFunc(inputs) {
-        ${userCode}
-  
-        return ${data?.compileFunctionName}(inputs)
-      }
-  
-      console.log(defaultFunc(${testcaseInput}));
-    `;
-    };
-
     const submissions = data.testcases.map((testCase) => {
       console.log("testCase.output : ", testCase.output);
       return {
@@ -277,12 +235,6 @@ const WorkSpace = ({ data, pid, contract }) => {
         expected_output: btoa(testCase.output),
       };
     });
-
-    console.log(
-      JSON.stringify({
-        submissions,
-      }),
-    );
 
     const options = {
       method: "POST",
@@ -302,13 +254,11 @@ const WorkSpace = ({ data, pid, contract }) => {
       .request(options)
       .then(function (response) {
         const tokens = response.data;
-        setExecutionProcessing(false);
         console.log("token : ", tokens);
         checkStatus(tokens, "run");
       })
       .catch((err) => {
         let error = err.response ? err.response.data : err;
-        setExecutionProcessing(false);
         console.log(error);
       });
   };
