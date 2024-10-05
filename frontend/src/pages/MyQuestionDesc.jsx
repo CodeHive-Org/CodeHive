@@ -12,66 +12,18 @@ import {
 } from "@/components/ui/accordion";
 import Navbar from "@/components/Navbar";
 import axios from "axios";
-
-const fetchTHeData = async (url, fxn) => {
-  console.log("fetching at the", import.meta.env.VITE_PINATA_URL + url);
-  fetch(import.meta.env.VITE_PINATA_URL + url, {
-    method: "GET",
-    headers: {
-      "ngrok-skip-browser-warning": true,
-    },
-  })
-    .then(async (response) => {
-      const decoder = new TextDecoder();
-      const reader = response.body.getReader();
-
-      return reader.read().then(({ value, done }) => {
-        if (done) {
-          console.log("Stream reading complete");
-          return;
-        }
-        const decodedValue = decoder.decode(value, { stream: true });
-        return JSON.parse(decodedValue);
-      });
-    })
-    .then((data) => {
-      console.log(data);
-      fxn(data);
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
-};
-
-const fetchTHeCode = async (url, fxn) => {
-  if (url == "") {
-    //default case baby man...
-    url = "bafkreib4sbyv6qwkrdpukntyv34c2qb6qqqwjr53rp4dezm4i56q4m4vsi";
-    console.error("Im showing a default code cause my code was blure....");
-  }
-  const URL = import.meta.env.VITE_PINATA_URL + url;
-
-  var myHeaders = new Headers();
-  var requestOptions = {
-    method: "GET",
-    headers: myHeaders,
-    redirect: "follow",
-  };
-  const data = await (await fetch(URL, requestOptions)).text();
-  fxn(JSON.parse(data).code);
-};
+import { useTheContext } from "@/context";
 
 export default function MyQuestionDesc() {
   let { pid } = useParams();
   const [loading, setLoading] = useState(true);
   const [problem, setProblem] = useState();
   const [claimer, setClaimer] = useState();
-  const [claimed, setClaimed] = useState(false);
   const [bounty, setBounty] = useState();
-  const [codes, setCodes] = useState();
-  const [name, setName] = useState();
   const [difficulty, setDiff] = useState();
   const [winnerCode, setWinnerCode] = useState();
+  const { tronWeb } = useTheContext();
+  const [submissions, setSubmissions] = useState([]);
 
   const [contract, setContract] = useState();
 
@@ -82,13 +34,15 @@ export default function MyQuestionDesc() {
           import.meta.env.VITE_BACKEND_URL + `/problems/${pid}`,
         );
         console.log("respnse : ", response.data);
+        setSubmissions(
+          response.data.submissions.filter((s) => s.statusDesc == "Accepted"),
+        );
         setProblem(response.data);
       } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
       }
-
     };
     getProblem();
   }, []);
@@ -135,9 +89,9 @@ export default function MyQuestionDesc() {
         <div className="flex w-[80%] flex-col items-center gap-3 py-[10px]">
           <div className="flex w-full items-center justify-between border-b border-gray-500">
             <p className="flex gap-2 text-[34px] font-bold text-gray-100">
-              {name}
+              {problem?.name}
               <span className="align-top text-[1rem]">
-                {claimed ? (
+                {problem?.bountyStatus === "CLAIMED" ? (
                   <p
                     className="float-right w-max rounded-[4px] border border-gray-900 p-[2px] 
                   text-primary"
@@ -154,8 +108,7 @@ export default function MyQuestionDesc() {
           <div className="w-[90%] text-[#b4b0b0]">{problem?.description}</div>
         </div>
         <div className="flex w-[70%] flex-col items-center gap-3 py-[10px]">
-          {claimed && (
-            // adding the winning code herer...
+          {/* {problem?.bountyStatus === "CLAIMED" && (
             <Accordion type="single" collapsible className="w-full px-[20px]">
               <AccordionItem value="69">
                 <AccordionTrigger className="text-[1.2rem] font-bold text-primary xl:text-[1.4rem]">
@@ -168,22 +121,24 @@ export default function MyQuestionDesc() {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-          )}
+          )} */}
         </div>
         <div className="flex w-[60%] flex-col items-center gap-3 py-[10px] pt-[30px]">
           <p className="w-full text-[20px] font-bold text-primary">
             Code Submissions:
           </p>
           <Accordion type="single" collapsible className="w-full px-[20px]">
-            {codes.map((code, index) => (
-              <CodeSegment
-                contract={contract}
-                codeData={code}
-                key={index}
-                index={index}
-                claimed={claimed}
-              />
-            ))}
+            {submissions.length > 0 &&
+              submissions.map((submission, index) => (
+                <CodeSegment
+                  contract={contract}
+                  submission={submission}
+                  key={index}
+                  index={index}
+                  claimed={problem.bountyStatus}
+                  bounty={Math.round(problem.bounty)}
+                />
+              ))}
           </Accordion>
         </div>
       </MaxWidthWrapper>
@@ -191,45 +146,41 @@ export default function MyQuestionDesc() {
   );
 }
 
-function CodeSegment({ contract, codeData, index, claimed }) {
-  const [code, setCode] = useState();
+function CodeSegment({ submission, index, claimed, bounty }) {
   const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    fetchTHeCode(codeData.code, setCode);
-  }, []);
-  console.log(index, codeData);
-  useEffect(() => {
-    if (code) {
-      setLoading(false);
-    }
-  }, [code]);
-  if (loading) {
-    return "skeleton small maannn";
-  }
+  const { tronWeb } = useTheContext();
   const fundAcc = async () => {
-    //check if allready claime
-    let isClaimed = await contract.claimed().call();
-    if (!isClaimed) {
-      //running the code to fund it.....
-      //todo: set loading true
-      const result = await contract.giveAway(codeData.by).send();
-      console.log(result);
-      //todo: set loading false
-    } else {
-      //todo: alert allready claimed
-    }
+    const winner = submission.user.walletAddress;
+    const amount = bounty * 1000000;
+    const res = await tronWeb.trx.sendTrx(winner, amount);
+
+    // api call to update the question data on db
+    console.log("res : ", res);
   };
 
   return (
     <>
       <AccordionItem value={index.toString()}>
         <AccordionTrigger className="text-[1.2rem] xl:text-[1.4rem]">
-          {codeData.by.slice(0, 6) + "..." + codeData.by.slice(-14)}
+          <div className="flex items-end">
+            <p className="text-[1.3rem] font-medium">
+              {submission.user?.username}
+            </p>
+            <p className="text-sm text-gray-400">
+              (
+              {submission.user.walletAddress.slice(0, 2) +
+                "..." +
+                submission.user.walletAddress.slice(-6)}
+              )
+            </p>
+          </div>
+
+          {/* {submission.by.} */}
         </AccordionTrigger>
         <AccordionContent>
           <div className="relative whitespace-pre-wrap rounded-[5px] border p-2">
-            {code}
-            {!claimed && (
+            {submission.code}
+            {claimed == "UNCLAIMED" && (
               <button
                 className="absolute right-[10px] top-[10px] rounded-[5px] border border-primary px-[3px] py-[2px] pt-[4px] text-[12px] font-bold text-primary hover:bg-primary hover:text-black"
                 onClick={() => fundAcc()}
@@ -242,14 +193,14 @@ function CodeSegment({ contract, codeData, index, claimed }) {
             <p>
               Memory:{" "}
               <span className="font-semibold text-primary">
-                {Math.floor(parseInt(codeData.runTime._hex, 16) / 10000)}
+                {submission.memoryUsage}b
               </span>
             </p>{" "}
             {/* number placed from index 4 to onwards are memory. */}
             <p>
               Run Time:{" "}
               <span className="font-semibold text-primary">
-                {parseInt(codeData.runTime._hex, 16) % 10000}
+                {submission.runtime}ms
               </span>
             </p>{" "}
             {/* number placed as 0 to 3 index is the runtime of the code. */}
@@ -257,7 +208,7 @@ function CodeSegment({ contract, codeData, index, claimed }) {
               Post Time:{" "}
               <span className="font-semibold text-primary">
                 {" "}
-                {parseInt(codeData.submitTime._hex, 16)}
+                {new Date(submission.createdAt).toDateString()}
               </span>
             </p>
           </div>

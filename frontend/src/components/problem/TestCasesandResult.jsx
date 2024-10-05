@@ -10,6 +10,7 @@ const TestCasesandResult = ({ problem, testcasePassed }) => {
   const [innerNavs, setInnerNavs] = useState(["TestCases"]);
   const [activeBar, setActiveBar] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
+  const [statusId, setStatusId] = useState(null);
 
   const output = useRecoilValue(outputAtom);
   const outputState = output?.data;
@@ -33,27 +34,31 @@ const TestCasesandResult = ({ problem, testcasePassed }) => {
     ) {
       setInnerNavs((prev) => [...prev, "Console"]);
     }
-  }, [output]);
-
-  console.log("tettt : ", testcasePassed);
+  }, [output, statusId]);
 
   const getOutputs = () => {
+    // setStatusId(outputState[0]?.status?.id);
+
     return outputState.map((output, index) => {
       let statusId = output?.status?.id;
+
+      if (statusId == 2) {
+        return <h1 key={index}>Loading....</h1>;
+      }
 
       if (statusId === 6) {
         // compilation error
         return (
           <pre
             key={index}
-            className="px-2 py-1 bg-[#06090f] text-[1.1rem] font-normal text-red-500"
+            className="bg-[#06090f] px-2 py-1 text-[1.1rem] font-normal text-red-500"
           >
             {atob(output?.compile_output)}
           </pre>
         );
       } else if (statusId === 3 || statusId === 4) {
         return (
-          <main key={index} className="max-w-[500px] bg-[#06090f] w-full px-2">
+          <main key={index} className="w-full max-w-[500px] bg-[#06090f] px-2">
             <section className="border-t border-gray-700">
               <div className="flex flex-col gap-6 px-2 py-4">
                 <div className="flex flex-col gap-3">
@@ -95,7 +100,7 @@ const TestCasesandResult = ({ problem, testcasePassed }) => {
         return (
           <pre
             key={index}
-            className="flex w-full bg-[#06090f] flex-col space-y-2 px-2 py-1 font-normal"
+            className="flex w-full flex-col space-y-2 bg-[#06090f] px-2 py-1 font-normal"
           >
             {output?.stderr.length > 0 ? (
               <div className="flex space-x-2">
@@ -110,13 +115,6 @@ const TestCasesandResult = ({ problem, testcasePassed }) => {
       }
     });
   };
-
-  console.log(
-    typeof Object.values(problem.testcases[activeTestCaseId]?.input)[0],
-  );
-  console.log(
-    typeof Object.values(problem.testcases[activeTestCaseId]?.input)[0],
-  );
 
   return (
     <div className="h-full overflow-auto bg-third px-5 py-2">

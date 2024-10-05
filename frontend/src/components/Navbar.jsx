@@ -19,13 +19,6 @@ const Navbar = ({ className, dropdown = false }) => {
   const navigate = useNavigate();
 
   const [position, setPosition] = useState("bottom");
-  const authToken = useRecoilValue(authTokenState);
-  // REMOVE
-  // useEffect(() => {
-  //     setUser(userState);
-  // }, []);
-
-  console.log("ssf", authToken);
 
   return (
     <div className={cn("xl:px-18 w-full px-14 py-4", className)}>

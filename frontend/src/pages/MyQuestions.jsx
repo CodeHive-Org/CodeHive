@@ -1,30 +1,35 @@
-import { useState, useEffect } from "react";
-import ComingSoon from "@/components/ComingSoon";
+import { userState } from "@/atoms/userAtom";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { ABI_Bank } from "@/utils/problems";
-import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useTheContext } from "@/context";
+import { useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 
 export default function MyQuestions() {
-  const [Questions, setQuestions] = useState();
-  useEffect(() => {
-    const getQuestions = async () => {
-      const contract = await window.tronLink.tronWeb.contract(
-        ABI_Bank,
-        import.meta.env.VITE_NILE_BANK_ADD,
-      );
-      const questions = await contract.questionList().call();
-      setQuestions(
-        questions.filter(
-          (data) =>
-            data.name.split("|")[1] ==
-            window.tronLink.tronWeb.defaultAddress.base58,
-        ),
-      );
-    };
-    getQuestions();
-  }, [ABI_Bank]);
-  console.log(Questions);
+  const user = useRecoilValue(userState);
+  const questions = user.myProblems;
+
+  console.log(questions);
+
+  const { tronWeb } = useTheContext();
+  const Navigate = useNavigate();
+
+  const fundAcc = async () => {
+    const winner = "TQymTayyt9pPbSUFZjisyuanAsePL76VyG";
+    const amount = 1000000;
+    const res = await tronWeb.trx.sendTrx(winner, amount);
+
+    console.log("res : ", res);
+  };
+
   return (
     <main className=" min-h-screen w-full bg-background">
       {/* right side */}
@@ -36,32 +41,48 @@ export default function MyQuestions() {
             Your Questions
           </p>
         </div>
-        <div className="mt-10 flex flex-col">
-          {Questions &&
-            Questions.map((el, index) => (
-              <ContratElem key={index} i={index} el={el} />
-            ))}
-        </div>
+
+        {/* <button onClick={() => fundAcc()}>Testtt</button> */}
+        <Table className="mt-4 w-full border border-gray-900 p-10">
+          <TableHeader>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Submissions</TableHead>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {questions &&
+              questions.length > 0 &&
+              questions.map((question, index) => (
+                <TableRow
+                  key={index}
+                  className="border-gray-600"
+                  onClick={() => {
+                    Navigate("/myquestion/" + question.id);
+                  }}
+                >
+                  <Question key={index} i={index} question={question} />
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
       </MaxWidthWrapper>
     </main>
   );
 }
 
-function ContratElem({ el, i }) {
-  const Navigate = useNavigate();
-  console.log(el);
+function Question({ question, i }) {
+  console.log("question : ", question.name);
+
   return (
-    <div
-      className="flex w-[60%] items-center justify-between text-white"
-      onClick={() => {
-        Navigate("/myquestion/" + el[0]);
-      }}
-    >
-      <div className="hover:text-whtie mt-4 flex w-full cursor-pointer justify-between rounded-md border-b border-gray-600 px-2 py-2 hover:bg-gray-600">
-        <p>{i + 1}</p>
-        <p>{el[1].split("|")[0]}</p>
-        <p>{el[0].slice(0, 4) + "....." + el[0].slice(-8)}</p>
-      </div>
-    </div>
+    <>
+      <TableCell>{i}</TableCell>
+      <TableCell>{question?.name}</TableCell>
+      <TableCell>{question.status}</TableCell>
+      <TableCell>{question?.submissions?.length || 0}</TableCell>
+    </>
   );
 }

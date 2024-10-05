@@ -48,6 +48,8 @@ const WorkSpace = ({ data, pid, contract }) => {
   const [outputState, setOutputState] = useRecoilState(outputAtom);
   const user = useRecoilValue(userState);
 
+  console.log("user : ", user);
+
   const [submissionProcessing, setSubmissionProcessing] = useState(false);
   const [executionProcessing, setExecutionProcessing] = useState(false);
   const [testcasePassed, setTestcasePassed] = useState(0);
@@ -58,8 +60,6 @@ const WorkSpace = ({ data, pid, contract }) => {
   const setSubmissionResult = useSetRecoilState(submissionResultState);
 
   const setSelector = useSetRecoilState(tabsSelectorAtom);
-
-  console.log("data : ", data);
 
   const checkStatus = async (tokens, type) => {
     const token = tokens.map((item) => item.token).join(",");
@@ -109,11 +109,6 @@ const WorkSpace = ({ data, pid, contract }) => {
       setExecutionProcessing(false);
     }
   };
-  // test-1
-  console.log("outputstate : ", outputState);
-
-  const testcaseInput = JSON.stringify(data?.examples[0]?.input);
-
   const [temp, setTemp] = useState(true); // make sures that the alert pop ups only once.
 
   const handleSubmit = async () => {
@@ -139,20 +134,20 @@ const WorkSpace = ({ data, pid, contract }) => {
     const amountInSun = data.bounty * 1_000_000;
 
     // send trx to codehive wallet
-    try {
-      const transaction =
-        await window.tronLink.tronWeb.transactionBuilder.sendTrx(
-          "TTJbVzrWBGfk82ChT61hR8cPdhAhS2FBvK",
-          amountInSun,
-          window.tronWeb.defaultAddress.base58,
-        );
+    // try {
+    //   const transaction =
+    //     await window.tronLink.tronWeb.transactionBuilder.sendTrx(
+    //       "TTJbVzrWBGfk82ChT61hR8cPdhAhS2FBvK",
+    //       amountInSun,
+    //       window.tronWeb.defaultAddress.base58,
+    //     );
 
-      console.log("transactoin : ", transaction);
-    } catch (err) {
-      console.log("err : ", err);
-      toast.error("unknown error occured !");
-      return;
-    }
+    //   console.log("transactoin : ", transaction);
+    // } catch (err) {
+    //   console.log("err : ", err);
+    //   toast.error("unknown error occured !");
+    //   return;
+    // }
 
     const formData = {
       userId: user.id,
@@ -228,7 +223,6 @@ const WorkSpace = ({ data, pid, contract }) => {
     };
 
     const submissions = data.testcases.map((testCase) => {
-      console.log("testCase.output : ", testCase.output);
       return {
         source_code: btoa(userCode + getInputString([testCase.input])),
         language_id: 63,
@@ -254,7 +248,6 @@ const WorkSpace = ({ data, pid, contract }) => {
       .request(options)
       .then(function (response) {
         const tokens = response.data;
-        console.log("token : ", tokens);
         checkStatus(tokens, "run");
       })
       .catch((err) => {
