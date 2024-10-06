@@ -48,13 +48,13 @@ function getTimeFromDateTime(dateTime) {
   }
 }
 
-const SubmissionList = () => {
+const SubmissionList = ({ pid }) => {
   const setActiveSubmissionId = useSetRecoilState(activeSubmissionIdState);
   const setFetchSubmissionsLoading = useSetRecoilState(
     fetchSubmissionsLoadingState,
   );
 
-  const submissions = useGetMySubmissions();
+  const submissions = useGetMySubmissions(pid);
 
   if (submissions) {
     return (

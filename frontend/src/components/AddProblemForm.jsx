@@ -149,24 +149,7 @@ export default function ProblemForum({ data }) {
     await DEPLOY(formData, bountyValue);
   };
 
-  const testing = async (e) => {
-    //                  bounty
-    const amountInSun = 10 * 1_000_000;
-
-    try {
-      const transaction = await window.tronLink.tronWeb.trx.sendTrx(
-        import.meta.env.VITE_CODEHIVE_WALLET |
-          "TRAMAQH5hy2qSteh2WRWpwjme2ieiwg5wu",
-        amountInSun,
-      );
-
-      console.log("transactoin : ", transaction);
-    } catch (err) {
-      console.log("err : ", err);
-      toast.error("unknown error occured !");
-      return;
-    }
-  };
+  
 
   return (
     <div className="relative flex h-full flex-col items-center justify-start">
@@ -313,7 +296,7 @@ export default function ProblemForum({ data }) {
               </div>
               <div>
                 <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
+                  {/* <div className="flex items-center gap-2">
                     <input
                       type="checkbox"
                       id="radio"
@@ -325,7 +308,7 @@ export default function ProblemForum({ data }) {
                     <label className="block text-gray-200">
                       Hide this testcase
                     </label>
-                  </div>
+                  </div> */}
                   <button
                     className="mt-1 rounded-[7px] border border-white p-2 px-4"
                     onClick={() => {
@@ -536,7 +519,6 @@ export default function ProblemForum({ data }) {
         >
           Prev
         </button>
-        <button onClick={testing}>Test</button>
         {formSelector == 5 ? (
           <button
             className={`rounded-[7px] border-[1px] border-black bg-primary px-4 font-bold text-black hover:text-white`}

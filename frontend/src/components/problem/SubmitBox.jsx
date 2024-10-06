@@ -19,7 +19,7 @@ const SubmitBox = ({
           >
             {executionLoading && (
               <svg
-                className="h-3 w-3 animate-spin border border-white"
+                className="h-3 w-3 mr-1 animate-spin border border-white"
                 // viewBox="0 0 24 24"
               ></svg>
             )}{" "}

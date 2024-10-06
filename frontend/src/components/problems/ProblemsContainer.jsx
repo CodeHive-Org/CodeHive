@@ -104,6 +104,8 @@ const ProblemsContainer = () => {
                   title={p.name.split("|")[0]}
                   address={p.question}
                   difficulty={p.difficulty}
+                  bounty={p.bounty}
+                  submissions={p.submissions.length}
                   isOpen={isOpen}
                   isAnyOpen={isAnyOpen}
                   handleOpen={handleOpen}

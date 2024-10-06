@@ -23,8 +23,8 @@ const Nav = () => {
               size={28}
               onClick={() => navigate(-1)}
             />
-            <span className="text-sm text-second">{"Problem 1"}</span>
-            <ChevronRight className="cursor-pointer" size={28} />
+            <span className="text-sm text-second">{"Problem"}</span>
+            {/* <ChevronRight className="cursor-pointer" size={28} /> */}
           </div>
         </div>
         {/* right side */}

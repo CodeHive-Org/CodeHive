@@ -15,17 +15,16 @@ import {
   WalletDisconnectedError,
   WalletNotFoundError,
 } from "@tronweb3/tronwallet-abstract-adapter";
-import {
-  WalletProvider
-} from "@tronweb3/tronwallet-adapter-react-hooks";
+import { WalletProvider } from "@tronweb3/tronwallet-adapter-react-hooks";
 import { WalletModalProvider } from "@tronweb3/tronwallet-adapter-react-ui";
 import "@tronweb3/tronwallet-adapter-react-ui/style.css";
 import { TronLinkAdapter } from "@tronweb3/tronwallet-adapter-tronlink";
 import { useEffect } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { authTokenState, userState } from "./atoms/userAtom";
 import AlertModal from "./components/ui/AlertModal";
 import { jwtDecode } from "jwt-decode";
+import axios from "axios";
 
 globalThis.Buffer = Buffer;
 
@@ -54,17 +53,34 @@ function App() {
     });
   });
 
-  const setAuthToken = useSetRecoilState(authTokenState);
+  const [authToken, setAuthToken] = useRecoilState(authTokenState);
   const setUser = useSetRecoilState(userState);
 
   useEffect(() => {
     const token = localStorage.getItem("auth-token");
+
+    const getUser = async (userId) => {
+      try {
+        const { data } = await axios.get(
+          import.meta.env.VITE_BACKEND_URL + `/auth/user/${userId}`,
+        );
+
+        setUser(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
     if (token) {
       setAuthToken(token);
       const decoded = jwtDecode(token);
-      setUser(decoded?.user);
+      const userId = decoded?.user?.id;
+
+      if (userId) {
+        getUser(userId);
+      }
     }
-  }, [setAuthToken]);
+  }, [authToken, setAuthToken]);
 
   return (
     <>

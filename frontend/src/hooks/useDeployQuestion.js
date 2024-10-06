@@ -18,6 +18,25 @@ export default function useDeployQuestion() {
 
   const [, setStatus] = useRecoilState(questionAddStatus);
 
+  const testing = async (e) => {
+    //                  bounty
+    const amountInSun = 10 * 1_000_000;
+
+    try {
+      const transaction = await window.tronLink.tronWeb.trx.sendTrx(
+        import.meta.env.VITE_CODEHIVE_WALLET |
+          "TRAMAQH5hy2qSteh2WRWpwjme2ieiwg5wu",
+        amountInSun,
+      );
+
+      console.log("transactoin : ", transaction);
+    } catch (err) {
+      console.log("err : ", err);
+      toast.error("unknown error occured !");
+      return;
+    }
+  };
+
   const DEPLOY = useCallback(async (formData, bounty) => {
     setStateOfTransaction(0); // Deploying the question
     setStatus(0);

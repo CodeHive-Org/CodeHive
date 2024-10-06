@@ -9,26 +9,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useTheContext } from "@/context";
-import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 
 export default function MyQuestions() {
   const user = useRecoilValue(userState);
   const questions = user.myProblems;
 
-  console.log(questions);
+  console.log(user);
 
-  const { tronWeb } = useTheContext();
   const Navigate = useNavigate();
-
-  const fundAcc = async () => {
-    const winner = "TQymTayyt9pPbSUFZjisyuanAsePL76VyG";
-    const amount = 1000000;
-    const res = await tronWeb.trx.sendTrx(winner, amount);
-
-    console.log("res : ", res);
-  };
 
   return (
     <main className=" min-h-screen w-full bg-background">
@@ -36,10 +27,17 @@ export default function MyQuestions() {
       <Navbar className={"wrapper"} dropdown={true} />
 
       <MaxWidthWrapper className="mt-10 flex flex-col justify-center">
-        <div className="flex flex-col gap-3 py-[10px]">
-          <p className="flex gap-2 border-b border-gray-600 text-[2.0rem] font-bold text-rose-500">
+        <div className="flex items-center  justify-between gap-3 border-b border-gray-600 py-[10px]">
+          <p className="flex gap-2  text-[2.0rem] font-bold text-rose-500">
             Your Questions
           </p>
+          <Link
+            to="/problems"
+            className="flex cursor-pointer items-center text-gray-300 space-x-2 self-end hover:text-primary"
+          >
+            <ArrowLeft className="text-inherit" />
+            <h2 className="text-inherit">Problems</h2>
+          </Link>
         </div>
 
         {/* <button onClick={() => fundAcc()}>Testtt</button> */}
@@ -59,12 +57,12 @@ export default function MyQuestions() {
               questions.map((question, index) => (
                 <TableRow
                   key={index}
-                  className="border-gray-600"
+                  className="cursor-pointer border-gray-600 hover:text-primary"
                   onClick={() => {
                     Navigate("/myquestion/" + question.id);
                   }}
                 >
-                  <Question key={index} i={index} question={question} />
+                  <Question key={index} i={index + 1} question={question} />
                 </TableRow>
               ))}
           </TableBody>
@@ -75,8 +73,6 @@ export default function MyQuestions() {
 }
 
 function Question({ question, i }) {
-  console.log("question : ", question.name);
-
   return (
     <>
       <TableCell>{i}</TableCell>

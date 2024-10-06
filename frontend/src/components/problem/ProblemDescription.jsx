@@ -21,7 +21,6 @@ const ProblemDescription = ({ problem, pid, contract }) => {
   //const { tronWeb } = useTheContext();
   const location = useLocation();
   const [claimer, setClaimer] = useState();
-  const [bounty, setBounty] = useState();
   const [isClaimed, setIsClaimed] = useState(false);
 
   const [selector, setSelector] = useRecoilState(tabsSelectorAtom);
@@ -70,7 +69,7 @@ const ProblemDescription = ({ problem, pid, contract }) => {
 
   return (
     <main className="relative h-full bg-third ">
-      <div className="scrollbar-none h-full overflow-y-scroll bg-third">
+      <div className="h-full overflow-y-scroll bg-third scrollbar-none">
         {/* TAB */}
         <div className="flex h-11 w-full items-center gap-2 overflow-x-hidden border-b border-gray-500 bg-secondary pt-2 text-white">
           <div
@@ -179,18 +178,18 @@ const ProblemDescription = ({ problem, pid, contract }) => {
                       Bounty Status :
                       <span>
                         {" "}
-                        {!bounty
+                        {problem?.status != "Funded"
                           ? "Not yet Set"
-                          : isClaimed
+                          : problem?.bountyStatus == "CLAIMED"
                             ? "Already Claimed"
                             : "Is yet to be Claimed."}
                       </span>
                     </h1>
                   </div>
-                  {bounty && (
+                  {problem?.bounty && (
                     <div className="flex rounded-md bg-orange-400 p-2 px-4 font-semibold text-red-700">
                       <h1 className="mr-2 font-medium text-black">
-                        Reward if you solve this : {bounty / 1000000} TRX
+                        Reward if you solve this : {problem?.bounty} TRX
                       </h1>
                     </div>
                   )}
@@ -214,7 +213,11 @@ const ProblemDescription = ({ problem, pid, contract }) => {
         )} */}
         {selector == 2 &&
           !loading &&
-          (activeSubmissionId ? <SubmissionDetail /> : <MySubmissions />)}
+          (activeSubmissionId ? (
+            <SubmissionDetail />
+          ) : (
+            <MySubmissions pid={problem.id} />
+          ))}
       </div>
     </main>
   );

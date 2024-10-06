@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 // import Nav from "@/components/problems/Nav";
 import { ABI } from "@/utils/problems";
-import { useParams } from "react-router-dom";
+import { Link, Router, useParams } from "react-router-dom";
 import { SkeletonPage } from "@/components/SkeletonPage";
 import {
   Accordion,
@@ -13,27 +13,29 @@ import {
 import Navbar from "@/components/Navbar";
 import axios from "axios";
 import { useTheContext } from "@/context";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import { signMessageWithTimeConstraint } from "@/hooks/SigMessage";
+import { toast } from "sonner";
 
 export default function MyQuestionDesc() {
   let { pid } = useParams();
   const [loading, setLoading] = useState(true);
+  const [fundLoading, setFundLoading] = useState(false);
   const [problem, setProblem] = useState();
   const [claimer, setClaimer] = useState();
-  const [bounty, setBounty] = useState();
   const [difficulty, setDiff] = useState();
-  const [winnerCode, setWinnerCode] = useState();
+  const [winnerDetails, setWinnerDetails] = useState();
   const { tronWeb } = useTheContext();
   const [submissions, setSubmissions] = useState([]);
 
   const [contract, setContract] = useState();
 
   useEffect(() => {
-    const getProblem = async () => {
+    const getProblemandwinner = async () => {
       try {
         const response = await axios.get(
           import.meta.env.VITE_BACKEND_URL + `/problems/${pid}`,
         );
-        console.log("respnse : ", response.data);
         setSubmissions(
           response.data.submissions.filter((s) => s.statusDesc == "Accepted"),
         );
@@ -44,8 +46,76 @@ export default function MyQuestionDesc() {
         setLoading(false);
       }
     };
-    getProblem();
+    getProblemandwinner();
   }, []);
+
+  const fundProblem = async (e) => {
+    const txnData = await signMessageWithTimeConstraint();
+
+    try {
+      if (!txnData?.message) {
+        throw new Error("Transaction failed !");
+      }
+
+      setFundLoading(true);
+
+      const amountInSun = problem?.bounty * 1_000_000;
+      const txn = await window.tronLink.tronWeb.trx.sendTrx(
+        import.meta.env.VITE_CODEHIVE_WALLET ??
+          "TQymTayyt9pPbSUFZjisyuanAsePL76VyG",
+        amountInSun,
+      );
+      console.log("sdfsfs");
+
+      console.log("txn : ", txn);
+
+      if (!txn?.result) {
+        throw new Error("Transaction Failed !");
+      } else {
+        const options = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            tron_message: txnData.message,
+            tron_signature: txnData.signature,
+          },
+          body: JSON.stringify({
+            problemId: pid,
+          }),
+        };
+
+        if (!window.tron.tronWeb.ready) {
+          toast.error("TronWeb not ready");
+          throw new Error("TronWeb not ready");
+        }
+
+        const response = await fetch(
+          import.meta.env.VITE_BACKEND_URL + "/code/fundproblem",
+          options,
+        );
+        const data = await response.json();
+        console.log("data; ", data);
+
+        if (response.ok) {
+          toast.success("Problem successfully funded !");
+          setTimeout(() => {
+            window.location.reload();
+          }, 4000);
+        } else {
+          throw new Error(
+            `Failed to fund problem. Status: ${data.status}, ${data.message}`,
+          );
+        }
+      }
+    } catch (err) {
+      console.error("Error during funding:", err);
+      const errMsg =
+        err?.message ?? "Error occurred, failed to fund the problem!";
+      toast.error(errMsg);
+    } finally {
+      setFundLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -86,6 +156,13 @@ export default function MyQuestionDesc() {
       <Navbar className={"wrapper"} dropdown={true} />
 
       <MaxWidthWrapper className="relative flex h-full flex-col items-center justify-center py-[40px]">
+        <Link
+          to="/myquestion"
+          className="flex cursor-pointer items-center space-x-2 self-start border-b border-gray-700 pb-2 hover:text-primary"
+        >
+          <ArrowLeft className="text-inherit" />
+          <h2 className="text-inherit">Back to Questions</h2>
+        </Link>
         <div className="flex w-[80%] flex-col items-center gap-3 py-[10px]">
           <div className="flex w-full items-center justify-between border-b border-gray-500">
             <p className="flex gap-2 text-[34px] font-bold text-gray-100">
@@ -103,42 +180,101 @@ export default function MyQuestionDesc() {
                 )}
               </span>
             </p>
-            <p className="text-[18px] font-bold text-[#3c3c3c]">{pid}</p>
+            <div>
+              {problem?.status == "Unfunded" &&
+                (fundLoading ? (
+                  <button
+                    disabled={fundLoading}
+                    className="absolute right-[10px] top-[10px] flex items-center rounded-[5px] border border-primary bg-primary px-4 py-[2px] pt-[4px] text-[12px] font-bold opacity-50 hover:text-black"
+                  >
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Funding
+                  </button>
+                ) : (
+                  <button
+                    className="float-right cursor-pointer rounded-[5px] border border-gray-600 bg-primary px-2 py-1 text-[12px] font-bold text-gray-200 hover:text-black lg:px-4 lg:py-[2px] lg:pt-[4px]"
+                    onClick={fundProblem}
+                  >
+                    Fund Problem
+                  </button>
+                ))}
+
+              <p className="text-[18px] font-bold text-[#3c3c3c]">
+                {problem?.bounty} TRX Bounty
+              </p>
+            </div>
           </div>
           <div className="w-[90%] text-[#b4b0b0]">{problem?.description}</div>
         </div>
+        {problem?.txnHash && problem?.txnHash.length > 0 && (
+          <div className="flex w-[70%] items-center gap-3 py-[10px]">
+            <h2 className="text-[1.2rem] font-bold text-primary xl:text-[1.4rem]">
+              TxnHash :{" "}
+            </h2>
+            <a
+              href={`https://nile.tronscan.org/#/transaction/${problem?.txnHash}`}
+              className="animate-pulse text-sm text-gray-300 hover:border-b hover:border-blue-600"
+            >
+              {problem?.txnHash}
+            </a>
+          </div>
+        )}
+
         <div className="flex w-[70%] flex-col items-center gap-3 py-[10px]">
-          {/* {problem?.bountyStatus === "CLAIMED" && (
+          {problem?.bountyStatus === "CLAIMED" && problem?.winnerCode && (
             <Accordion type="single" collapsible className="w-full px-[20px]">
               <AccordionItem value="69">
                 <AccordionTrigger className="text-[1.2rem] font-bold text-primary xl:text-[1.4rem]">
-                  Winner Code
+                  Winner Details
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div className="relative whitespace-pre-wrap rounded-[5px] border p-2">
-                    {winnerCode}
+                  <div className="relative whitespace-pre-wrap rounded-[5px] border p-2 text-gray-300">
+                    <div className="flex w-full items-center justify-between">
+                      <h2 className="flex items-center py-4 font-semibold text-white">
+                        Winner : {problem?.winnerCode?.user?.username}
+                        <span className="ml-1 mt-2 text-sm text-gray-400">
+                          (
+                          {problem?.winnerCode?.user?.walletAddress.slice(
+                            0,
+                            2,
+                          ) +
+                            "..." +
+                            problem?.winnerCode?.user?.walletAddress.slice(-6)}
+                          )
+                        </span>
+                      </h2>
+                    </div>
+
+                    <h2 className="border-b py-4 font-semibold text-white">
+                      Code :{" "}
+                    </h2>
+                    {problem?.winnerCode?.code}
                   </div>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-          )} */}
+          )}
         </div>
         <div className="flex w-[60%] flex-col items-center gap-3 py-[10px] pt-[30px]">
           <p className="w-full text-[20px] font-bold text-primary">
             Code Submissions:
           </p>
           <Accordion type="single" collapsible className="w-full px-[20px]">
-            {submissions.length > 0 &&
+            {submissions.length > 0 ? (
               submissions.map((submission, index) => (
                 <CodeSegment
                   contract={contract}
                   submission={submission}
                   key={index}
-                  index={index}
+                  index={index + 1}
                   claimed={problem.bountyStatus}
                   bounty={Math.round(problem.bounty)}
+                  pid={problem.id}
                 />
-              ))}
+              ))
+            ) : (
+              <h1 className="text-gray-500">No Submissions made !</h1>
+            )}
           </Accordion>
         </div>
       </MaxWidthWrapper>
@@ -146,16 +282,75 @@ export default function MyQuestionDesc() {
   );
 }
 
-function CodeSegment({ submission, index, claimed, bounty }) {
-  const [loading, setLoading] = useState(true);
+function CodeSegment({ submission, index, claimed, bounty, pid }) {
+  const [loading, setLoading] = useState(false);
   const { tronWeb } = useTheContext();
-  const fundAcc = async () => {
-    const winner = submission.user.walletAddress;
-    const amount = bounty * 1000000;
-    const res = await tronWeb.trx.sendTrx(winner, amount);
+  const fundWinner = async (e) => {
+    e.preventDefault();
+    const txnData = await signMessageWithTimeConstraint();
 
-    // api call to update the question data on db
-    console.log("res : ", res);
+    try {
+      if (!txnData?.message) {
+        throw new Error("Transaction failed !");
+      }
+
+      setLoading(true);
+
+      const winner = submission.user.walletAddress;
+      const amount = bounty * 1000000;
+      const txn = await tronWeb.trx.sendTrx(winner, amount);
+
+      console.log("txn : ", txn);
+
+      if (!txn?.result) {
+        throw new Error("Transaction Failed !");
+      } else {
+        const options = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            tron_message: txnData.message,
+            tron_signature: txnData.signature,
+          },
+          body: JSON.stringify({
+            winnerId: submission.user.id,
+            problemId: pid,
+            txnHash: txn.txid,
+            winnerSubId: submission.id,
+          }),
+        };
+
+        if (!window.tron.tronWeb.ready) {
+          toast.error("TronWeb not ready");
+          throw new Error("TronWeb not ready");
+        }
+
+        const response = await fetch(
+          import.meta.env.VITE_BACKEND_URL + "/code/fundwinner",
+          options,
+        );
+        const data = await response.json();
+        console.log("data; ", data);
+
+        if (response.ok) {
+          toast.success("Winner successfully funded !");
+          setTimeout(() => {
+            window.location.reload();
+          }, 4000);
+        } else {
+          throw new Error(
+            `Failed to fund winner. Status: ${data.status}, ${data.message}`,
+          );
+        }
+      }
+    } catch (err) {
+      console.error("Error during funding:", err.message);
+      const errMsg =
+        err?.message ?? "Error occurred, failed to fund the winner!";
+      toast.error(errMsg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -180,14 +375,23 @@ function CodeSegment({ submission, index, claimed, bounty }) {
         <AccordionContent>
           <div className="relative whitespace-pre-wrap rounded-[5px] border p-2">
             {submission.code}
-            {claimed == "UNCLAIMED" && (
-              <button
-                className="absolute right-[10px] top-[10px] rounded-[5px] border border-primary px-[3px] py-[2px] pt-[4px] text-[12px] font-bold text-primary hover:bg-primary hover:text-black"
-                onClick={() => fundAcc()}
-              >
-                Fund This
-              </button>
-            )}
+            {claimed == "UNCLAIMED" &&
+              (loading ? (
+                <button
+                  disabled={loading}
+                  className="absolute right-[10px] top-[10px] flex items-center rounded-[5px] border border-primary bg-primary px-4 py-[2px] pt-[4px] text-[12px] font-bold opacity-50 hover:text-black"
+                >
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Funding
+                </button>
+              ) : (
+                <button
+                  className="absolute right-[10px] top-[10px] cursor-pointer rounded-[5px] border border-gray-600 bg-primary px-4 py-[2px] pt-[4px] text-[12px] font-bold text-gray-200 hover:text-black"
+                  onClick={fundWinner}
+                >
+                  Fund This
+                </button>
+              ))}
           </div>
           <div className="flex items-center justify-between gap-2">
             <p>

@@ -19,7 +19,9 @@ const Problem = ({
   difficulty,
   isOpen,
   handleOpen,
+  bounty,
   status,
+  submissions,
 }) => {
   const navigate = useNavigate();
 
@@ -87,17 +89,19 @@ const Problem = ({
           />
         </TableCell>
       </TableRow>
-      {/* <TableRow
+      <TableRow
         className={cn(
           "w-full border-b-0 border-t border-gray-600 bg-secondary text-gray-300",
           { hidden: !isOpen },
         )}
       >
-        <TableCell className="" colSpan={4}>
-          <span className="text-md text-second">Problem address : </span>
-          {address}
+        <TableCell className="border-t border-gray-600 bg-black" colSpan={5}>
+          <span className="text-md text-second">Bounty Set :{bounty}TRX </span>
+          <span className="text-md float-right text-second">
+            Total Submissions : {submissions}{" "}
+          </span>
         </TableCell>
-      </TableRow> */}
+      </TableRow>
     </>
   );
 };
