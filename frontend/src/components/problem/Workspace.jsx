@@ -48,7 +48,7 @@ const WorkSpace = ({ data, pid, contract }) => {
   const [outputState, setOutputState] = useRecoilState(outputAtom);
   const user = useRecoilValue(userState);
 
-  console.log("user : ", user);
+  console.log("user : ", data);
 
   const [submissionProcessing, setSubmissionProcessing] = useState(false);
   const [executionProcessing, setExecutionProcessing] = useState(false);
@@ -183,6 +183,8 @@ const WorkSpace = ({ data, pid, contract }) => {
             );
             const data = res.data;
 
+            console.log("data : ", data);
+
             setSubmissionResult((prev) => ({
               ...prev,
               [response.data.submissionId]: data,
@@ -214,17 +216,20 @@ const WorkSpace = ({ data, pid, contract }) => {
     setExecutionProcessing(true);
 
     const getInputString = (args) => {
+      let validateArgs = Array.isArray(args) ? args.join(",") : `"${args}"`;
       return `\n
 
-
-
-    console.log(${data?.compileFunctionName}(${args.join(",")}))
+    console.log(${data?.compileFunctionName}(${validateArgs}))
     `;
     };
 
     const submissions = data.testcases.map((testCase) => {
+      let testCaseInput = testCase?.input.startsWith("[")
+        ? [testCase.input]
+        : String(testCase.input);
+
       return {
-        source_code: btoa(userCode + getInputString([testCase.input])),
+        source_code: btoa(userCode + getInputString(testCaseInput)),
         language_id: 63,
         expected_output: btoa(testCase.output),
       };
@@ -300,6 +305,7 @@ const WorkSpace = ({ data, pid, contract }) => {
         executionLoading={executionProcessing}
         submissionloading={submissionProcessing}
         handleRun={handleRun}
+        problem={data}
       />
       {success && (
         <ReactConfetti

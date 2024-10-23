@@ -7,6 +7,7 @@ const SubmitBox = ({
   handleSubmit,
   handleRun,
   submissionloading,
+  problem,
 }) => {
   return (
     <div className="absolute bottom-1 right-3 z-10 flex w-full">
@@ -19,7 +20,7 @@ const SubmitBox = ({
           >
             {executionLoading && (
               <svg
-                className="h-3 w-3 mr-1 animate-spin border border-white"
+                className="mr-1 h-3 w-3 animate-spin border border-white"
                 // viewBox="0 0 24 24"
               ></svg>
             )}{" "}
@@ -31,12 +32,19 @@ const SubmitBox = ({
               Please wait
             </Button>
           ) : (
-            <button
-              className="inline-flex items-center rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-white transition-all hover:bg-rose-700 focus:outline-none"
-              onClick={handleSubmit}
-            >
-              Submit
-            </button>
+            <>
+              {problem?.bountyStatus == "CLAIMED" ||
+              problem?.status == "UNFUNDED" ? (
+                <span></span>
+              ) : (
+                <button
+                  className="inline-flex items-center rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-white transition-all hover:bg-rose-700 focus:outline-none"
+                  onClick={handleSubmit}
+                >
+                  Submit
+                </button>
+              )}
+            </>
           )}
         </div>
       </div>
